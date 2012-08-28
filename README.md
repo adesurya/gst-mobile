@@ -1,2 +1,2 @@
-gst-media-mobile
+gst-mobile
 ================
