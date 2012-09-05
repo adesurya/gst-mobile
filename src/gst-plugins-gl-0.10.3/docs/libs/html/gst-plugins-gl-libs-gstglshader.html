@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstGLShader</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="GStreamer OpenGL Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="GStreamer OpenGL Plugin Libraries">
+<link rel="prev" href="gst-plugins-gl-libs-gstglbuffer.html" title="gstglbuffer">
+<link rel="next" href="gst-plugins-gl-libs-gstgldisplay.html" title="GstGLDisplay">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="gst-plugins-gl-libs-gstglbuffer.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer OpenGL Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="gst-plugins-gl-libs-gstgldisplay.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#gst-plugins-gl-libs-gstglshader.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#gst-plugins-gl-libs-gstglshader.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#gst-plugins-gl-libs-gstglshader.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#gst-plugins-gl-libs-gstglshader.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="gst-plugins-gl-libs-gstglshader"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="gst-plugins-gl-libs-gstglshader.top_of_page"></a>GstGLShader</span></h2>
+<p>GstGLShader</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="gst-plugins-gl-libs-gstglshader.synopsis"></a><h2>Synopsis</h2>
+<a name="GstGLShader"></a><pre class="synopsis">#define             <a class="link" href="gst-plugins-gl-libs-gstglshader.html#GST-GL-SHADER-ERROR:CAPS" title="GST_GL_SHADER_ERROR">GST_GL_SHADER_ERROR</a>
+enum                <a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShaderError" title="enum GstGLShaderError">GstGLShaderError</a>;
+enum                <a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShaderSourceType" title="enum GstGLShaderSourceType">GstGLShaderSourceType</a>;
+                    <a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShaderPrivate" title="GstGLShaderPrivate">GstGLShaderPrivate</a>;
+struct              <a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader-struct" title="struct GstGLShader">GstGLShader</a>;
+<span class="returnvalue">GQuark</span>              <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-error-quark" title="gst_gl_shader_error_quark ()">gst_gl_shader_error_quark</a>           (<em class="parameter"><code><span class="type">void</span></code></em>);
+<a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="returnvalue">GstGLShader</span></a> *       <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-new" title="gst_gl_shader_new ()">gst_gl_shader_new</a>                   (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-set-vertex-source" title="gst_gl_shader_set_vertex_source ()">gst_gl_shader_set_vertex_source</a>     (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *src</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-set-fragment-source" title="gst_gl_shader_set_fragment_source ()">gst_gl_shader_set_fragment_source</a>   (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *src</code></em>);
+const <span class="returnvalue">gchar</span> *       <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-get-vertex-source" title="gst_gl_shader_get_vertex_source ()">gst_gl_shader_get_vertex_source</a>     (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);
+const <span class="returnvalue">gchar</span> *       <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-get-fragment-source" title="gst_gl_shader_get_fragment_source ()">gst_gl_shader_get_fragment_source</a>   (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-set-active" title="gst_gl_shader_set_active ()">gst_gl_shader_set_active</a>            (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code><span class="type">gboolean</span> active</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-is-compiled" title="gst_gl_shader_is_compiled ()">gst_gl_shader_is_compiled</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-compile" title="gst_gl_shader_compile ()">gst_gl_shader_compile</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code><span class="type">GError</span> **error</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-compile-and-check" title="gst_gl_shader_compile_and_check ()">gst_gl_shader_compile_and_check</a>     (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *source</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShaderSourceType" title="enum GstGLShaderSourceType"><span class="type">GstGLShaderSourceType</span></a> type</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-release" title="gst_gl_shader_release ()">gst_gl_shader_release</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-use" title="gst_gl_shader_use ()">gst_gl_shader_use</a>                   (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-set-uniform-1i" title="gst_gl_shader_set_uniform_1i ()">gst_gl_shader_set_uniform_1i</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *name</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> value</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-set-uniform-1f" title="gst_gl_shader_set_uniform_1f ()">gst_gl_shader_set_uniform_1f</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *name</code></em>,
+                                                         <em class="parameter"><code><span class="type">gfloat</span> value</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-set-uniform-1fv" title="gst_gl_shader_set_uniform_1fv ()">gst_gl_shader_set_uniform_1fv</a>       (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *name</code></em>,
+                                                         <em class="parameter"><code><span class="type">guint</span> count</code></em>,
+                                                         <em class="parameter"><code><span class="type">gfloat</span> *value</code></em>);
+<span class="returnvalue">GLint</span>               <a class="link" href="gst-plugins-gl-libs-gstglshader.html#gst-gl-shader-get-attribute-location" title="gst_gl_shader_get_attribute_location ()">gst_gl_shader_get_attribute_location</a>
+                                                        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *name</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstglshader.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  GObject
+   +----GstGLShader
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstglshader.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader--active" title='The "active" property'>active</a>"                   <span class="type">gchar</span>*                : Read / Write
+  "<a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader--compiled" title='The "compiled" property'>compiled</a>"                 <span class="type">gboolean</span>              : Read
+  "<a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader--fragment-src" title='The "fragment-src" property'>fragment-src</a>"             <span class="type">gchar</span>*                : Read / Write
+  "<a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader--vertex-src" title='The "vertex-src" property'>vertex-src</a>"               <span class="type">gchar</span>*                : Read / Write
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstglshader.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstglshader.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GST-GL-SHADER-ERROR:CAPS"></a><h3>GST_GL_SHADER_ERROR</h3>
+<pre class="programlisting">#define GST_GL_SHADER_ERROR (gst_gl_shader_error_quark ())
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLShaderError"></a><h3>enum GstGLShaderError</h3>
+<pre class="programlisting">typedef enum {
+  GST_GL_SHADER_ERROR_COMPILE,
+  GST_GL_SHADER_ERROR_LINK,
+  GST_GL_SHADER_ERROR_PROGRAM
+} GstGLShaderError;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLShaderSourceType"></a><h3>enum GstGLShaderSourceType</h3>
+<pre class="programlisting">typedef enum {
+  GST_GL_SHADER_FRAGMENT_SOURCE,
+  GST_GL_SHADER_VERTEX_SOURCE
+} GstGLShaderSourceType;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLShaderPrivate"></a><h3>GstGLShaderPrivate</h3>
+<pre class="programlisting">typedef struct _GstGLShaderPrivate GstGLShaderPrivate;</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLShader-struct"></a><h3>struct GstGLShader</h3>
+<pre class="programlisting">struct GstGLShader;</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-error-quark"></a><h3>gst_gl_shader_error_quark ()</h3>
+<pre class="programlisting"><span class="returnvalue">GQuark</span>              gst_gl_shader_error_quark           (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-new"></a><h3>gst_gl_shader_new ()</h3>
+<pre class="programlisting"><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="returnvalue">GstGLShader</span></a> *       gst_gl_shader_new                   (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-set-vertex-source"></a><h3>gst_gl_shader_set_vertex_source ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_shader_set_vertex_source     (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *src</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-set-fragment-source"></a><h3>gst_gl_shader_set_fragment_source ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_shader_set_fragment_source   (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *src</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-get-vertex-source"></a><h3>gst_gl_shader_get_vertex_source ()</h3>
+<pre class="programlisting">const <span class="returnvalue">gchar</span> *       gst_gl_shader_get_vertex_source     (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-get-fragment-source"></a><h3>gst_gl_shader_get_fragment_source ()</h3>
+<pre class="programlisting">const <span class="returnvalue">gchar</span> *       gst_gl_shader_get_fragment_source   (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-set-active"></a><h3>gst_gl_shader_set_active ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_shader_set_active            (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code><span class="type">gboolean</span> active</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-is-compiled"></a><h3>gst_gl_shader_is_compiled ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_shader_is_compiled           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-compile"></a><h3>gst_gl_shader_compile ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_shader_compile               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code><span class="type">GError</span> **error</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-compile-and-check"></a><h3>gst_gl_shader_compile_and_check ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_shader_compile_and_check     (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *source</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShaderSourceType" title="enum GstGLShaderSourceType"><span class="type">GstGLShaderSourceType</span></a> type</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-release"></a><h3>gst_gl_shader_release ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_shader_release               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-use"></a><h3>gst_gl_shader_use ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_shader_use                   (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-set-uniform-1i"></a><h3>gst_gl_shader_set_uniform_1i ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_shader_set_uniform_1i        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *name</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> value</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-set-uniform-1f"></a><h3>gst_gl_shader_set_uniform_1f ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_shader_set_uniform_1f        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *name</code></em>,
+                                                         <em class="parameter"><code><span class="type">gfloat</span> value</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-set-uniform-1fv"></a><h3>gst_gl_shader_set_uniform_1fv ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_shader_set_uniform_1fv       (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *name</code></em>,
+                                                         <em class="parameter"><code><span class="type">guint</span> count</code></em>,
+                                                         <em class="parameter"><code><span class="type">gfloat</span> *value</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-shader-get-attribute-location"></a><h3>gst_gl_shader_get_attribute_location ()</h3>
+<pre class="programlisting"><span class="returnvalue">GLint</span>               gst_gl_shader_get_attribute_location
+                                                        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *name</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstglshader.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstGLShader--active"></a><h3>The <code class="literal">"active"</code> property</h3>
+<pre class="programlisting">  "active"                   <span class="type">gchar</span>*                : Read / Write</pre>
+<p>Enable/Disable the shader.</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLShader--compiled"></a><h3>The <code class="literal">"compiled"</code> property</h3>
+<pre class="programlisting">  "compiled"                 <span class="type">gboolean</span>              : Read</pre>
+<p>Shader compile and link status.</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLShader--fragment-src"></a><h3>The <code class="literal">"fragment-src"</code> property</h3>
+<pre class="programlisting">  "fragment-src"             <span class="type">gchar</span>*                : Read / Write</pre>
+<p>GLSL Fragment Shader source code.</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLShader--vertex-src"></a><h3>The <code class="literal">"vertex-src"</code> property</h3>
+<pre class="programlisting">  "vertex-src"               <span class="type">gchar</span>*                : Read / Write</pre>
+<p>GLSL Vertex Shader source code.</p>
+<p>Default value: NULL</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

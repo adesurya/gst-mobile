@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>gloverlay</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="GStreamer OpenGL Plugins 0.10 Plugins Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-gl Elements">
+<link rel="prev" href="gst-plugins-gl-plugins-glimagesink.html" title="glimagesink">
+<link rel="next" href="gst-plugins-gl-plugins-gltestsrc.html" title="gltestsrc">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="gst-plugins-gl-plugins-glimagesink.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer OpenGL Plugins 0.10 Plugins Reference Manual</th>
+<td><a accesskey="n" href="gst-plugins-gl-plugins-gltestsrc.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#gst-plugins-gl-plugins-gloverlay.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#gst-plugins-gl-plugins-gloverlay.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#gst-plugins-gl-plugins-gloverlay.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#gst-plugins-gl-plugins-gloverlay.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="gst-plugins-gl-plugins-gloverlay"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="gst-plugins-gl-plugins-gloverlay.top_of_page"></a>gloverlay</span></h2>
+<p>gloverlay — Overlay GL video texture with a PNG image</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="gst-plugins-gl-plugins-gloverlay.synopsis"></a><h2>Synopsis</h2>
+<a name="GstGLOverlay"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay-struct" title="struct GstGLOverlay">GstGLOverlay</a>;
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-plugins-gloverlay.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  GObject
+   +----GstObject
+         +----GstElement
+               +----GstBaseTransform
+                     +----GstGLFilter
+                           +----GstGLOverlay
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-plugins-gloverlay.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--location" title='The "location" property'>location</a>"                 <span class="type">gchar</span>*                : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--proportion" title='The "proportion" property'>proportion</a>"               <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--xpos" title='The "xpos" property'>xpos</a>"                     <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--ypos" title='The "ypos" property'>ypos</a>"                     <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--angle-png" title='The "angle-png" property'>angle-png</a>"                <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--angle-video" title='The "angle-video" property'>angle-video</a>"              <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--proportion-png" title='The "proportion-png" property'>proportion-png</a>"           <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--proportion-video" title='The "proportion-video" property'>proportion-video</a>"         <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--rotate-png" title='The "rotate-png" property'>rotate-png</a>"               <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--rotate-video" title='The "rotate-video" property'>rotate-video</a>"             <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--video-top" title='The "video-top" property'>video-top</a>"                <span class="type">gboolean</span>              : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--xpos-png" title='The "xpos-png" property'>xpos-png</a>"                 <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--xpos-video" title='The "xpos-video" property'>xpos-video</a>"               <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--ypos-png" title='The "ypos-png" property'>ypos-png</a>"                 <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--ypos-video" title='The "ypos-video" property'>ypos-video</a>"               <span class="type">gint</span>                  : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gloverlay.html#GstGLOverlay--ratio-video" title='The "ratio-video" property'>ratio-video</a>"              <span class="type">gint</span>                  : Read / Write
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-plugins-gloverlay.description"></a><h2>Description</h2>
+<p>
+Overlay GL video texture with a PNG image
+</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp5992160"></a><h3>Examples</h3>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch  videotestsrc <span class="gtkdoc opt">!</span> <span class="string">&quot;video/x-raw-rgb&quot;</span> <span class="gtkdoc opt">!</span> glupload <span class="gtkdoc opt">!</span> gloverlay location<span class="gtkdoc opt">=</span>imagefile <span class="gtkdoc opt">!</span> glimagesink</pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+FBO (Frame Buffer Object) is required.
+</div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp9669232"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-gl-plugins-plugin-opengl.html#plugin-opengl">opengl</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Filippo Argiolas &lt;filippo.argiolas@gmail.com&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Filter/Effect</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="idp6501616"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>video/x-raw-gl, width=(int)[ 1, 8000 ], height=(int)[ 1, 6000 ], pixel-aspect-ratio=(fraction)1/1, framerate=(fraction)[ 0/1, 100/1 ]</td>
+</tr>
+</tbody>
+</table></div>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>video/x-raw-gl, width=(int)[ 1, 8000 ], height=(int)[ 1, 6000 ], pixel-aspect-ratio=(fraction)1/1, framerate=(fraction)[ 0/1, 100/1 ]</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-plugins-gloverlay.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstGLOverlay-struct"></a><h3>struct GstGLOverlay</h3>
+<pre class="programlisting">struct GstGLOverlay;</pre>
+<p>
+</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-plugins-gloverlay.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstGLOverlay--location"></a><h3>The <code class="literal">"location"</code> property</h3>
+<pre class="programlisting">  "location"                 <span class="type">gchar</span>*                : Read / Write</pre>
+<p>Location of the image.</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--proportion"></a><h3>The <code class="literal">"proportion"</code> property</h3>
+<pre class="programlisting">  "proportion"               <span class="type">gint</span>                  : Read / Write</pre>
+<p>Relative size of iverlay image, in percents.</p>
+<p>Allowed values: [0,100]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--xpos"></a><h3>The <code class="literal">"xpos"</code> property</h3>
+<pre class="programlisting">  "xpos"                     <span class="type">gint</span>                  : Read / Write</pre>
+<p>X position of overlay image in percents.</p>
+<p>Allowed values: [0,100]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--ypos"></a><h3>The <code class="literal">"ypos"</code> property</h3>
+<pre class="programlisting">  "ypos"                     <span class="type">gint</span>                  : Read / Write</pre>
+<p>Y position of overlay image in percents.</p>
+<p>Allowed values: [0,100]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--angle-png"></a><h3>The <code class="literal">"angle-png"</code> property</h3>
+<pre class="programlisting">  "angle-png"                <span class="type">gint</span>                  : Read / Write</pre>
+<p>choose angle in axis to choosen between -90 and 90.</p>
+<p>Allowed values: [-90,90]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--angle-video"></a><h3>The <code class="literal">"angle-video"</code> property</h3>
+<pre class="programlisting">  "angle-video"              <span class="type">gint</span>                  : Read / Write</pre>
+<p>choose angle in axis to choosen between -90 and 90.</p>
+<p>Allowed values: [-90,90]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--proportion-png"></a><h3>The <code class="literal">"proportion-png"</code> property</h3>
+<pre class="programlisting">  "proportion-png"           <span class="type">gint</span>                  : Read / Write</pre>
+<p>Relative size of iverlay image, in percents.</p>
+<p>Allowed values: [0,100]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--proportion-video"></a><h3>The <code class="literal">"proportion-video"</code> property</h3>
+<pre class="programlisting">  "proportion-video"         <span class="type">gint</span>                  : Read / Write</pre>
+<p>Relative size of iverlay video, in percents.</p>
+<p>Allowed values: [0,100]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--rotate-png"></a><h3>The <code class="literal">"rotate-png"</code> property</h3>
+<pre class="programlisting">  "rotate-png"               <span class="type">gint</span>                  : Read / Write</pre>
+<p>choose rotation axis for the moment only Y axis is implemented.</p>
+<p>Allowed values: [0,3]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--rotate-video"></a><h3>The <code class="literal">"rotate-video"</code> property</h3>
+<pre class="programlisting">  "rotate-video"             <span class="type">gint</span>                  : Read / Write</pre>
+<p>choose rotation axis for the moment only Y axis is implemented.</p>
+<p>Allowed values: [0,3]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--video-top"></a><h3>The <code class="literal">"video-top"</code> property</h3>
+<pre class="programlisting">  "video-top"                <span class="type">gboolean</span>              : Read / Write</pre>
+<p>Video is over png image.</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--xpos-png"></a><h3>The <code class="literal">"xpos-png"</code> property</h3>
+<pre class="programlisting">  "xpos-png"                 <span class="type">gint</span>                  : Read / Write</pre>
+<p>X position of overlay image in percents.</p>
+<p>Allowed values: [0,100]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--xpos-video"></a><h3>The <code class="literal">"xpos-video"</code> property</h3>
+<pre class="programlisting">  "xpos-video"               <span class="type">gint</span>                  : Read / Write</pre>
+<p>X position of overlay video in percents.</p>
+<p>Allowed values: [0,100]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--ypos-png"></a><h3>The <code class="literal">"ypos-png"</code> property</h3>
+<pre class="programlisting">  "ypos-png"                 <span class="type">gint</span>                  : Read / Write</pre>
+<p>Y position of overlay image in percents.</p>
+<p>Allowed values: [0,100]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--ypos-video"></a><h3>The <code class="literal">"ypos-video"</code> property</h3>
+<pre class="programlisting">  "ypos-video"               <span class="type">gint</span>                  : Read / Write</pre>
+<p>Y position of overlay video in percents.</p>
+<p>Allowed values: [0,100]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLOverlay--ratio-video"></a><h3>The <code class="literal">"ratio-video"</code> property</h3>
+<pre class="programlisting">  "ratio-video"              <span class="type">gint</span>                  : Read / Write</pre>
+<p></p>
+<p>Allowed values: [0,3]</p>
+<p>Default value: 0</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

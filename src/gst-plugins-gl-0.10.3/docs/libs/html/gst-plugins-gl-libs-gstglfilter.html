@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstGLFilter</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="GStreamer OpenGL Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="GStreamer OpenGL Plugin Libraries">
+<link rel="prev" href="ch01.html" title="GStreamer OpenGL Plugin Libraries">
+<link rel="next" href="gst-plugins-gl-libs-gstglbuffer.html" title="gstglbuffer">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="ch01.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer OpenGL Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="gst-plugins-gl-libs-gstglbuffer.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#gst-plugins-gl-libs-gstglfilter.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#gst-plugins-gl-libs-gstglfilter.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#gst-plugins-gl-libs-gstglfilter.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#gst-plugins-gl-libs-gstglfilter.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="gst-plugins-gl-libs-gstglfilter"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="gst-plugins-gl-libs-gstglfilter.top_of_page"></a>GstGLFilter</span></h2>
+<p>GstGLFilter</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="gst-plugins-gl-libs-gstglfilter.synopsis"></a><h2>Synopsis</h2>
+<a name="GstGLFilter"></a><pre class="synopsis"><span class="returnvalue">gboolean</span>            (<a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilterSetCaps" title="GstGLFilterSetCaps ()">*GstGLFilterSetCaps</a>)               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstCaps</span> *incaps</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstCaps</span> *outcaps</code></em>);
+<span class="returnvalue">gboolean</span>            (<a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilterProcessFunc" title="GstGLFilterProcessFunc ()">*GstGLFilterProcessFunc</a>)           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglbuffer.html#GstGLBuffer"><span class="type">GstGLBuffer</span></a> *inbuf</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglbuffer.html#GstGLBuffer"><span class="type">GstGLBuffer</span></a> *outbuf</code></em>);
+<span class="returnvalue">gboolean</span>            (<a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilterOnInitFBO" title="GstGLFilterOnInitFBO ()">*GstGLFilterOnInitFBO</a>)             (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);
+<span class="returnvalue">void</span>                (<a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilterOnReset" title="GstGLFilterOnReset ()">*GstGLFilterOnReset</a>)               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);
+<span class="returnvalue">void</span>                (<a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilterOnStart" title="GstGLFilterOnStart ()">*GstGLFilterOnStart</a>)               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);
+<span class="returnvalue">void</span>                (<a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilterOnStop" title="GstGLFilterOnStop ()">*GstGLFilterOnStop</a>)                (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);
+<span class="returnvalue">void</span>                (<a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilterGLStartFunc" title="GstGLFilterGLStartFunc ()">*GstGLFilterGLStartFunc</a>)           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);
+<span class="returnvalue">void</span>                (<a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilterGLStopFunc" title="GstGLFilterGLStopFunc ()">*GstGLFilterGLStopFunc</a>)            (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);
+struct              <a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter-struct" title="struct GstGLFilter">GstGLFilter</a>;
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstglfilter.html#gst-gl-filter-render-to-target" title="gst_gl_filter_render_to_target ()">gst_gl_filter_render_to_target</a>      (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> input</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> target</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GLCB:CAPS" title="GLCB ()"><span class="type">GLCB</span></a> func</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> data</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstglfilter.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  GObject
+   +----GstObject
+         +----GstElement
+               +----GstBaseTransform
+                     +----GstGLFilter
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstglfilter.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter--external-opengl-context" title='The "external-opengl-context" property'>external-opengl-context</a>"  <span class="type">gulong</span>                : Write
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstglfilter.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstglfilter.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstGLFilterSetCaps"></a><h3>GstGLFilterSetCaps ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            (*GstGLFilterSetCaps)               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstCaps</span> *incaps</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstCaps</span> *outcaps</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLFilterProcessFunc"></a><h3>GstGLFilterProcessFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            (*GstGLFilterProcessFunc)           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglbuffer.html#GstGLBuffer"><span class="type">GstGLBuffer</span></a> *inbuf</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglbuffer.html#GstGLBuffer"><span class="type">GstGLBuffer</span></a> *outbuf</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLFilterOnInitFBO"></a><h3>GstGLFilterOnInitFBO ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            (*GstGLFilterOnInitFBO)             (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLFilterOnReset"></a><h3>GstGLFilterOnReset ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                (*GstGLFilterOnReset)               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLFilterOnStart"></a><h3>GstGLFilterOnStart ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                (*GstGLFilterOnStart)               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLFilterOnStop"></a><h3>GstGLFilterOnStop ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                (*GstGLFilterOnStop)                (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLFilterGLStartFunc"></a><h3>GstGLFilterGLStartFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                (*GstGLFilterGLStartFunc)           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLFilterGLStopFunc"></a><h3>GstGLFilterGLStopFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                (*GstGLFilterGLStopFunc)            (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLFilter-struct"></a><h3>struct GstGLFilter</h3>
+<pre class="programlisting">struct GstGLFilter;</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-filter-render-to-target"></a><h3>gst_gl_filter_render_to_target ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_filter_render_to_target      (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglfilter.html#GstGLFilter"><span class="type">GstGLFilter</span></a> *filter</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> input</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> target</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GLCB:CAPS" title="GLCB ()"><span class="type">GLCB</span></a> func</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> data</code></em>);</pre>
+</div>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstglfilter.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstGLFilter--external-opengl-context"></a><h3>The <code class="literal">"external-opengl-context"</code> property</h3>
+<pre class="programlisting">  "external-opengl-context"  <span class="type">gulong</span>                : Write</pre>
+<p>Give an external OpenGL context with which to share textures.</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

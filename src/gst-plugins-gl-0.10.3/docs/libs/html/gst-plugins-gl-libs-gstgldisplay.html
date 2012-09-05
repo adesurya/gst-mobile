@@ -1,0 +1,360 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstGLDisplay</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="GStreamer OpenGL Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="GStreamer OpenGL Plugin Libraries">
+<link rel="prev" href="gst-plugins-gl-libs-gstglshader.html" title="GstGLShader">
+<link rel="next" href="gst-plugins-gl-libs-gettext.html" title="gettext">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="gst-plugins-gl-libs-gstglshader.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer OpenGL Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="gst-plugins-gl-libs-gettext.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#gst-plugins-gl-libs-gstgldisplay.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#gst-plugins-gl-libs-gstgldisplay.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#gst-plugins-gl-libs-gstgldisplay.object-hierarchy" class="shortcut">Object Hierarchy</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="gst-plugins-gl-libs-gstgldisplay"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="gst-plugins-gl-libs-gstgldisplay.top_of_page"></a>GstGLDisplay</span></h2>
+<p>GstGLDisplay</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="gst-plugins-gl-libs-gstgldisplay.synopsis"></a><h2>Synopsis</h2>
+<a name="GstGLDisplay"></a><pre class="synopsis">enum                <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplayConversion" title="enum GstGLDisplayConversion">GstGLDisplayConversion</a>;
+enum                <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplayProjection" title="enum GstGLDisplayProjection">GstGLDisplayProjection</a>;
+<span class="returnvalue">void</span>                (<a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#CRCB:CAPS" title="CRCB ()">*CRCB</a>)                             (<em class="parameter"><code><span class="type">GLuint</span> Param1</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> Param2</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> Param3</code></em>);
+<span class="returnvalue">gboolean</span>            (<a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#CDCB:CAPS" title="CDCB ()">*CDCB</a>)                             (<em class="parameter"><code><span class="type">GLuint</span> Param1</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> Param2</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> Param3</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> Param4</code></em>);
+<span class="returnvalue">void</span>                (<a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplayThreadFunc" title="GstGLDisplayThreadFunc ()">*GstGLDisplayThreadFunc</a>)           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> data</code></em>);
+<span class="returnvalue">void</span>                (<a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GLCB:CAPS" title="GLCB ()">*GLCB</a>)                             (<em class="parameter"><code><span class="type">gint</span> Param1</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> Param2</code></em>,
+                                                         <em class="parameter"><code><span class="type">guint</span> Param3</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> stuff</code></em>);
+struct              <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay-struct" title="struct GstGLDisplay">GstGLDisplay</a>;
+<a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="returnvalue">GstGLDisplay</span></a> *      <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-new" title="gst_gl_display_new ()">gst_gl_display_new</a>                  (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-create-context" title="gst_gl_display_create_context ()">gst_gl_display_create_context</a>       (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">gulong</span> external_gl_context</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-redisplay" title="gst_gl_display_redisplay ()">gst_gl_display_redisplay</a>            (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> gl_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> gl_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> window_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> window_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">gboolean</span> keep_aspect_ratio</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-thread-add" title="gst_gl_display_thread_add ()">gst_gl_display_thread_add</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplayThreadFunc" title="GstGLDisplayThreadFunc ()"><span class="type">GstGLDisplayThreadFunc</span></a> func</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> data</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-gen-texture" title="gst_gl_display_gen_texture ()">gst_gl_display_gen_texture</a>          (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> *pTexture</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLint</span> width</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLint</span> height</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-del-texture" title="gst_gl_display_del_texture ()">gst_gl_display_del_texture</a>          (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLint</span> width</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLint</span> height</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-init-upload" title="gst_gl_display_init_upload ()">gst_gl_display_init_upload</a>          (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoFormat</span> video_format</code></em>,
+                                                         <em class="parameter"><code><span class="type">guint</span> gl_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">guint</span> gl_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> video_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> video_height</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-do-upload" title="gst_gl_display_do_upload ()">gst_gl_display_do_upload</a>            (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> data_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> data_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> data</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-init-download" title="gst_gl_display_init_download ()">gst_gl_display_init_download</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoFormat</span> video_format</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> height</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-do-download" title="gst_gl_display_do_download ()">gst_gl_display_do_download</a>          (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> height</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> data</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-gen-fbo" title="gst_gl_display_gen_fbo ()">gst_gl_display_gen_fbo</a>              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> height</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> *fbo</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> *depthbuffer</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-use-fbo" title="gst_gl_display_use_fbo ()">gst_gl_display_use_fbo</a>              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> texture_fbo_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> texture_fbo_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> fbo</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> depth_buffer</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture_fbo</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GLCB:CAPS" title="GLCB ()"><span class="type">GLCB</span></a> cb</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> input_texture_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> input_texture_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> input_texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">gdouble</span> proj_param1</code></em>,
+                                                         <em class="parameter"><code><span class="type">gdouble</span> proj_param2</code></em>,
+                                                         <em class="parameter"><code><span class="type">gdouble</span> proj_param3</code></em>,
+                                                         <em class="parameter"><code><span class="type">gdouble</span> proj_param4</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplayProjection" title="enum GstGLDisplayProjection"><span class="type">GstGLDisplayProjection</span></a> projection</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> *stuff</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-del-fbo" title="gst_gl_display_del_fbo ()">gst_gl_display_del_fbo</a>              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> fbo</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> depth_buffer</code></em>);
+<span class="returnvalue">gboolean</span>            <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-gen-shader" title="gst_gl_display_gen_shader ()">gst_gl_display_gen_shader</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *shader_vertex_source</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *shader_fragment_source</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> **shader</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-del-shader" title="gst_gl_display_del_shader ()">gst_gl_display_del_shader</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-set-window-id" title="gst_gl_display_set_window_id ()">gst_gl_display_set_window_id</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">gulong</span> window_id</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-set-client-reshape-callback" title="gst_gl_display_set_client_reshape_callback ()">gst_gl_display_set_client_reshape_callback</a>
+                                                        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#CRCB:CAPS" title="CRCB ()"><span class="type">CRCB</span></a> cb</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#gst-gl-display-set-client-draw-callback" title="gst_gl_display_set_client_draw_callback ()">gst_gl_display_set_client_draw_callback</a>
+                                                        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#CDCB:CAPS" title="CDCB ()"><span class="type">CDCB</span></a> cb</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstgldisplay.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  GObject
+   +----GstGLDisplay
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstgldisplay.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-libs-gstgldisplay.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstGLDisplayConversion"></a><h3>enum GstGLDisplayConversion</h3>
+<pre class="programlisting">typedef enum {
+  GST_GL_DISPLAY_CONVERSION_GLSL,       //ARB_fragment_shade
+  GST_GL_DISPLAY_CONVERSION_MATRIX,     //ARB_imaging
+  GST_GL_DISPLAY_CONVERSION_MESA,       //MESA_ycbcr_texture
+} GstGLDisplayConversion;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLDisplayProjection"></a><h3>enum GstGLDisplayProjection</h3>
+<pre class="programlisting">typedef enum {
+  GST_GL_DISPLAY_PROJECTION_ORTHO2D,
+  GST_GL_DISPLAY_PROJECTION_PERSPECTIVE
+} GstGLDisplayProjection;
+</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="CRCB:CAPS"></a><h3>CRCB ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                (*CRCB)                             (<em class="parameter"><code><span class="type">GLuint</span> Param1</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> Param2</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> Param3</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="CDCB:CAPS"></a><h3>CDCB ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            (*CDCB)                             (<em class="parameter"><code><span class="type">GLuint</span> Param1</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> Param2</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> Param3</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> Param4</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLDisplayThreadFunc"></a><h3>GstGLDisplayThreadFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                (*GstGLDisplayThreadFunc)           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GLCB:CAPS"></a><h3>GLCB ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                (*GLCB)                             (<em class="parameter"><code><span class="type">gint</span> Param1</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> Param2</code></em>,
+                                                         <em class="parameter"><code><span class="type">guint</span> Param3</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> stuff</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLDisplay-struct"></a><h3>struct GstGLDisplay</h3>
+<pre class="programlisting">struct GstGLDisplay;</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-new"></a><h3>gst_gl_display_new ()</h3>
+<pre class="programlisting"><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="returnvalue">GstGLDisplay</span></a> *      gst_gl_display_new                  (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-create-context"></a><h3>gst_gl_display_create_context ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_display_create_context       (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">gulong</span> external_gl_context</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-redisplay"></a><h3>gst_gl_display_redisplay ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_display_redisplay            (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> gl_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> gl_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> window_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> window_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">gboolean</span> keep_aspect_ratio</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-thread-add"></a><h3>gst_gl_display_thread_add ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_display_thread_add           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplayThreadFunc" title="GstGLDisplayThreadFunc ()"><span class="type">GstGLDisplayThreadFunc</span></a> func</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-gen-texture"></a><h3>gst_gl_display_gen_texture ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_display_gen_texture          (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> *pTexture</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLint</span> width</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLint</span> height</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-del-texture"></a><h3>gst_gl_display_del_texture ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_display_del_texture          (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLint</span> width</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLint</span> height</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-init-upload"></a><h3>gst_gl_display_init_upload ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_display_init_upload          (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoFormat</span> video_format</code></em>,
+                                                         <em class="parameter"><code><span class="type">guint</span> gl_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">guint</span> gl_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> video_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> video_height</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-do-upload"></a><h3>gst_gl_display_do_upload ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_display_do_upload            (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> data_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> data_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-init-download"></a><h3>gst_gl_display_init_download ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_display_init_download        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoFormat</span> video_format</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> height</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-do-download"></a><h3>gst_gl_display_do_download ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_display_do_download          (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> height</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> data</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-gen-fbo"></a><h3>gst_gl_display_gen_fbo ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_display_gen_fbo              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> height</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> *fbo</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> *depthbuffer</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-use-fbo"></a><h3>gst_gl_display_use_fbo ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_display_use_fbo              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> texture_fbo_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> texture_fbo_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> fbo</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> depth_buffer</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture_fbo</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GLCB:CAPS" title="GLCB ()"><span class="type">GLCB</span></a> cb</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> input_texture_width</code></em>,
+                                                         <em class="parameter"><code><span class="type">gint</span> input_texture_height</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> input_texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">gdouble</span> proj_param1</code></em>,
+                                                         <em class="parameter"><code><span class="type">gdouble</span> proj_param2</code></em>,
+                                                         <em class="parameter"><code><span class="type">gdouble</span> proj_param3</code></em>,
+                                                         <em class="parameter"><code><span class="type">gdouble</span> proj_param4</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplayProjection" title="enum GstGLDisplayProjection"><span class="type">GstGLDisplayProjection</span></a> projection</code></em>,
+                                                         <em class="parameter"><code><span class="type">gpointer</span> *stuff</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-del-fbo"></a><h3>gst_gl_display_del_fbo ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_display_del_fbo              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> fbo</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> depth_buffer</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-gen-shader"></a><h3>gst_gl_display_gen_shader ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>            gst_gl_display_gen_shader           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *shader_vertex_source</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">gchar</span> *shader_fragment_source</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> **shader</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-del-shader"></a><h3>gst_gl_display_del_shader ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_display_del_shader           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstglshader.html#GstGLShader"><span class="type">GstGLShader</span></a> *shader</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-set-window-id"></a><h3>gst_gl_display_set_window_id ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_display_set_window_id        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">gulong</span> window_id</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-set-client-reshape-callback"></a><h3>gst_gl_display_set_client_reshape_callback ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_display_set_client_reshape_callback
+                                                        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#CRCB:CAPS" title="CRCB ()"><span class="type">CRCB</span></a> cb</code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-display-set-client-draw-callback"></a><h3>gst_gl_display_set_client_draw_callback ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_display_set_client_draw_callback
+                                                        (<em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#GstGLDisplay"><span class="type">GstGLDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-gl-libs-gstgldisplay.html#CDCB:CAPS" title="CDCB ()"><span class="type">CDCB</span></a> cb</code></em>);</pre>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

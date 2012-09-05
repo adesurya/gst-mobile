@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>gleffects</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="GStreamer OpenGL Plugins 0.10 Plugins Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-gl Elements">
+<link rel="prev" href="gst-plugins-gl-plugins-gldownload.html" title="gldownload">
+<link rel="next" href="gst-plugins-gl-plugins-glfilterapp.html" title="glfilterapp">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="gst-plugins-gl-plugins-gldownload.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer OpenGL Plugins 0.10 Plugins Reference Manual</th>
+<td><a accesskey="n" href="gst-plugins-gl-plugins-glfilterapp.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#gst-plugins-gl-plugins-gleffects.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#gst-plugins-gl-plugins-gleffects.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#gst-plugins-gl-plugins-gleffects.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#gst-plugins-gl-plugins-gleffects.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="gst-plugins-gl-plugins-gleffects"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="gst-plugins-gl-plugins-gleffects.top_of_page"></a>gleffects</span></h2>
+<p>gleffects — GL Shading Language effects</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="gst-plugins-gl-plugins-gleffects.synopsis"></a><h2>Synopsis</h2>
+<a name="GstGLEffects"></a><pre class="synopsis"><span class="returnvalue">void</span>                (<a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffectProcessFunc" title="GstGLEffectProcessFunc ()">*GstGLEffectProcessFunc</a>)           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+#define             <a class="link" href="gst-plugins-gl-plugins-gleffects.html#NEEDED-TEXTURES:CAPS" title="NEEDED_TEXTURES">NEEDED_TEXTURES</a>
+struct              <a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects-struct" title="struct GstGLEffects">GstGLEffects</a>;
+struct              <a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffectsClass" title="struct GstGLEffectsClass">GstGLEffectsClass</a>;
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-draw-texture" title="gst_gl_effects_draw_texture ()">gst_gl_effects_draw_texture</a>         (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> tex</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-identity" title="gst_gl_effects_identity ()">gst_gl_effects_identity</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-mirror" title="gst_gl_effects_mirror ()">gst_gl_effects_mirror</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-squeeze" title="gst_gl_effects_squeeze ()">gst_gl_effects_squeeze</a>              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-stretch" title="gst_gl_effects_stretch ()">gst_gl_effects_stretch</a>              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-tunnel" title="gst_gl_effects_tunnel ()">gst_gl_effects_tunnel</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-fisheye" title="gst_gl_effects_fisheye ()">gst_gl_effects_fisheye</a>              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-twirl" title="gst_gl_effects_twirl ()">gst_gl_effects_twirl</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-bulge" title="gst_gl_effects_bulge ()">gst_gl_effects_bulge</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-square" title="gst_gl_effects_square ()">gst_gl_effects_square</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-heat" title="gst_gl_effects_heat ()">gst_gl_effects_heat</a>                 (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-sepia" title="gst_gl_effects_sepia ()">gst_gl_effects_sepia</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-xpro" title="gst_gl_effects_xpro ()">gst_gl_effects_xpro</a>                 (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-xray" title="gst_gl_effects_xray ()">gst_gl_effects_xray</a>                 (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-luma-xpro" title="gst_gl_effects_luma_xpro ()">gst_gl_effects_luma_xpro</a>            (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-sin" title="gst_gl_effects_sin ()">gst_gl_effects_sin</a>                  (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-gl-plugins-gleffects.html#gst-gl-effects-glow" title="gst_gl_effects_glow ()">gst_gl_effects_glow</a>                 (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-plugins-gleffects.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  GObject
+   +----GstObject
+         +----GstElement
+               +----GstBaseTransform
+                     +----GstGLFilter
+                           +----GstGLEffects
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-plugins-gleffects.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects--effect" title='The "effect" property'>effect</a>"                   <span class="type">GstGLEffectsEffect</span>    : Read / Write
+  "<a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects--hswap" title='The "hswap" property'>hswap</a>"                    <span class="type">gboolean</span>              : Read / Write
+</pre>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-plugins-gleffects.description"></a><h2>Description</h2>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp7939040"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-gl-plugins-plugin-opengl.html#plugin-opengl">opengl</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Filippo Argiolas &lt;filippo.argiolas@gmail.com&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Filter/Effect</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="idp7037616"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>video/x-raw-gl, width=(int)[ 1, 8000 ], height=(int)[ 1, 6000 ], pixel-aspect-ratio=(fraction)1/1, framerate=(fraction)[ 0/1, 100/1 ]</td>
+</tr>
+</tbody>
+</table></div>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>video/x-raw-gl, width=(int)[ 1, 8000 ], height=(int)[ 1, 6000 ], pixel-aspect-ratio=(fraction)1/1, framerate=(fraction)[ 0/1, 100/1 ]</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-plugins-gleffects.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstGLEffectProcessFunc"></a><h3>GstGLEffectProcessFunc ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                (*GstGLEffectProcessFunc)           (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NEEDED-TEXTURES:CAPS"></a><h3>NEEDED_TEXTURES</h3>
+<pre class="programlisting">#define NEEDED_TEXTURES 5
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLEffects-struct"></a><h3>struct GstGLEffects</h3>
+<pre class="programlisting">struct GstGLEffects;</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLEffectsClass"></a><h3>struct GstGLEffectsClass</h3>
+<pre class="programlisting">struct GstGLEffectsClass {
+  GstGLFilterClass filter_class;
+};
+</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-draw-texture"></a><h3>gst_gl_effects_draw_texture ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_draw_texture         (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> tex</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-identity"></a><h3>gst_gl_effects_identity ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_identity             (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-mirror"></a><h3>gst_gl_effects_mirror ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_mirror               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-squeeze"></a><h3>gst_gl_effects_squeeze ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_squeeze              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-stretch"></a><h3>gst_gl_effects_stretch ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_stretch              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-tunnel"></a><h3>gst_gl_effects_tunnel ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_tunnel               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-fisheye"></a><h3>gst_gl_effects_fisheye ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_fisheye              (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-twirl"></a><h3>gst_gl_effects_twirl ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_twirl                (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-bulge"></a><h3>gst_gl_effects_bulge ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_bulge                (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-square"></a><h3>gst_gl_effects_square ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_square               (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-heat"></a><h3>gst_gl_effects_heat ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_heat                 (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-sepia"></a><h3>gst_gl_effects_sepia ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_sepia                (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-xpro"></a><h3>gst_gl_effects_xpro ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_xpro                 (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-xray"></a><h3>gst_gl_effects_xray ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_xray                 (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-luma-xpro"></a><h3>gst_gl_effects_luma_xpro ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_luma_xpro            (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-sin"></a><h3>gst_gl_effects_sin ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_sin                  (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-gl-effects-glow"></a><h3>gst_gl_effects_glow ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_gl_effects_glow                 (<em class="parameter"><code><a class="link" href="gst-plugins-gl-plugins-gleffects.html#GstGLEffects"><span class="type">GstGLEffects</span></a> *effects</code></em>);</pre>
+<p>
+</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="gst-plugins-gl-plugins-gleffects.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstGLEffects--effect"></a><h3>The <code class="literal">"effect"</code> property</h3>
+<pre class="programlisting">  "effect"                   <span class="type">GstGLEffectsEffect</span>    : Read / Write</pre>
+<p>Select which effect apply to GL video texture.</p>
+<p>Default value: Do nothing Effect</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstGLEffects--hswap"></a><h3>The <code class="literal">"hswap"</code> property</h3>
+<pre class="programlisting">  "hswap"                    <span class="type">gboolean</span>              : Read / Write</pre>
+<p>Switch video texture left to right, useful with webcams.</p>
+<p>Default value: FALSE</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>
