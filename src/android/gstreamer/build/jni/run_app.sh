@@ -24,7 +24,7 @@ fi
 
 for m in $modlist; 
 do
-    if [ $m = "gstcoreelements" || $m = "gstcoreindexers" ]; then
+    if [[ $m = "gstcoreelements" || $m = "gstcoreindexers" ]]; then
          app=$m
     else
          app=$m-$ver

@@ -1,4 +1,5 @@
-LOCAL_PATH:= $(call my-dir)
+GSTREAMER_TOP := $(call my-dir)/../..
+LOCAL_PATH := $(GSTREAMER_TOP)/libs/gst/controller
 
 include $(CLEAR_VARS)
 

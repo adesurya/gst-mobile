@@ -1,4 +1,6 @@
-LOCAL_PATH:= $(call my-dir)
+GSTREAMER_TOP := $(call my-dir)/../..
+EXTERNAL := $(GSTREAMER_TOP)/..
+LOCAL_PATH := $(GSTREAMER_TOP)/plugins/indexers
 
 include $(CLEAR_VARS)
 
@@ -16,22 +18,23 @@ LOCAL_SHARED_LIBRARIES := \
     libgmodule-2.0          \
     libgobject-2.0
 
-LOCAL_MODULE:= libgstcoreindexers
+LOCAL_MODULE:= gstcoreindexers
 
 LOCAL_C_INCLUDES := 			\
-	external/gstreamer       	\
-	external/gstreamer/android      \
-	external/gstreamer/libs 	\
-	external/gstreamer/gst		\
-	external/gstreamer/gst/android	\
-	external/glib   		\
-	external/glib/android   	\
-	external/glib/glib   		\
-	external/glib/gmodule   	\
-	external/glib/gobject  		\
-	external/glib/gthread
+	$(EXTERNAL)/gstreamer       	\
+	$(EXTERNAL)/gstreamer/android      \
+	$(EXTERNAL)/gstreamer/libs 	\
+	$(EXTERNAL)/gstreamer/gst		\
+	$(EXTERNAL)/gstreamer/gst/android	\
+	$(EXTERNAL)/glib   		\
+	$(EXTERNAL)/glib/android   	\
+	$(EXTERNAL)/glib/glib   		\
+	$(EXTERNAL)/glib/gmodule   	\
+	$(EXTERNAL)/glib/gobject  		\
+	$(EXTERNAL)/glib/gthread
 
 LOCAL_CFLAGS := \
 	-DHAVE_CONFIG_H			
 
-include $(BUILD_PLUGIN_LIBRARY)
+#include $(BUILD_PLUGIN_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
