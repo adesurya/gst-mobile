@@ -1,0 +1,131 @@
+
+Release notes for GStreamer Ugly Plug-ins 0.10.16 "Because He Knows the Time is Short"
+        
+
+The GStreamer team is proud to announce a new release
+in the 0.10.x stable series of the
+GStreamer Ugly Plug-ins.
+
+
+The 0.10.x series is a stable series targeted at end users.
+It is not API or ABI compatible with the stable 0.8.x series.
+It is, however, parallel installable with the 0.8.x series.
+
+
+
+"When you have to shoot, shoot.  Don't talk."
+
+
+There are times when the world needs a color between black and white.
+Quality code to match the good's, but two-timing, backstabbing and ready to
+sell your freedom down the river.  These plug-ins might have a patent noose
+around their neck, or a lock-up license, or any other problem that makes you
+think twice about shipping them.
+
+
+We don't call them ugly because we like them less.  Does a mother love her
+son less because he's not as pretty as the other ones ? No  - she commends
+him on his great personality.  These plug-ins are the life of the party.
+And we'll still step in and set them straight if you report any unacceptable
+behaviour - because there are two kinds of people in the world, my friend:
+those with a rope around their neck and the people who do the cutting.
+
+
+This module contains a set of plug-ins that have good quality and correct
+functionality, but distributing them might pose problems.  The license
+on either the plug-ins or the supporting libraries might not be how we'd
+like. The code might be widely known to present patent problems.
+Distributors should check if they want/can ship these plug-ins.
+
+
+Other modules containing plug-ins are:
+
+
+gst-plugins-base
+contains a basic set of well-supported plug-ins
+gst-plugins-good
+contains a set of well-supported plug-ins under our preferred license
+gst-plugins-bad
+contains a set of less supported plug-ins that haven't passed the
+    rigorous quality testing we expect
+
+
+
+  
+
+Features of this release
+    
+      * refactor x264enc to use current x264 API correctly, add new properties and new defaults
+      * liboil is no longer required, but orc is now required
+      * build: require orc >= 0.4.5, GLib >= 2.20, automake >= 1.10, autoconf >= 2.60; liboil is no longer required
+      * asfdemux: fix playback of files or streams that are shorter than the advertised preroll value
+      * asfdemux: fix sending eos event for chained asfs in pull mode (exotic)
+      * asfdemux: fix playback of files or streams that advertise miniscule preroll values
+      * lamemp3enc: implement latency query
+      * rmdemux: fix playback of sipro audio streams
+      * x264enc: refactor code in preparation for presets/tunings
+      * x264enc: add "profile" property (and default to MAIN profile)
+      * x264enc: improve defaults: medium speed/quality preset; auto mode for threads
+      * x264enc: add "speed-preset", "tune" and "psy-tune" properties
+      * x264enc: add "option-string" property to specify advanced parameters
+      * x264enc: set time base if needed, fixes visual artifacts
+      * x264enc: add "sliced-threads", "sync-lookahead", "intra-refresh", "mb-tree", and "rc-lookahead" properties
+      * x264enc: fix compilation against ancient x264 versions (X264_BUILD <= 75)
+      * x264enc: speed up first pass of multi-pass encoding (has no impact on quality)
+      * x264enc: fix flushing of delayed frames with new default settings
+
+Bugs fixed in this release
+     
+      * 599718 : [asf] support chained asfs
+      * 600412 : [asfdemux] Wrong handling of downstream GstFlowReturn
+      * 607798 : x264enc needs updating to support new features and use x264 correctly
+      * 618896 : lamemp3enc doesn't implement latency query
+      * 620007 : Gibberish sound when playing a certain RealMedia file of Sipro/ACELP.net audio codec
+      * 620344 : Update gst-plugins-ugly docs on website
+      * 622407 : [asfdemux] doesn't detect some streams if preroll value is very small
+      * 624786 : x264enc time base is wrong
+      * 625557 : x264enc doesn't flush delayed frames properly
+      * 626577 : [x264enc] regression: doesn't work with older versions of x264
+      * 627946 : mp3parse misuses GST_FLOW_IS_FATAL, doesn't forward GST_FLOW_UNEXPECTED upstream
+
+Download
+
+You can find source releases of gst-plugins-ugly in the download directory:
+http://gstreamer.freedesktop.org/src/gst-plugins-ugly/
+
+GStreamer Homepage
+
+More details can be found on the project's website:
+http://gstreamer.freedesktop.org/
+
+Support and Bugs
+
+We use GNOME's bugzilla for bug reports and feature requests:
+http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer
+
+Developers
+
+GStreamer is stored in Git, hosted at git.freedesktop.org, and can be cloned from there.
+Interested developers of the core library, plug-ins, and applications should
+subscribe to the gstreamer-devel list. If there is sufficient interest we
+will create more lists as necessary.
+
+        
+Applications
+  
+Contributors to this release
+    
+      * Alessandro Decina
+      * David Hoyt
+      * David Schleef
+      * Edward Hervey
+      * Mark Nauwelaerts
+      * Olivier Crête
+      * Robert Swain
+      * Sebastian Dröge
+      * Stefan Kost
+      * Thiago Santos
+      * Tim-Philipp Müller
+      * Tristan Matthews
+      * Wim Taymans
+ 
