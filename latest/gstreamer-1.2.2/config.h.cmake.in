@@ -1,0 +1,429 @@
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define if building universal (internal helper macro) */
+#cmakedefine AC_APPLE_UNIVERSAL_BUILD @AC_APPLE_UNIVERSAL_BUILD@
+
+/* poll doesn't work on devices */
+#cmakedefine BROKEN_POLL @BROKEN_POLL@
+
+/* Define to 1 if translation of program messages to the user's native
+   language is requested. */
+#cmakedefine ENABLE_NLS @ENABLE_NLS@
+
+/* Subunit protocol result output */
+#cmakedefine ENABLE_SUBUNIT @ENABLE_SUBUNIT@
+
+/* gettext package name */
+#cmakedefine GETTEXT_PACKAGE @GETTEXT_PACKAGE@
+
+/* The GIO library directory. */
+#cmakedefine GIO_LIBDIR @GIO_LIBDIR@
+
+/* The GIO modules directory. */
+#cmakedefine GIO_MODULE_DIR @GIO_MODULE_DIR@
+
+/* GStreamer API Version */
+#cmakedefine GST_API_VERSION @GST_API_VERSION@
+
+/* data dir */
+#cmakedefine GST_DATADIR @GST_DATADIR@
+
+/* Define if option parsing is disabled */
+#cmakedefine GST_DISABLE_OPTION_PARSING @GST_DISABLE_OPTION_PARSING@
+
+/* Define if pipeline parsing code is disabled */
+#cmakedefine GST_DISABLE_PARSE @GST_DISABLE_PARSE@
+
+/* Extra platform specific plugin suffix */
+#cmakedefine GST_EXTRA_MODULE_SUFFIX @GST_EXTRA_MODULE_SUFFIX@
+
+/* macro to use to show function name */
+#cmakedefine GST_FUNCTION @GST_FUNCTION@
+
+/* Defined if gcov is enabled to force a rebuild due to config.h changing */
+#cmakedefine GST_GCOV_ENABLED @GST_GCOV_ENABLED@
+
+/* Defined when registry scanning through fork is unsafe */
+#cmakedefine GST_HAVE_UNSAFE_FORK @GST_HAVE_UNSAFE_FORK@
+
+/* Default errorlevel to use */
+#cmakedefine GST_LEVEL_DEFAULT @GST_LEVEL_DEFAULT@
+
+/* GStreamer license */
+#cmakedefine GST_LICENSE @GST_LICENSE@
+
+/* package name in plugins */
+#cmakedefine GST_PACKAGE_NAME @GST_PACKAGE_NAME@
+
+/* package origin */
+#cmakedefine GST_PACKAGE_ORIGIN @GST_PACKAGE_ORIGIN@
+
+/* GStreamer package release date/time for plugins as YYYY-MM-DD */
+#cmakedefine GST_PACKAGE_RELEASE_DATETIME @GST_PACKAGE_RELEASE_DATETIME@
+
+/* Define if static plugins should be built */
+#cmakedefine GST_PLUGIN_BUILD_STATIC @GST_PLUGIN_BUILD_STATIC@
+
+/* location of the installed gst-plugin-scanner */
+#cmakedefine GST_PLUGIN_SCANNER_INSTALLED @GST_PLUGIN_SCANNER_INSTALLED@
+
+/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
+   CoreFoundation framework. */
+#cmakedefine HAVE_CFLOCALECOPYCURRENT @HAVE_CFLOCALECOPYCURRENT@
+
+/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
+   the CoreFoundation framework. */
+#cmakedefine HAVE_CFPREFERENCESCOPYAPPVALUE @HAVE_CFPREFERENCESCOPYAPPVALUE@
+
+/* Define to 1 if you have the `clock_gettime' function. */
+#cmakedefine HAVE_CLOCK_GETTIME @HAVE_CLOCK_GETTIME@
+
+/* Define if the target CPU is an Alpha */
+#cmakedefine HAVE_CPU_ALPHA @HAVE_CPU_ALPHA@
+
+/* Define if the target CPU is an ARM */
+#cmakedefine HAVE_CPU_ARM @HAVE_CPU_ARM@
+
+/* Define if the target CPU is a CRIS */
+#cmakedefine HAVE_CPU_CRIS @HAVE_CPU_CRIS@
+
+/* Define if the target CPU is a CRISv32 */
+#cmakedefine HAVE_CPU_CRISV32 @HAVE_CPU_CRISV32@
+
+/* Define if the target CPU is a HPPA */
+#cmakedefine HAVE_CPU_HPPA @HAVE_CPU_HPPA@
+
+/* Define if the target CPU is an x86 */
+#cmakedefine HAVE_CPU_I386 @HAVE_CPU_I386@
+
+/* Define if the target CPU is a IA64 */
+#cmakedefine HAVE_CPU_IA64 @HAVE_CPU_IA64@
+
+/* Define if the target CPU is a M68K */
+#cmakedefine HAVE_CPU_M68K @HAVE_CPU_M68K@
+
+/* Define if the target CPU is a MIPS */
+#cmakedefine HAVE_CPU_MIPS @HAVE_CPU_MIPS@
+
+/* Define if the target CPU is a PowerPC */
+#cmakedefine HAVE_CPU_PPC @HAVE_CPU_PPC@
+
+/* Define if the target CPU is a 64 bit PowerPC */
+#cmakedefine HAVE_CPU_PPC64 @HAVE_CPU_PPC64@
+
+/* Define if the target CPU is a S390 */
+#cmakedefine HAVE_CPU_S390 @HAVE_CPU_S390@
+
+/* Define if the target CPU is a SPARC */
+#cmakedefine HAVE_CPU_SPARC @HAVE_CPU_SPARC@
+
+/* Define if the target CPU is a x86_64 */
+#cmakedefine HAVE_CPU_X86_64 @HAVE_CPU_X86_64@
+
+/* Define if the GNU dcgettext() function is already present or preinstalled.
+   */
+#cmakedefine HAVE_DCGETTEXT @HAVE_DCGETTEXT@
+
+/* Defined if we have dladdr () */
+#cmakedefine HAVE_DLADDR @HAVE_DLADDR@
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#cmakedefine HAVE_DLFCN_H @HAVE_DLFCN_H@
+
+/* Define to 1 if you have the `fgetpos' function. */
+#cmakedefine HAVE_FGETPOS @HAVE_FGETPOS@
+
+/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
+#cmakedefine HAVE_FSEEKO @HAVE_FSEEKO@
+
+/* Define to 1 if you have the `fsetpos' function. */
+#cmakedefine HAVE_FSETPOS @HAVE_FSETPOS@
+
+/* Define to 1 if you have the `ftello' function. */
+#cmakedefine HAVE_FTELLO @HAVE_FTELLO@
+
+/* defined if the compiler implements __func__ */
+#cmakedefine HAVE_FUNC @HAVE_FUNC@
+
+/* defined if the compiler implements __FUNCTION__ */
+#cmakedefine HAVE_FUNCTION @HAVE_FUNCTION@
+
+/* Define to 1 if you have the `getpagesize' function. */
+#cmakedefine HAVE_GETPAGESIZE @HAVE_GETPAGESIZE@
+
+/* Define if the GNU gettext() function is already present or preinstalled. */
+#cmakedefine HAVE_GETTEXT @HAVE_GETTEXT@
+
+/* Have GMP library */
+#cmakedefine HAVE_GMP @HAVE_GMP@
+
+/* Define to 1 if you have the `gmtime_r' function. */
+#cmakedefine HAVE_GMTIME_R @HAVE_GMTIME_R@
+
+/* Have GSL library */
+#cmakedefine HAVE_GSL @HAVE_GSL@
+
+/* Define if you have the iconv() function and it works. */
+#cmakedefine HAVE_ICONV @HAVE_ICONV@
+
+/* Define to 1 if the system has the type `intmax_t'. */
+#cmakedefine HAVE_INTMAX_T @HAVE_INTMAX_T@
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#cmakedefine HAVE_INTTYPES_H @HAVE_INTTYPES_H@
+
+/* Define if <inttypes.h> exists, doesn't clash with <sys/types.h>, and
+   declares uintmax_t. */
+#cmakedefine HAVE_INTTYPES_H_WITH_UINTMAX @HAVE_INTTYPES_H_WITH_UINTMAX@
+
+/* Define to 1 if you have the `localtime_r' function. */
+#cmakedefine HAVE_LOCALTIME_R @HAVE_LOCALTIME_R@
+
+/* Define to 1 if the system has the type long long */
+#cmakedefine HAVE_LONG_LONG @HAVE_LONG_LONG@
+
+/* Define to 1 if the system has the type `long long int'. */
+#cmakedefine HAVE_LONG_LONG_INT @HAVE_LONG_LONG_INT@
+
+/* Define to 1 if you have the <memory.h> header file. */
+#cmakedefine HAVE_MEMORY_H @HAVE_MEMORY_H@
+
+/* Define to 1 if you have a working `mmap' system call. */
+#cmakedefine HAVE_MMAP @HAVE_MMAP@
+
+/* Have a monotonic clock */
+#cmakedefine HAVE_MONOTONIC_CLOCK @HAVE_MONOTONIC_CLOCK@
+
+/* Defined if compiling for OSX */
+#cmakedefine HAVE_OSX @HAVE_OSX@
+
+/* Define to 1 if you have the `poll' function. */
+#cmakedefine HAVE_POLL @HAVE_POLL@
+
+/* Define to 1 if you have the <poll.h> header file. */
+#cmakedefine HAVE_POLL_H @HAVE_POLL_H@
+
+/* Define to 1 if you have the `posix_memalign' function. */
+#cmakedefine HAVE_POSIX_MEMALIGN @HAVE_POSIX_MEMALIGN@
+
+/* Have posix timers */
+#cmakedefine HAVE_POSIX_TIMERS @HAVE_POSIX_TIMERS@
+
+/* Define to 1 if you have the `ppoll' function. */
+#cmakedefine HAVE_PPOLL @HAVE_PPOLL@
+
+/* defined if the compiler implements __PRETTY_FUNCTION__ */
+#cmakedefine HAVE_PRETTY_FUNCTION @HAVE_PRETTY_FUNCTION@
+
+/* Define to 1 if you have the <process.h> header file. */
+#cmakedefine HAVE_PROCESS_H @HAVE_PROCESS_H@
+
+/* Define to 1 if you have the `pselect' function. */
+#cmakedefine HAVE_PSELECT @HAVE_PSELECT@
+
+/* Define if you have POSIX threads libraries and header files. */
+#cmakedefine HAVE_PTHREAD @HAVE_PTHREAD@
+
+/* Have PTHREAD_PRIO_INHERIT. */
+#cmakedefine HAVE_PTHREAD_PRIO_INHERIT @HAVE_PTHREAD_PRIO_INHERIT@
+
+/* Define to 1 if the system has the type `ptrdiff_t'. */
+#cmakedefine HAVE_PTRDIFF_T @HAVE_PTRDIFF_T@
+
+/* Define if RDTSC is available */
+#cmakedefine HAVE_RDTSC @HAVE_RDTSC@
+
+/* Define to 1 if you have the `sigaction' function. */
+#cmakedefine HAVE_SIGACTION @HAVE_SIGACTION@
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#cmakedefine HAVE_STDINT_H @HAVE_STDINT_H@
+
+/* Define if <stdint.h> exists, doesn't clash with <sys/types.h>, and declares
+   uintmax_t. */
+#cmakedefine HAVE_STDINT_H_WITH_UINTMAX @HAVE_STDINT_H_WITH_UINTMAX@
+
+/* Define to 1 if you have the <stdio_ext.h> header file. */
+#cmakedefine HAVE_STDIO_EXT_H @HAVE_STDIO_EXT_H@
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#cmakedefine HAVE_STDLIB_H @HAVE_STDLIB_H@
+
+/* Define to 1 if you have the <strings.h> header file. */
+#cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@
+
+/* Define to 1 if you have the <string.h> header file. */
+#cmakedefine HAVE_STRING_H @HAVE_STRING_H@
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#cmakedefine HAVE_SYS_PARAM_H @HAVE_SYS_PARAM_H@
+
+/* Define to 1 if you have the <sys/poll.h> header file. */
+#cmakedefine HAVE_SYS_POLL_H @HAVE_SYS_POLL_H@
+
+/* Define to 1 if you have the <sys/prctl.h> header file. */
+#cmakedefine HAVE_SYS_PRCTL_H @HAVE_SYS_PRCTL_H@
+
+/* Define to 1 if you have the <sys/socket.h> header file. */
+#cmakedefine HAVE_SYS_SOCKET_H @HAVE_SYS_SOCKET_H@
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#cmakedefine HAVE_SYS_STAT_H @HAVE_SYS_STAT_H@
+
+/* Define to 1 if you have the <sys/times.h> header file. */
+#cmakedefine HAVE_SYS_TIMES_H @HAVE_SYS_TIMES_H@
+
+/* Define to 1 if you have the <sys/time.h> header file. */
+#cmakedefine HAVE_SYS_TIME_H @HAVE_SYS_TIME_H@
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#cmakedefine HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@
+
+/* Define to 1 if you have the <sys/utsname.h> header file. */
+#cmakedefine HAVE_SYS_UTSNAME_H @HAVE_SYS_UTSNAME_H@
+
+/* Define to 1 if you have the <sys/wait.h> header file. */
+#cmakedefine HAVE_SYS_WAIT_H @HAVE_SYS_WAIT_H@
+
+/* Have tm_gmtoff field in struct tm */
+#cmakedefine HAVE_TM_GMTOFF @HAVE_TM_GMTOFF@
+
+/* Define to 1 if you have the <ucontext.h> header file. */
+#cmakedefine HAVE_UCONTEXT_H @HAVE_UCONTEXT_H@
+
+/* Have __uint128_t type */
+#cmakedefine HAVE_UINT128_T @HAVE_UINT128_T@
+
+/* defined if unaligned memory access works correctly */
+#cmakedefine HAVE_UNALIGNED_ACCESS @HAVE_UNALIGNED_ACCESS@
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#cmakedefine HAVE_UNISTD_H @HAVE_UNISTD_H@
+
+/* Define to 1 if the system has the type `unsigned long long int'. */
+#cmakedefine HAVE_UNSIGNED_LONG_LONG_INT @HAVE_UNSIGNED_LONG_LONG_INT@
+
+/* Define if valgrind should be used */
+#cmakedefine HAVE_VALGRIND @HAVE_VALGRIND@
+
+/* Define to 1 if you have the <valgrind/valgrind.h> header file. */
+#cmakedefine HAVE_VALGRIND_VALGRIND_H @HAVE_VALGRIND_VALGRIND_H@
+
+/* Defined if compiling for Windows */
+#cmakedefine HAVE_WIN32 @HAVE_WIN32@
+
+/* Define to 1 if you have the <winsock2.h> header file. */
+#cmakedefine HAVE_WINSOCK2_H @HAVE_WINSOCK2_H@
+
+/* the host CPU */
+#cmakedefine HOST_CPU @HOST_CPU@
+
+/* library dir */
+#cmakedefine LIBDIR @LIBDIR@
+
+/* gettext locale dir */
+#cmakedefine LOCALEDIR @LOCALEDIR@
+
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#cmakedefine LT_OBJDIR @LT_OBJDIR@
+
+/* Memory alignment to use */
+#cmakedefine MEMORY_ALIGNMENT @MEMORY_ALIGNMENT@
+
+/* Memory alignment by malloc default */
+#cmakedefine MEMORY_ALIGNMENT_MALLOC @MEMORY_ALIGNMENT_MALLOC@
+
+/* Memory alignment by pagesize */
+#cmakedefine MEMORY_ALIGNMENT_PAGESIZE @MEMORY_ALIGNMENT_PAGESIZE@
+
+/* Name of package */
+#cmakedefine PACKAGE @PACKAGE@
+
+/* Define to the address where bug reports for this package should be sent. */
+#cmakedefine PACKAGE_BUGREPORT @PACKAGE_BUGREPORT@
+
+/* Define to the full name of this package. */
+#cmakedefine PACKAGE_NAME @PACKAGE_NAME@
+
+/* Define to the full name and version of this package. */
+#cmakedefine PACKAGE_STRING @PACKAGE_STRING@
+
+/* Define to the one symbol short name of this package. */
+#cmakedefine PACKAGE_TARNAME @PACKAGE_TARNAME@
+
+/* Define to the home page for this package. */
+#cmakedefine PACKAGE_URL @PACKAGE_URL@
+
+/* Define to the version of this package. */
+#cmakedefine PACKAGE_VERSION @PACKAGE_VERSION@
+
+/* directory where plugins are located */
+#cmakedefine PLUGINDIR @PLUGINDIR@
+
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#cmakedefine PTHREAD_CREATE_JOINABLE @PTHREAD_CREATE_JOINABLE@
+
+/* The size of `char', as computed by sizeof. */
+#cmakedefine SIZEOF_CHAR @SIZEOF_CHAR@
+
+/* The size of `int', as computed by sizeof. */
+#cmakedefine SIZEOF_INT @SIZEOF_INT@
+
+/* The size of `long', as computed by sizeof. */
+#cmakedefine SIZEOF_LONG @SIZEOF_LONG@
+
+/* The size of `short', as computed by sizeof. */
+#cmakedefine SIZEOF_SHORT @SIZEOF_SHORT@
+
+/* The size of `void*', as computed by sizeof. */
+#cmakedefine SIZEOF_VOIDP @SIZEOF_VOIDP@
+
+/* Define to 1 if you have the ANSI C header files. */
+#cmakedefine STDC_HEADERS @STDC_HEADERS@
+
+/* the target CPU */
+#cmakedefine TARGET_CPU @TARGET_CPU@
+
+/* Define if we should poison deallocated memory */
+#cmakedefine USE_POISONING @USE_POISONING@
+
+/* Version number of package */
+#cmakedefine VERSION @VERSION@
+
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#cmakedefine WORDS_BIGENDIAN @WORDS_BIGENDIAN@
+# endif
+#endif
+
+/* Enable large inode numbers on Mac OS X 10.5.  */
+#ifndef _DARWIN_USE_64_BIT_INODE
+# define _DARWIN_USE_64_BIT_INODE 1
+#endif
+
+/* Number of bits in a file offset, on hosts where this is settable. */
+#cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
+
+/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
+#cmakedefine _LARGEFILE_SOURCE @_LARGEFILE_SOURCE@
+
+/* Define for large files, on AIX-style hosts. */
+#cmakedefine _LARGE_FILES @_LARGE_FILES@
+
+/* We need at least WinXP SP2 for __stat64 */
+#cmakedefine __MSVCRT_VERSION__ @__MSVCRT_VERSION__@
+
+/* Define to the widest signed integer type if <stdint.h> and <inttypes.h> do
+   not define. */
+#cmakedefine intmax_t @intmax_t@
+
+/* Define to `unsigned int' if <sys/types.h> does not define. */
+#cmakedefine size_t @size_t@
