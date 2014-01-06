@@ -13,12 +13,16 @@ set(CMAKE_CXX_COMPILER clang)
 
 # add extra header/function/type check
 include(cmake_check.cmake)
-add_subdirectory()
+add_subdirectory(gst)
+#add_subdirectory(libs)
+#add_subdirectory(plugins)
 
 # CMAKE_C_FLAGS CMAKE_CXX_FLAGS
 add_definitions(-O2 -Wall)
 add_definitions(-DHAVE_CONFIG_H) 
+
 set(gstreamer_LIB_SRCS
+    test.cpp
 )
 include_directories(
     .
