@@ -1,9 +1,11 @@
 # CMAKE_C_FLAGS CMAKE_CXX_FLAGS
 add_definitions(-O2 -Wall)
 add_definitions(-DHAVE_CONFIG_H) 
+add_definitions(-DGLIB_COMPILATION)
 
 include_directories(
     .
+    ..
     ${PROJECT_BINARY_DIR}
 )
 
@@ -18,10 +20,10 @@ set(glib_LIB_SRCS
     gregex.c        gthread.c
     gunicollate.c    gvariant-serialiser.c
     gasyncqueue.c    gconvert.c   ghash.c       glib-private.c  goption.c
-    gscanner.c      gspawn-win64-helper.c          gthreadpool.c
+    gscanner.c      gthreadpool.c
     gunidecomp.c     gvarianttype.c
     gatomic.c        gdataset.c   ghmac.c       glib-unix.c     gpattern.c
-    gsequence.c     gspawn-win64-helper-console.c  gthread-posix.c  guniprop.c
+    gsequence.c     gthread-posix.c  guniprop.c
     gvarianttypeinfo.c
     gbacktrace.c     gdate.c      ghook.c       glist.c         gpoll.c
     gshell.c        gstdio.c                       
@@ -31,10 +33,8 @@ set(glib_LIB_SRCS
     gwakeup.c
     gbitlock.c       gdir.c       giochannel.c  gmappedfile.c   gprintf.c
     gslist.c        gstring.c                      gtimezone.c      gutils.c
-    gwin32.c
     gbookmarkfile.c  genviron.c   giounix.c     gmarkup.c       gqsort.c
     gspawn.c        gstringchunk.c                 gtrashstack.c    gvariant.c
-    win_iconv.c
     gbytes.c         gerror.c     gmem.c          gqueue.c
     gtester.c                      gtree.c
     gvariant-core.c
