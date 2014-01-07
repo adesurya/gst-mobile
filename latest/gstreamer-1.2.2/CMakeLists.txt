@@ -13,6 +13,14 @@ set(CMAKE_CXX_COMPILER clang)
 
 # add extra header/function/type check
 include(cmake_check.cmake)
+
+include_directories(
+    ${PROJECT_SOURCE_DIR}/../glib2.0-2.32.1
+    ${PROJECT_SOURCE_DIR}/../glib2.0-2.32.1/glib
+    ${PROJECT_SOURCE_DIR}/../glib2.0-2.32.1/gmodule
+    ${PROJECT_SOURCE_DIR}/../glib2.0-2.32.1/cmkbld/glib
+)
+
 add_subdirectory(gst)
 #add_subdirectory(libs)
 #add_subdirectory(plugins)
@@ -23,9 +31,6 @@ add_definitions(-DHAVE_CONFIG_H)
 
 set(gstreamer_LIB_SRCS
     test.cpp
-)
-include_directories(
-    .
 )
 link_directories(
 )

@@ -5,7 +5,9 @@ add_subdirectory(printf)
 
 include_directories(
     .
+    ..
     ${PROJECT_BINARY_DIR}
+    ${PROJECT_BINARY_DIR}/gst
 )
 
 link_directories(
