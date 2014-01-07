@@ -58,10 +58,10 @@ export LDFLAGS="$LDFLAGS -L$libpath"
 ## start configure
 mkdir -p oldbld
 cd oldbld
-##
-##
+
 chmod a+w $CACHE_FILE
 cat > $CACHE_FILE << __EOF
+ac_cv_header_pwd_h=no
 glib_cv_stack_grows=no
 glib_cv_uscore=no
 ac_cv_func_posix_getpwuid_r=no
