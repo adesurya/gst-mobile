@@ -53,6 +53,7 @@ __EOF
 fi
 if [ ! -f $libpath/libintl.a ]; then
     ln -sf $libpath/libandroid_support.a $libpath/libintl.a
+    ln -sf $libpath/libandroid_support.a $libpath/libpthread.a
 fi
 
 export CFLAGS="$CFLAGS -DANDROID -I$ROOT/sources/android/support/include -I$incpath"
