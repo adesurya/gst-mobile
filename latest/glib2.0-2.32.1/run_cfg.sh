@@ -59,6 +59,12 @@ export CFLAGS="$CFLAGS -I$ROOT/sources/android/support/include -I$incpath"
 export LDFLAGS="$LDFLAGS -L$libpath"
 
 ##
+## for libffi
+PWD=`pwd`
+export LIBFFI_CFLAGS="-I$PWD/../libffi-3.0.11/oldbld/libffi/include"
+export LIBFFI_LIBS="-L$PWD/../libffi-3.0.11/oldbld/libffi/lib"
+
+##
 ## start configure
 mkdir -p oldbld
 cd oldbld
@@ -69,7 +75,6 @@ ac_cv_header_pwd_h=no
 glib_cv_stack_grows=no
 glib_cv_uscore=no
 ac_cv_func_posix_getpwuid_r=no
-ac_cv_func_nonposix_getpwuid_r=no
 ac_cv_func_posix_getgrgid_r=no
 __EOF
 chmod a-w $CACHE_FILE
