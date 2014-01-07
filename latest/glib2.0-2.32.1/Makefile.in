@@ -426,7 +426,7 @@ EXTRA_DIST = ChangeLog.pre-2-20 ChangeLog.pre-2-18 ChangeLog.pre-2-16 \
 	gio-windows-2.0.pc.in
 TEST_PROGS = 
 ACLOCAL_AMFLAGS = -I m4macros ${ACLOCAL_FLAGS}
-SUBDIRS = . m4macros glib gmodule gthread gobject gio #tests po docs
+SUBDIRS = . m4macros glib gmodule gthread gobject gio 
 DIST_SUBDIRS = $(SUBDIRS) build
 bin_SCRIPTS = glib-gettextize
 AM_CPPFLAGS = \

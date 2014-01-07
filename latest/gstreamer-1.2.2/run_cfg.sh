@@ -15,7 +15,7 @@ export LDFLAGS=""
 
 
 PWD=`pwd`
-export GLIB_CFLAGS="-I$PWD/../glib2.0-2.32.1/oldbld/libglib/include/glib-2.0"
+export GLIB_CFLAGS="-I$PWD/../glib2.0-2.32.1/oldbld/libglib/include/glib-2.0 -I$PWD/../glib2.0-2.32.1/oldbld/libglib/lib/glib-2.0/include"
 export GLIB_LIBS="-L$PWD/../glib2.0-2.32.1/oldbld/libglib/lib -lglib-2.0"
 export GIO_CFLAGS="-I$PWD/../glib2.0-2.32.1/oldbld/libglib/include/glib-2.0"
 export GIO_LIBS="-L$PWD/../glib2.0-2.32.1/oldbld/libglib/lib -lgio-2.0"
