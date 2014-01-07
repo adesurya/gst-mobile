@@ -819,6 +819,7 @@ fill_group_info (DBusGroupInfo    *info,
           }
 
         g = NULL;
+#if !defined(ANDROID)
 #ifdef HAVE_POSIX_GETPWNAM_R
         if (group_c_str)
           result = getgrnam_r (group_c_str, &g_str, buf, buflen,
@@ -830,6 +831,7 @@ fill_group_info (DBusGroupInfo    *info,
         g = getgrnam_r (group_c_str, &g_str, buf, buflen);
         result = 0;
 #endif /* !HAVE_POSIX_GETPWNAM_R */
+#endif
         /* Try a bigger buffer if ERANGE was returned:
            https://bugs.freedesktop.org/show_bug.cgi?id=16727
         */

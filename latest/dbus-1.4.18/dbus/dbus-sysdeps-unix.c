@@ -1997,6 +1997,7 @@ fill_user_info (DBusUserInfo       *info,
           }
 
         p = NULL;
+#if !defined(ANDROID)
 #ifdef HAVE_POSIX_GETPWNAM_R
         if (uid != DBUS_UID_UNSET)
           result = getpwuid_r (uid, &p_str, buf, buflen,
@@ -2011,6 +2012,7 @@ fill_user_info (DBusUserInfo       *info,
           p = getpwnam_r (username_c, &p_str, buf, buflen);
         result = 0;
 #endif /* !HAVE_POSIX_GETPWNAM_R */
+#endif
         //Try a bigger buffer if ERANGE was returned
         if (result == ERANGE && buflen < 512 * 1024)
           {
