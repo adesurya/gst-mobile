@@ -11,8 +11,10 @@ export CC="$CCROOT/bin/$HOST-gcc --sysroot=$SYSROOT"
 export CXX="$CCROOT/bin/$HOST-g++ --sysroot=$SYSROOT"
 export STRIP="$CCROOT/bin/$HOST-strip --sysroot=$SYSROOT"
 #export RANLIB="$CCROOT/bin/$HOST-ranlib --sysroot=$SYSROOT"
-export CFLAGS=""
-export LDFLAGS=""
+
+PWD=`pwd`
+export CFLAGS="$CFLAGS -DANDROID -I$PWD/../expat-2.0.1/oldbld/libexpat/include"
+export LDFLAGS="$LDFLAGS -L$PWD/../expat-2.0.1/oldbld/libexpat/lib -lexpat"
 
 
 
