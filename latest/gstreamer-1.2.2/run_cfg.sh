@@ -21,6 +21,7 @@ jnipath=andriod/support/jni
 libpath=`pwd`/$jnipath/../obj/local/armeabi-v7a
 incpath=`pwd`/$jnipath/../include
 if [ ! -f $libpath/libandroid_support.a ]; then
+    (
     mkdir -p $jnipath
     cd $jnipath
     cat > Application.mk << __EOF
@@ -32,11 +33,13 @@ __EOF
 include $ROOT/sources/android/support/Android.mk
 __EOF
     $ROOT/ndk-build
+    )
 fi
 if [ ! -f $libpath/libiconv.a ]; then
     ln -sf $libpath/libandroid_support.a $libpath/libiconv.a
 fi
 if [ ! -f $incpath/libintl.h ]; then
+    (
     mkdir -p  $incpath
     cat >  $incpath/libintl.h << __EOF
 #ifndef _LIBINTL_H_ANDROID_
@@ -46,6 +49,7 @@ char *dgettext(const char *domainname, const char *msgid);
 char *dcgettext(const char *domainname, const char *msgid, int category);
 #endif
 __EOF
+    )
 fi
 if [ ! -f $libpath/libintl.a ]; then
     ln -sf $libpath/libandroid_support.a $libpath/libintl.a
