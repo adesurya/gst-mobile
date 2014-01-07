@@ -7,6 +7,7 @@ include_directories(
     .
     ..
     ${PROJECT_BINARY_DIR}
+    ${PROJECT_BINARY_DIR}/glib
 )
 
 link_directories(

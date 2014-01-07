@@ -1,7 +1,7 @@
 # CMAKE_C_FLAGS CMAKE_CXX_FLAGS
 add_definitions(-O2 -Wall)
 add_definitions(-DHAVE_CONFIG_H) 
-add_definitions(-DGIO_COMPILATION)
+add_definitions(-DGIO_COMPILATION -DGIO_MODULE_DIR="groot/gio")
 
 include_directories(
     .
@@ -9,6 +9,7 @@ include_directories(
     ../glib
     ../gmodule
     ${PROJECT_BINARY_DIR}
+    ${PROJECT_BINARY_DIR}/glib
 )
 
 link_directories(

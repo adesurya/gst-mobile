@@ -14,8 +14,8 @@ set(CMAKE_CXX_COMPILER clang)
 # add extra header/function/type check
 include(cmake_check.cmake)
 add_subdirectory(glib)
+add_subdirectory(gmodule)
 add_subdirectory(gio)
-#add_subdirectory(gmodule)
-#add_subdirectory(gobject)
-#add_subdirectory(gthread)
+add_subdirectory(gobject)
+add_subdirectory(gthread)
 
