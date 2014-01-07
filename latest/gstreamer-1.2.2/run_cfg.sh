@@ -49,3 +49,6 @@ PREFIX=$PWD/libgstreamer
     --disable-check --disable-Bsymbolic \
     --without-libiconv-prefix \
     --without-libintl-prefix 
+
+make && make install
+

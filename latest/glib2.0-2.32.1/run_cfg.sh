@@ -90,3 +90,5 @@ PREFIX=$PWD/libglib
     --cache-file=$CACHE_FILE \
     --enable-static \
     --disable-selinux --disable-fam --disable-xattr
+
+make && make install
