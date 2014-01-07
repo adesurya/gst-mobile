@@ -3,12 +3,17 @@ ROOT=/opt/zdisk/zerox/android/android-ndk-r9
 CCROOT=$ROOT/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86
 SYSROOT=$ROOT/platforms/android-14/arch-arm/
 HOST=arm-linux-androideabi
+CACHE_FILE=./arm-linux.cache
 
+export AR="$CCROOT/bin/$HOST-ar --sysroot=$SYSROOT"
 export CC="$CCROOT/bin/$HOST-gcc --sysroot=$SYSROOT"
 export CXX="$CCROOT/bin/$HOST-g++ --sysroot=$SYSROOT"
 export STRIP="$CCROOT/bin/$HOST-strip --sysroot=$SYSROOT"
+export RANLIB="$CCROOT/bin/$HOST-ranlib --sysroot=$SYSROOT"
 export CFLAGS=""
 export LDFLAGS=""
+
+
 
 ##
 ## android support sources
@@ -53,6 +58,19 @@ export LDFLAGS="$LDFLAGS -L$libpath"
 ## start configure
 mkdir -p oldbld
 cd oldbld
+##
+##
+chmod a+w $CACHE_FILE
+cat > $CACHE_FILE << __EOF
+glib_cv_stack_grows=no
+glib_cv_uscore=no
+ac_cv_func_posix_getpwuid_r=no
+ac_cv_func_nonposix_getpwuid_r=no
+ac_cv_func_posix_getgrgid_r=no
+__EOF
+chmod a-w $CACHE_FILE
+
 ../configure \
     --host=arm-linux-androideabi  \
+    --cache-file=$CACHE_FILE \
     --disable-selinux --disable-fam --disable-xattr
