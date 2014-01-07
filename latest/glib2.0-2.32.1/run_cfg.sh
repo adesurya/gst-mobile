@@ -64,7 +64,7 @@ export LDFLAGS="$LDFLAGS -L$libpath"
 PWD=`pwd`
 export LIBFFI_CFLAGS="-I$PWD/../libffi-3.0.11/oldbld/libffi/include"
 export LIBFFI_LIBS="-L$PWD/../libffi-3.0.11/oldbld/libffi/lib -lffi"
-export LDFLAGS="$LDFLAGS $LIBFFI_LIBS"
+export LDFLAGS="$LDFLAGS $LIBFFI_LIBS $DBUS1_LIBS"
 
 
 ##
@@ -88,4 +88,5 @@ PREFIX=$PWD/libglib
     --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
     --cache-file=$CACHE_FILE \
+    --enable-static \
     --disable-selinux --disable-fam --disable-xattr
