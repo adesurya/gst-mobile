@@ -1,0 +1,5 @@
+includedir.diff
+armhf-varargs.diff
+sparc-v8-fix.diff
+kfreebsd-config.diff
+powerpc-softfloat.diff

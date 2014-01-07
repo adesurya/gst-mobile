@@ -1,0 +1,22 @@
+--- libffi-3.0.11~rc1.orig/configure.ac
++++ libffi-3.0.11~rc1/configure.ac
+@@ -345,7 +345,7 @@ case "$target" in
+                  [Cannot use PROT_EXEC on this target, so, we revert to
+                    alternative means])
+      ;;
+-     *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
++     *-apple-darwin10* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
+        AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
+                  [Cannot use malloc on this target, so, we revert to
+                    alternative means])
+--- libffi-3.0.11~rc1.orig/configure
++++ libffi-3.0.11~rc1/configure
+@@ -13302,7 +13302,7 @@ case "$target" in
+ $as_echo "#define FFI_EXEC_TRAMPOLINE_TABLE 1" >>confdefs.h
+ 
+      ;;
+-     *-apple-darwin10* | *-*-freebsd* | *-*-openbsd* | *-pc-solaris*)
++     *-apple-darwin10* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
+ 
+ $as_echo "#define FFI_MMAP_EXEC_WRIT 1" >>confdefs.h
+ 
