@@ -940,7 +940,7 @@ BUILT_SOURCES = $(am__append_5) test_resources.c test_resources2.c \
 	test_resources2.h
 
 #GTESTER = gtester 			# for non-GLIB packages
-GTESTER = $(top_builddir)/glib/gtester			# for the GLIB package
+GTESTER = $(GTESTER_ENV) $(top_builddir)/glib/gtester	# for the GLIB package
 GTESTER_REPORT = $(top_builddir)/glib/gtester-report	# for the GLIB package
 
 # initialize variables for unconditional += appending
@@ -967,6 +967,9 @@ TEST_PROGS = io-stream memory-input-stream memory-output-stream \
 	network-monitor fileattributematcher gmenumodel resources \
 	$(NULL) $(am__append_1) $(am__append_3) $(am__append_4)
 SUBDIRS = gdbus-object-manager-example
+
+# Some tests need a dbus session
+GTESTER_ENV = dbus-launch
 INCLUDES = \
 	-g 			\
 	$(gio_INCLUDES)		\

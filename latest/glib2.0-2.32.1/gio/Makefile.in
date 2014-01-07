@@ -479,7 +479,7 @@ ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
 red=; grn=; lgn=; blu=; std=
-DIST_SUBDIRS = gdbus-2.0/codegen xdgmime inotify fen win32 . fam tests
+DIST_SUBDIRS = gdbus-2.0/codegen xdgmime inotify fen win32 . fam
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
   dir0=`pwd`; \
@@ -745,7 +745,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 #GTESTER = gtester 			# for non-GLIB packages
-GTESTER = $(top_builddir)/glib/gtester			# for the GLIB package
+GTESTER = $(GTESTER_ENV) $(top_builddir)/glib/gtester	# for the GLIB package
 GTESTER_REPORT = $(top_builddir)/glib/gtester-report	# for the GLIB package
 
 # initialize variables for unconditional += appending
@@ -756,7 +756,7 @@ EXTRA_DIST = strinfo.c data-to-c.pl gio.symbols \
 TEST_PROGS = 
 NULL = 
 SUBDIRS = gdbus-2.0/codegen $(am__append_1) $(am__append_4) \
-	$(am__append_8) $(am__append_11) . $(am__append_14) tests
+	$(am__append_8) $(am__append_11) . $(am__append_14)
 @MS_LIB_AVAILABLE_TRUE@@OS_WIN32_AND_DLL_COMPILATION_TRUE@noinst_DATA = gio-2.0.lib
 @MS_LIB_AVAILABLE_TRUE@@OS_WIN32_AND_DLL_COMPILATION_TRUE@install_ms_lib_cmd = $(INSTALL) gio-2.0.lib $(DESTDIR)$(libdir)
 @MS_LIB_AVAILABLE_TRUE@@OS_WIN32_AND_DLL_COMPILATION_TRUE@uninstall_ms_lib_cmd = -rm $(DESTDIR)$(libdir)/gio-2.0.lib
@@ -950,6 +950,8 @@ win32_more_sources_for_vcproj = \
 @OS_WIN32_TRUE@	gwin32outputstream.h \
 @OS_WIN32_TRUE@	$(NULL)
 
+
+#SUBDIRS += tests
 libgio_2_0_la_SOURCES = \
 	gappinfo.c 		\
 	gasynchelper.c 		\
