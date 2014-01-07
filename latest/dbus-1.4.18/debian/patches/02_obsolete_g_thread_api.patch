@@ -1,0 +1,197 @@
+From: Martin Pitt <martin.pitt@ubuntu.com>
+Date: Tue, 3 Jan 2012 10:57:30 +0100
+Subject: [PATCH] Port to glib 2.31.x g_thread API
+
+g_thread_init() is deprecated since glib 2.24, call g_type_init() instead.
+g_thread_create is deprecated since 2.31, use g_thread_new() instead.
+
+Bump glib requirement accordingly.
+
+Bug: https://bugs.freedesktop.org/show_bug.cgi?id=44413
+Bug-Ubuntu: https://launchpad.net/bugs/911125
+
+Index: dbus-1.4.16/test/internals/refs.c
+===================================================================
+--- dbus-1.4.16.orig/test/internals/refs.c	2011-09-21 13:16:16.000000000 +0200
++++ dbus-1.4.16/test/internals/refs.c	2012-01-03 11:07:30.714947587 +0100
+@@ -26,6 +26,7 @@
+ 
+ #include <config.h>
+ 
++#include <glib-object.h>
+ #include <glib.h>
+ 
+ #define DBUS_COMPILATION    /* this test uses libdbus-internal */
+@@ -277,10 +278,9 @@
+   for (i = 0; i < N_THREADS; i++)
+     {
+       if ((i % 2) == 0)
+-        f->threads[i] = g_thread_create (ref_thread, &public_api, TRUE, NULL);
++        f->threads[i] = g_thread_new (NULL, ref_thread, &public_api);
+       else
+-        f->threads[i] = g_thread_create (ref_thread, &internal_api, TRUE,
+-            NULL);
++        f->threads[i] = g_thread_new (NULL, ref_thread, &internal_api);
+ 
+       g_assert (f->threads[i] != NULL);
+     }
+@@ -290,11 +290,9 @@
+   for (i = 0; i < N_THREADS; i++)
+     {
+       if ((i % 2) == 0)
+-        f->threads[i] = g_thread_create (cycle_thread, &public_api, TRUE,
+-            NULL);
++        f->threads[i] = g_thread_new (NULL, cycle_thread, &public_api);
+       else
+-        f->threads[i] = g_thread_create (cycle_thread, &internal_api, TRUE,
+-            NULL);
++        f->threads[i] = g_thread_new (NULL, cycle_thread, &internal_api);
+ 
+       g_assert (f->threads[i] != NULL);
+     }
+@@ -304,11 +302,9 @@
+   for (i = 0; i < N_THREADS; i++)
+     {
+       if ((i % 2) == 0)
+-        f->threads[i] = g_thread_create (unref_thread, &public_api, TRUE,
+-            NULL);
++        f->threads[i] = g_thread_new (NULL, unref_thread, &public_api);
+       else
+-        f->threads[i] = g_thread_create (unref_thread, &internal_api, TRUE,
+-            NULL);
++        f->threads[i] = g_thread_new (NULL, unref_thread, &internal_api);
+ 
+       g_assert (f->threads[i] != NULL);
+     }
+@@ -361,10 +357,9 @@
+   for (i = 0; i < N_THREADS; i++)
+     {
+       if ((i % 2) == 0)
+-        f->threads[i] = g_thread_create (ref_thread, &public_api, TRUE, NULL);
++        f->threads[i] = g_thread_new (NULL, ref_thread, &public_api);
+       else
+-        f->threads[i] = g_thread_create (ref_thread, &internal_api, TRUE,
+-            NULL);
++        f->threads[i] = g_thread_new (NULL, ref_thread, &internal_api);
+ 
+       g_assert (f->threads[i] != NULL);
+     }
+@@ -374,11 +369,9 @@
+   for (i = 0; i < N_THREADS; i++)
+     {
+       if ((i % 2) == 0)
+-        f->threads[i] = g_thread_create (cycle_thread, &public_api, TRUE,
+-            NULL);
++        f->threads[i] = g_thread_new (NULL, cycle_thread, &public_api);
+       else
+-        f->threads[i] = g_thread_create (cycle_thread, &internal_api, TRUE,
+-            NULL);
++        f->threads[i] = g_thread_new (NULL, cycle_thread, &internal_api);
+ 
+       g_assert (f->threads[i] != NULL);
+     }
+@@ -388,11 +381,9 @@
+   for (i = 0; i < N_THREADS; i++)
+     {
+       if ((i % 2) == 0)
+-        f->threads[i] = g_thread_create (unref_thread, &public_api, TRUE,
+-            NULL);
++        f->threads[i] = g_thread_new (NULL, unref_thread, &public_api);
+       else
+-        f->threads[i] = g_thread_create (unref_thread, &internal_api, TRUE,
+-            NULL);
++        f->threads[i] = g_thread_new (NULL, unref_thread, &internal_api);
+ 
+       g_assert (f->threads[i] != NULL);
+     }
+@@ -427,7 +418,7 @@
+ 
+   for (i = 0; i < N_THREADS; i++)
+     {
+-      f->threads[i] = g_thread_create (ref_thread, &public_api, TRUE, NULL);
++      f->threads[i] = g_thread_new (NULL, ref_thread, &public_api);
+       g_assert (f->threads[i] != NULL);
+     }
+ 
+@@ -435,7 +426,7 @@
+ 
+   for (i = 0; i < N_THREADS; i++)
+     {
+-      f->threads[i] = g_thread_create (cycle_thread, &public_api, TRUE, NULL);
++      f->threads[i] = g_thread_new (NULL, cycle_thread, &public_api);
+       g_assert (f->threads[i] != NULL);
+     }
+ 
+@@ -443,7 +434,7 @@
+ 
+   for (i = 0; i < N_THREADS; i++)
+     {
+-      f->threads[i] = g_thread_create (unref_thread, &public_api, TRUE, NULL);
++      f->threads[i] = g_thread_new (NULL, unref_thread, &public_api);
+       g_assert (f->threads[i] != NULL);
+     }
+ 
+@@ -501,10 +492,9 @@
+   for (i = 0; i < N_THREADS; i++)
+     {
+       if ((i % 2) == 0)
+-        f->threads[i] = g_thread_create (ref_thread, &public_api, TRUE, NULL);
++        f->threads[i] = g_thread_new (NULL, ref_thread, &public_api);
+       else
+-        f->threads[i] = g_thread_create (ref_thread, &internal_api, TRUE,
+-            NULL);
++        f->threads[i] = g_thread_new (NULL, ref_thread, &internal_api);
+ 
+       g_assert (f->threads[i] != NULL);
+     }
+@@ -516,16 +506,14 @@
+       switch (i % 3)
+         {
+           case 0:
+-            f->threads[i] = g_thread_create (cycle_thread, &public_api, TRUE,
+-                NULL);
++            f->threads[i] = g_thread_new (NULL, cycle_thread, &public_api);
+             break;
+           case 1:
+-            f->threads[i] = g_thread_create (cycle_thread, &internal_api, TRUE,
+-                NULL);
++            f->threads[i] = g_thread_new (NULL, cycle_thread, &internal_api);
+             break;
+           default:
+-            f->threads[i] = g_thread_create (cycle_thread,
+-                &unref_and_unlock_api, TRUE, NULL);
++            f->threads[i] = g_thread_new (NULL, cycle_thread,
++                &unref_and_unlock_api);
+         }
+ 
+       g_assert (f->threads[i] != NULL);
+@@ -538,16 +526,14 @@
+       switch (i % 3)
+         {
+           case 0:
+-            f->threads[i] = g_thread_create (unref_thread, &public_api, TRUE,
+-                NULL);
++            f->threads[i] = g_thread_new (NULL, unref_thread, &public_api);
+             break;
+           case 1:
+-            f->threads[i] = g_thread_create (unref_thread, &internal_api, TRUE,
+-                NULL);
++            f->threads[i] = g_thread_new (NULL, unref_thread, &internal_api);
+             break;
+           default:
+-            f->threads[i] = g_thread_create (unref_thread,
+-                &unref_and_unlock_api, TRUE, NULL);
++            f->threads[i] = g_thread_new (NULL, unref_thread,
++                &unref_and_unlock_api);
+         }
+ 
+       g_assert (f->threads[i] != NULL);
+@@ -596,7 +582,7 @@
+ main (int argc,
+     char **argv)
+ {
+-  g_thread_init (NULL);
++  g_type_init ();
+   g_test_init (&argc, &argv, NULL);
+   g_test_bug_base ("https://bugs.freedesktop.org/show_bug.cgi?id=");
+ 

@@ -1,0 +1,9 @@
+01_no-fatal-warnings.patch
+02_obsolete_g_thread_api.patch
+20_system_conf_limit.patch
+81-session.conf-timeout.patch
+0001-activation-allow-for-more-variation-than-just-system.patch
+0002-bus-change-systemd-activation-to-activation-systemd.patch
+0003-upstart-add-upstart-as-a-possible-activation-type.patch
+0004-upstart-add-UpstartJob-to-service-desktop-files.patch
+0005-activation-implement-upstart-activation.patch

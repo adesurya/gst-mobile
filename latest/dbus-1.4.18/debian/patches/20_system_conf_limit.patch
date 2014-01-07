@@ -1,0 +1,12 @@
+Index: dbus-1.2.16/bus/system.conf.in
+===================================================================
+--- dbus-1.2.16.orig/bus/system.conf.in	2009-10-23 20:06:56.000000000 +0200
++++ dbus-1.2.16/bus/system.conf.in	2009-10-23 20:09:53.000000000 +0200
+@@ -80,4 +80,7 @@
+ 
+   <include if_selinux_enabled="yes" selinux_root_relative="yes">contexts/dbus_contexts</include>
+ 
++  <!-- increase default match rules limit from 512 to 5000 because the
++       aptdaemon needs relatively many per package in the queue -->
++  <limit name="max_match_rules_per_connection">5000</limit>
+ </busconfig>

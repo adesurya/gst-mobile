@@ -1,0 +1,196 @@
+From d713b4bed89486d9c164168517b20223c2bbece5 Mon Sep 17 00:00:00 2001
+From: Scott James Remnant <scott@netsplit.com>
+Date: Wed, 22 Dec 2010 14:08:14 +0000
+Subject: [PATCH 5/5] activation: implement upstart activation
+
+Upstart activation is performed by emitting a dbus-activation event
+within Upstart, and then simply expecting the appropriate bus name
+to appear.  e.g.
+
+	start on dbus-activation org.freedesktop.UDisks
+	exec /usr/lib/udisks/udsks-daemon
+---
+ bus/activation.c |  170 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 170 insertions(+), 0 deletions(-)
+
+Index: dbus-1.4.16/bus/activation.c
+===================================================================
+--- dbus-1.4.16.orig/bus/activation.c	2011-10-18 18:11:06.414135027 +0200
++++ dbus-1.4.16/bus/activation.c	2011-10-18 18:11:09.086135156 +0200
+@@ -1935,6 +1935,176 @@
+   if (was_pending_activation)
+     return TRUE;
+ 
++  if (bus_context_get_activation_type (activation->context) == ACTIVATION_UPSTART)
++    {
++      BusRegistry *registry;
++      DBusString service_string;
++      BusService *service;
++
++      /* Check whether Upstart is connected */
++      registry = bus_connection_get_registry (connection);
++      _dbus_string_init_const (&service_string, "com.ubuntu.Upstart");
++      service = bus_registry_lookup (registry, &service_string);
++
++      if (entry->upstart_job
++          && (service != NULL))
++        {
++          BusTransaction *activation_transaction;
++          DBusMessageIter iter;
++          const char *event_name;
++          int wait_for_event;
++          DBusMessageIter array_iter;
++          DBusString entry;
++          const char *entry_str;
++          char **e;
++
++          /* Upstart activation is done by event; rather than naming a
++             job, we name the bus name to be activated; this is included
++             in the event environment along with the activation environment
++             so that gets passed correctly to jobs. */
++
++          /* Create the message */
++          message = dbus_message_new_method_call ("com.ubuntu.Upstart",
++                                                  "/com/ubuntu/Upstart",
++                                                  "com.ubuntu.Upstart0_6",
++                                                  "EmitEvent");
++          if (!message)
++            {
++              _dbus_verbose ("No memory to create activation message\n");
++              BUS_SET_OOM (error);
++              return FALSE;
++            }
++
++          if (!dbus_message_set_sender (message, DBUS_SERVICE_DBUS))
++            {
++              _dbus_verbose ("No memory to set sender of activation message\n");
++              dbus_message_unref (message);
++              BUS_SET_OOM (error);
++              return FALSE;
++            }
++
++          dbus_message_iter_init_append (message, &iter);
++
++          event_name = "dbus-activation";
++          if (!dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &event_name))
++            {
++              _dbus_verbose ("No memory to set args of activation message\n");
++              dbus_message_unref (message);
++              BUS_SET_OOM (error);
++              return FALSE;
++            }
++
++          if (!dbus_message_iter_open_container (&iter, DBUS_TYPE_ARRAY, DBUS_TYPE_STRING_AS_STRING,
++                                                 &array_iter))
++            {
++              _dbus_verbose ("No memory to set args of activation message\n");
++              dbus_message_unref (message);
++              BUS_SET_OOM (error);
++              return FALSE;
++            }
++
++          if (!_dbus_string_init (&entry))
++            {
++              _dbus_verbose ("No memory to create activation message environment\n");
++              dbus_message_unref (message);
++              BUS_SET_OOM (error);
++              return FALSE;
++            }
++
++          if (!_dbus_string_append_printf (&entry, "SERVICE=%s", service_name))
++            {
++              _dbus_verbose ("No memory to create activation message environment\n");
++              _dbus_string_free (&entry);
++              dbus_message_unref (message);
++              BUS_SET_OOM (error);
++              return FALSE;
++            }
++
++          entry_str = _dbus_string_get_data (&entry);
++
++          if (!dbus_message_iter_append_basic (&array_iter, DBUS_TYPE_STRING, &entry_str))
++            {
++              _dbus_verbose ("No memory to set args of activation message\n");
++              dbus_message_unref (message);
++              BUS_SET_OOM (error);
++              return FALSE;
++            }
++
++          _dbus_string_free (&entry);
++
++
++          envp = bus_activation_get_environment (activation);
++
++          if (envp == NULL)
++            {
++              _dbus_verbose ("No memory to get environment for activation message\n");
++              BUS_SET_OOM (error);
++              return FALSE;
++            }
++
++          for (e = envp; *e; e++)
++            {
++              if (!dbus_message_iter_append_basic (&array_iter, DBUS_TYPE_STRING, e))
++                {
++                  _dbus_verbose ("No memory to set args of activation message\n");
++                  dbus_message_unref (message);
++                  dbus_free_string_array (envp);
++                  BUS_SET_OOM (error);
++                  return FALSE;
++                }
++            }
++
++          dbus_free_string_array (envp);
++
++          if (!dbus_message_iter_close_container (&iter, &array_iter))
++            {
++              _dbus_verbose ("No memory to set args of activation message\n");
++              dbus_message_unref (message);
++              BUS_SET_OOM (error);
++              return FALSE;
++             }
++
++          wait_for_event = FALSE;
++          if (!dbus_message_iter_append_basic (&iter, DBUS_TYPE_BOOLEAN, &wait_for_event))
++            {
++              _dbus_verbose ("No memory to set args of activation message\n");
++              dbus_message_unref (message);
++              BUS_SET_OOM (error);
++              return FALSE;
++            }
++
++          /* Create the transaction */
++          activation_transaction = bus_transaction_new (activation->context);
++          if (activation_transaction == NULL)
++            {
++              _dbus_verbose ("No memory to create activation transaction\n");
++              dbus_message_unref (message);
++              BUS_SET_OOM (error);
++              return FALSE;
++            }
++
++          retval = bus_dispatch_matches (activation_transaction, NULL, bus_service_get_primary_owners_connection (service),
++                                           message, error);
++          dbus_message_unref (message);
++
++          if (!retval)
++            {
++              _DBUS_ASSERT_ERROR_IS_SET (error);
++              _dbus_verbose ("failed to send activation message: %s\n", error->name);
++              bus_transaction_cancel_and_free (activation_transaction);
++              return FALSE;
++            }
++
++          bus_transaction_execute_and_free (activation_transaction);
++
++          /* Now we just wait for the bus name to appear */
++          return TRUE;
++         }
++
++      /* Configured service without UpstartJob=, fallback to traditional
++         activation. */
++    }
++
+   if (bus_context_get_activation_type (activation->context) == ACTIVATION_SYSTEMD)
+     {
+       if (strcmp (service_name, "org.freedesktop.systemd1") == 0)

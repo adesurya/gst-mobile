@@ -1,0 +1,97 @@
+From 186818fa7a3af63178f68778555c87321505fd34 Mon Sep 17 00:00:00 2001
+From: Scott James Remnant <scott@netsplit.com>
+Date: Tue, 21 Dec 2010 16:00:42 +0000
+Subject: [PATCH 4/5] upstart: add UpstartJob= to service desktop files
+
+Add a field to service desktop files to specify that there is an
+equivalent Upstart job for this service; unlike the systemd stuff,
+this doesn't need to name that job so it's just a flag.
+---
+ bus/activation.c   |   20 ++++++++++++++++++++
+ bus/desktop-file.h |    1 +
+ 2 files changed, 21 insertions(+), 0 deletions(-)
+
+Index: dbus-1.4.16/bus/activation.c
+===================================================================
+--- dbus-1.4.16.orig/bus/activation.c	2011-10-18 18:10:55.214134484 +0200
++++ dbus-1.4.16/bus/activation.c	2011-10-18 18:11:06.414135027 +0200
+@@ -74,6 +74,7 @@
+   unsigned long mtime;
+   BusServiceDirectory *s_dir;
+   char *filename;
++  unsigned int upstart_job : 1;
+ } BusActivationEntry;
+ 
+ typedef struct BusPendingActivationEntry BusPendingActivationEntry;
+@@ -98,6 +99,7 @@
+   DBusBabysitter *babysitter;
+   DBusTimeout *timeout;
+   unsigned int timeout_added : 1;
++  unsigned int upstart_job : 1;
+ } BusPendingActivation;
+ 
+ #if 0
+@@ -260,6 +262,8 @@
+                            DBusError           *error)
+ {
+   char *name, *exec, *user, *exec_tmp, *systemd_service;
++  const char *upstart_job_raw;
++  int upstart_job;
+   BusActivationEntry *entry;
+   DBusStat stat_buf;
+   DBusString file_path;
+@@ -275,6 +279,8 @@
+   exec_tmp = NULL;
+   entry = NULL;
+   systemd_service = NULL;
++  upstart_job_raw = NULL;
++  upstart_job = FALSE;
+ 
+   dbus_error_init (&tmp_error);
+ 
+@@ -361,6 +367,16 @@
+         }
+     }
+ 
++  /* upstart job is never required */
++  if (bus_desktop_file_get_raw (desktop_file,
++                                DBUS_SERVICE_SECTION,
++                                DBUS_SERVICE_UPSTART_JOB,
++                                &upstart_job_raw))
++    {
++      if (strchr ("YyTt", upstart_job_raw[0]))
++        upstart_job = TRUE;
++    }
++
+   _DBUS_ASSERT_ERROR_IS_CLEAR (&tmp_error);
+ 
+   entry = _dbus_hash_table_lookup_string (s_dir->entries,
+@@ -389,6 +405,7 @@
+       entry->exec = exec;
+       entry->user = user;
+       entry->systemd_service = systemd_service;
++      entry->upstart_job = upstart_job;
+       entry->refcount = 1;
+ 
+       /* ownership has been transferred to entry, do not free separately */
+@@ -1847,6 +1864,8 @@
+             }
+         }
+ 
++      pending_activation->upstart_job = entry->upstart_job;
++
+       pending_activation->timeout =
+         _dbus_timeout_new (bus_context_get_activation_timeout (activation->context),
+                            pending_activation_timed_out,
+Index: dbus-1.4.16/bus/desktop-file.h
+===================================================================
+--- dbus-1.4.16.orig/bus/desktop-file.h	2011-09-14 17:58:18.000000000 +0200
++++ dbus-1.4.16/bus/desktop-file.h	2011-10-18 18:11:06.414135027 +0200
+@@ -36,6 +36,7 @@
+ #define DBUS_SERVICE_USER     "User"
+ #define DBUS_SERVICE_GROUP    "Group"
+ #define DBUS_SERVICE_SYSTEMD_SERVICE "SystemdService"
++#define DBUS_SERVICE_UPSTART_JOB "UpstartJob"
+ 
+ typedef struct BusDesktopFile BusDesktopFile;
+ 

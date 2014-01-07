@@ -1,0 +1,171 @@
+From 28b76a197d13fefa9a89e1ba9ca402130247c6c9 Mon Sep 17 00:00:00 2001
+From: Scott James Remnant <scott@netsplit.com>
+Date: Tue, 21 Dec 2010 15:41:16 +0000
+Subject: [PATCH 1/5] activation: allow for more variation than just "systemd"
+
+Implementing systemd_activation as a bool means we'd end up with
+dozens of bools here if every init daemon decided to take over
+bus activation.
+
+Turn it into an enum instead.
+---
+ bus/activation.c |    2 +-
+ bus/bus.c        |   16 ++++++++--------
+ bus/bus.h        |   12 +++++++++---
+ bus/main.c       |    8 ++++----
+ 4 files changed, 22 insertions(+), 16 deletions(-)
+
+Index: dbus-1.4.16/bus/activation.c
+===================================================================
+--- dbus-1.4.16.orig/bus/activation.c	2011-09-21 13:16:15.000000000 +0200
++++ dbus-1.4.16/bus/activation.c	2011-10-18 18:10:55.214134484 +0200
+@@ -1916,7 +1916,7 @@
+   if (was_pending_activation)
+     return TRUE;
+ 
+-  if (bus_context_get_systemd_activation (activation->context))
++  if (bus_context_get_activation_type (activation->context) == ACTIVATION_SYSTEMD)
+     {
+       if (strcmp (service_name, "org.freedesktop.systemd1") == 0)
+           /* systemd itself is missing apparently. That can happen
+Index: dbus-1.4.16/bus/bus.c
+===================================================================
+--- dbus-1.4.16.orig/bus/bus.c	2011-09-21 13:16:15.000000000 +0200
++++ dbus-1.4.16/bus/bus.c	2011-10-18 18:10:55.214134484 +0200
+@@ -55,6 +55,7 @@
+   char *pidfile;
+   char *user;
+   char *log_prefix;
++  ActivationType activation_type;
+   DBusLoop *loop;
+   DBusList *servers;
+   BusConnections *connections;
+@@ -67,7 +68,6 @@
+   unsigned int syslog : 1;
+   unsigned int keep_umask : 1;
+   unsigned int allow_anonymous : 1;
+-  unsigned int systemd_activation : 1;
+ };
+ 
+ static dbus_int32_t server_data_slot = -1;
+@@ -284,7 +284,7 @@
+ process_config_first_time_only (BusContext       *context,
+ 				BusConfigParser  *parser,
+                                 const DBusString *address,
+-                                dbus_bool_t      systemd_activation,
++                                ActivationType    activation_type,
+ 				DBusError        *error)
+ {
+   DBusString log_prefix;
+@@ -303,7 +303,7 @@
+ 
+   _dbus_init_system_log ();
+ 
+-  context->systemd_activation = systemd_activation;
++  context->activation_type = activation_type;
+ 
+   /* Check for an existing pid file. Of course this is a race;
+    * we'd have to use fcntl() locks on the pid file to
+@@ -712,7 +712,7 @@
+                  DBusPipe         *print_addr_pipe,
+                  DBusPipe         *print_pid_pipe,
+                  const DBusString *address,
+-                 dbus_bool_t      systemd_activation,
++                 ActivationType   activation_type,
+                  DBusError        *error)
+ {
+   DBusString log_prefix;
+@@ -767,7 +767,7 @@
+       goto failed;
+     }
+ 
+-  if (!process_config_first_time_only (context, parser, address, systemd_activation, error))
++  if (!process_config_first_time_only (context, parser, address, activation_type, error))
+     {
+       _DBUS_ASSERT_ERROR_IS_SET (error);
+       goto failed;
+@@ -1146,9 +1146,9 @@
+ }
+ 
+ dbus_bool_t
+-bus_context_get_systemd_activation (BusContext *context)
++bus_context_get_activation_type (BusContext *context)
+ {
+-  return context->systemd_activation;
++  return context->activation_type;
+ }
+ 
+ BusRegistry*
+Index: dbus-1.4.16/bus/bus.h
+===================================================================
+--- dbus-1.4.16.orig/bus/bus.h	2011-09-14 17:58:18.000000000 +0200
++++ dbus-1.4.16/bus/bus.h	2011-10-18 18:10:55.218134485 +0200
+@@ -71,12 +71,18 @@
+   FORK_NEVER
+ } ForceForkSetting;
+ 
++typedef enum
++{
++  ACTIVATION_DEFAULT,
++  ACTIVATION_SYSTEMD
++} ActivationType;
++
+ BusContext*       bus_context_new                                (const DBusString *config_file,
+                                                                   ForceForkSetting  force_fork,
+                                                                   DBusPipe         *print_addr_pipe,
+                                                                   DBusPipe         *print_pid_pipe,
+                                                                   const DBusString *address,
+-                                                                  dbus_bool_t      systemd_activation,
++                                                                  ActivationType    activation_type,
+                                                                   DBusError        *error);
+ dbus_bool_t       bus_context_reload_config                      (BusContext       *context,
+ 								  DBusError        *error);
+@@ -88,7 +94,7 @@
+ const char*       bus_context_get_type                           (BusContext       *context);
+ const char*       bus_context_get_address                        (BusContext       *context);
+ const char*       bus_context_get_servicehelper                  (BusContext       *context);
+-dbus_bool_t       bus_context_get_systemd_activation             (BusContext       *context);
++ActivationType    bus_context_get_activation_type                (BusContext       *context);
+ BusRegistry*      bus_context_get_registry                       (BusContext       *context);
+ BusConnections*   bus_context_get_connections                    (BusContext       *context);
+ BusActivation*    bus_context_get_activation                     (BusContext       *context);
+Index: dbus-1.4.16/bus/main.c
+===================================================================
+--- dbus-1.4.16.orig/bus/main.c	2011-09-21 13:16:15.000000000 +0200
++++ dbus-1.4.16/bus/main.c	2011-10-18 18:10:55.218134485 +0200
+@@ -361,7 +361,7 @@
+   dbus_bool_t print_pid;
+   dbus_bool_t is_session_bus;
+   int force_fork;
+-  dbus_bool_t systemd_activation;
++  ActivationType activation_type;
+ 
+   if (!_dbus_string_init (&config_file))
+     return 1;
+@@ -379,7 +379,7 @@
+   print_pid = FALSE;
+   is_session_bus = FALSE;
+   force_fork = FORK_FOLLOW_CONFIG_FILE;
+-  systemd_activation = FALSE;
++  activation_type = ACTIVATION_DEFAULT;
+ 
+   prev_arg = NULL;
+   i = 1;
+@@ -400,7 +400,7 @@
+       else if (strcmp (arg, "--fork") == 0)
+         force_fork = FORK_ALWAYS;
+       else if (strcmp (arg, "--systemd-activation") == 0)
+-        systemd_activation = TRUE;
++        activation_type = ACTIVATION_SYSTEMD;
+       else if (strcmp (arg, "--system") == 0)
+         {
+           check_two_config_files (&config_file, "system");
+@@ -579,7 +579,7 @@
+   context = bus_context_new (&config_file, force_fork,
+                              &print_addr_pipe, &print_pid_pipe,
+                              _dbus_string_get_length(&address) > 0 ? &address : NULL,
+-                             systemd_activation,
++                             activation_type,
+                              &error);
+   _dbus_string_free (&config_file);
+   if (context == NULL)

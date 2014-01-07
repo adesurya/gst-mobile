@@ -1,0 +1,77 @@
+From f4a24b6062122f324c6cc7c0f33f955f649deb2f Mon Sep 17 00:00:00 2001
+From: Scott James Remnant <scott@netsplit.com>
+Date: Tue, 21 Dec 2010 15:47:33 +0000
+Subject: [PATCH 2/5] bus: change --systemd-activation to --activation=systemd
+
+In the same spirit as the previous patch, rather than adding a new
+command-line option for each activation type, take a parameter to
+choose between them.
+
+The old option has been left in as an undocumented equivalent for
+compatibility.
+---
+ bus/dbus.service.in  |    2 +-
+ bus/main.c           |   17 ++++++++++++++++-
+ doc/dbus-daemon.1.in |    2 +-
+ 3 files changed, 18 insertions(+), 3 deletions(-)
+
+Index: dbus-1.4.16/bus/dbus.service.in
+===================================================================
+--- dbus-1.4.16.orig/bus/dbus.service.in	2011-09-14 17:58:18.000000000 +0200
++++ dbus-1.4.16/bus/dbus.service.in	2011-10-18 18:11:00.010134717 +0200
+@@ -6,6 +6,6 @@
+ [Service]
+ ExecStartPre=@EXPANDED_BINDIR@/dbus-uuidgen --ensure
+ ExecStartPre=-/bin/rm -f @DBUS_SYSTEM_PID_FILE@
+-ExecStart=@EXPANDED_BINDIR@/dbus-daemon --system --address=systemd: --nofork --systemd-activation
++ExecStart=@EXPANDED_BINDIR@/dbus-daemon --system --address=systemd: --nofork --activation=systemd
+ ExecReload=@EXPANDED_BINDIR@/dbus-send --print-reply --system --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
+ OOMScoreAdjust=-900
+Index: dbus-1.4.16/bus/main.c
+===================================================================
+--- dbus-1.4.16.orig/bus/main.c	2011-10-18 18:10:55.218134485 +0200
++++ dbus-1.4.16/bus/main.c	2011-10-18 18:11:00.010134717 +0200
+@@ -125,7 +125,7 @@
+ static void
+ usage (void)
+ {
+-  fprintf (stderr, DBUS_DAEMON_NAME " [--version] [--session] [--system] [--config-file=FILE] [--print-address[=DESCRIPTOR]] [--print-pid[=DESCRIPTOR]] [--fork] [--nofork] [--introspect] [--address=ADDRESS] [--systemd-activation]\n");
++  fprintf (stderr, DBUS_DAEMON_NAME " [--version] [--session] [--system] [--config-file=FILE] [--print-address[=DESCRIPTOR]] [--print-pid[=DESCRIPTOR]] [--fork] [--nofork] [--introspect] [--address=ADDRESS] [--activation=systemd]\n");
+   exit (1);
+ }
+ 
+@@ -401,6 +401,21 @@
+         force_fork = FORK_ALWAYS;
+       else if (strcmp (arg, "--systemd-activation") == 0)
+         activation_type = ACTIVATION_SYSTEMD;
++      else if (strstr (arg, "--activation=") == arg)
++        {
++          const char *activation;
++
++          activation = strchr (arg, '=');
++          ++activation;
++
++          if (strcmp (activation, "systemd") == 0)
++            activation_type = ACTIVATION_SYSTEMD;
++          else
++            {
++              fprintf (stderr, "Unknown activation type: %s.\n", activation);
++              usage ();
++            }
++        }
+       else if (strcmp (arg, "--system") == 0)
+         {
+           check_two_config_files (&config_file, "system");
+Index: dbus-1.4.16/doc/dbus-daemon.1.in
+===================================================================
+--- dbus-1.4.16.orig/doc/dbus-daemon.1.in	2011-09-20 19:59:20.000000000 +0200
++++ dbus-1.4.16/doc/dbus-daemon.1.in	2011-10-18 18:11:00.014134716 +0200
+@@ -91,7 +91,7 @@
+ Set the address to listen on. This option overrides the address
+ configured in the configuration file.
+ .TP
+-.I "\-\-systemd\-activation"
++.I "\-\-activation=systemd"
+ Enable systemd\-style service activation. Only useful in conjunction
+ with the systemd system and session manager on Linux.
+ 

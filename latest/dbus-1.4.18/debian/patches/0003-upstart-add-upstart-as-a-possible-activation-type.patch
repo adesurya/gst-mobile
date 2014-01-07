@@ -1,0 +1,64 @@
+From 3decca8e0ac801cf9c5985bfdd9b00e3e56a6643 Mon Sep 17 00:00:00 2001
+From: Scott James Remnant <scott@netsplit.com>
+Date: Tue, 21 Dec 2010 15:54:32 +0000
+Subject: [PATCH 3/5] upstart: add upstart as a possible activation type
+
+Add upstart as a possible value for the enum and the command-line
+option.
+---
+ bus/bus.h            |    3 ++-
+ bus/main.c           |    4 +++-
+ doc/dbus-daemon.1.in |    4 ++++
+ 3 files changed, 9 insertions(+), 2 deletions(-)
+
+Index: dbus-1.4.16/bus/bus.h
+===================================================================
+--- dbus-1.4.16.orig/bus/bus.h	2011-10-18 18:10:55.218134485 +0200
++++ dbus-1.4.16/bus/bus.h	2011-10-18 18:11:03.714134896 +0200
+@@ -74,7 +74,8 @@
+ typedef enum
+ {
+   ACTIVATION_DEFAULT,
+-  ACTIVATION_SYSTEMD
++  ACTIVATION_SYSTEMD,
++  ACTIVATION_UPSTART
+ } ActivationType;
+ 
+ BusContext*       bus_context_new                                (const DBusString *config_file,
+Index: dbus-1.4.16/bus/main.c
+===================================================================
+--- dbus-1.4.16.orig/bus/main.c	2011-10-18 18:11:00.010134717 +0200
++++ dbus-1.4.16/bus/main.c	2011-10-18 18:11:03.718134896 +0200
+@@ -125,7 +125,7 @@
+ static void
+ usage (void)
+ {
+-  fprintf (stderr, DBUS_DAEMON_NAME " [--version] [--session] [--system] [--config-file=FILE] [--print-address[=DESCRIPTOR]] [--print-pid[=DESCRIPTOR]] [--fork] [--nofork] [--introspect] [--address=ADDRESS] [--activation=systemd]\n");
++  fprintf (stderr, DBUS_DAEMON_NAME " [--version] [--session] [--system] [--config-file=FILE] [--print-address[=DESCRIPTOR]] [--print-pid[=DESCRIPTOR]] [--fork] [--nofork] [--introspect] [--address=ADDRESS] [--activation=systemd|upstart]\n");
+   exit (1);
+ }
+ 
+@@ -410,6 +410,8 @@
+ 
+           if (strcmp (activation, "systemd") == 0)
+             activation_type = ACTIVATION_SYSTEMD;
++          else if (strcmp (activation, "upstart") == 0)
++            activation_type = ACTIVATION_UPSTART;
+           else
+             {
+               fprintf (stderr, "Unknown activation type: %s.\n", activation);
+Index: dbus-1.4.16/doc/dbus-daemon.1.in
+===================================================================
+--- dbus-1.4.16.orig/doc/dbus-daemon.1.in	2011-10-18 18:11:00.014134716 +0200
++++ dbus-1.4.16/doc/dbus-daemon.1.in	2011-10-18 18:11:03.726134896 +0200
+@@ -94,6 +94,10 @@
+ .I "\-\-activation=systemd"
+ Enable systemd\-style service activation. Only useful in conjunction
+ with the systemd system and session manager on Linux.
++.TP
++.I "--activation=upstart"
++Enable upstart-style service activation. Only useful in conjunction
++with the Upstart init daemon on Linux.
+ 
+ .SH CONFIGURATION FILE
+ 
