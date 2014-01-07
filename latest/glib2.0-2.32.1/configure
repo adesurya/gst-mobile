@@ -30437,13 +30437,13 @@ do
     "glib/gnulib/Makefile") CONFIG_FILES="$CONFIG_FILES glib/gnulib/Makefile" ;;
     "glib/pcre/Makefile") CONFIG_FILES="$CONFIG_FILES glib/pcre/Makefile" ;;
     "glib/update-pcre/Makefile") CONFIG_FILES="$CONFIG_FILES glib/update-pcre/Makefile" ;;
-    "glib/tests/Makefile") CONFIG_FILES="$CONFIG_FILES glib/tests/Makefile" ;;
+    #"glib/tests/Makefile") CONFIG_FILES="$CONFIG_FILES glib/tests/Makefile" ;;
     "gmodule/Makefile") CONFIG_FILES="$CONFIG_FILES gmodule/Makefile" ;;
     "gmodule/gmoduleconf.h") CONFIG_FILES="$CONFIG_FILES gmodule/gmoduleconf.h" ;;
     "gobject/Makefile") CONFIG_FILES="$CONFIG_FILES gobject/Makefile" ;;
     "gobject/gobject.stp") CONFIG_FILES="$CONFIG_FILES gobject/gobject.stp" ;;
     "gobject/glib-mkenums") CONFIG_FILES="$CONFIG_FILES gobject/glib-mkenums" ;;
-    "gobject/tests/Makefile") CONFIG_FILES="$CONFIG_FILES gobject/tests/Makefile" ;;
+    #"gobject/tests/Makefile") CONFIG_FILES="$CONFIG_FILES gobject/tests/Makefile" ;;
     "gthread/Makefile") CONFIG_FILES="$CONFIG_FILES gthread/Makefile" ;;
     "gio/Makefile") CONFIG_FILES="$CONFIG_FILES gio/Makefile" ;;
     "gio/gdbus-2.0/codegen/Makefile") CONFIG_FILES="$CONFIG_FILES gio/gdbus-2.0/codegen/Makefile" ;;
@@ -30453,8 +30453,8 @@ do
     "gio/fen/Makefile") CONFIG_FILES="$CONFIG_FILES gio/fen/Makefile" ;;
     "gio/fam/Makefile") CONFIG_FILES="$CONFIG_FILES gio/fam/Makefile" ;;
     "gio/win32/Makefile") CONFIG_FILES="$CONFIG_FILES gio/win32/Makefile" ;;
-    "gio/tests/Makefile") CONFIG_FILES="$CONFIG_FILES gio/tests/Makefile" ;;
-    "gio/tests/gdbus-object-manager-example/Makefile") CONFIG_FILES="$CONFIG_FILES gio/tests/gdbus-object-manager-example/Makefile" ;;
+    #"gio/tests/Makefile") CONFIG_FILES="$CONFIG_FILES gio/tests/Makefile" ;;
+    #"gio/tests/gdbus-object-manager-example/Makefile") CONFIG_FILES="$CONFIG_FILES gio/tests/gdbus-object-manager-example/Makefile" ;;
     "po/Makefile.in") CONFIG_FILES="$CONFIG_FILES po/Makefile.in" ;;
     "docs/Makefile") CONFIG_FILES="$CONFIG_FILES docs/Makefile" ;;
     "docs/reference/Makefile") CONFIG_FILES="$CONFIG_FILES docs/reference/Makefile" ;;
@@ -30465,9 +30465,9 @@ do
     "docs/reference/gio/Makefile") CONFIG_FILES="$CONFIG_FILES docs/reference/gio/Makefile" ;;
     "docs/reference/gio/gdbus-object-manager-example/Makefile") CONFIG_FILES="$CONFIG_FILES docs/reference/gio/gdbus-object-manager-example/Makefile" ;;
     "docs/reference/gio/version.xml") CONFIG_FILES="$CONFIG_FILES docs/reference/gio/version.xml" ;;
-    "tests/Makefile") CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
-    "tests/gobject/Makefile") CONFIG_FILES="$CONFIG_FILES tests/gobject/Makefile" ;;
-    "tests/refcount/Makefile") CONFIG_FILES="$CONFIG_FILES tests/refcount/Makefile" ;;
+    #"tests/Makefile") CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
+    #"tests/gobject/Makefile") CONFIG_FILES="$CONFIG_FILES tests/gobject/Makefile" ;;
+    #"tests/refcount/Makefile") CONFIG_FILES="$CONFIG_FILES tests/refcount/Makefile" ;;
     "m4macros/Makefile") CONFIG_FILES="$CONFIG_FILES m4macros/Makefile" ;;
     "chmod-scripts") CONFIG_COMMANDS="$CONFIG_COMMANDS chmod-scripts" ;;
     "INSTALL") CONFIG_FILES="$CONFIG_FILES INSTALL" ;;
@@ -30483,7 +30483,7 @@ do
     "gthread/makefile.msc") CONFIG_FILES="$CONFIG_FILES gthread/makefile.msc" ;;
     "gthread/gthread.rc") CONFIG_FILES="$CONFIG_FILES gthread/gthread.rc" ;;
     "gio/gio.rc") CONFIG_FILES="$CONFIG_FILES gio/gio.rc" ;;
-    "tests/makefile.msc") CONFIG_FILES="$CONFIG_FILES tests/makefile.msc" ;;
+    #"tests/makefile.msc") CONFIG_FILES="$CONFIG_FILES tests/makefile.msc" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
