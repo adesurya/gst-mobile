@@ -5,11 +5,11 @@ SYSROOT=$ROOT/platforms/android-14/arch-arm/
 HOST=arm-linux-androideabi
 CACHE_FILE=./arm-linux.cache
 
-export AR="$CCROOT/bin/$HOST-ar --sysroot=$SYSROOT"
+#export AR="$CCROOT/bin/$HOST-ar --sysroot=$SYSROOT"
 export CC="$CCROOT/bin/$HOST-gcc --sysroot=$SYSROOT"
 export CXX="$CCROOT/bin/$HOST-g++ --sysroot=$SYSROOT"
 export STRIP="$CCROOT/bin/$HOST-strip --sysroot=$SYSROOT"
-export RANLIB="$CCROOT/bin/$HOST-ranlib --sysroot=$SYSROOT"
+#export RANLIB="$CCROOT/bin/$HOST-ranlib --sysroot=$SYSROOT"
 export CFLAGS=""
 export LDFLAGS=""
 
@@ -62,7 +62,9 @@ export LDFLAGS="$LDFLAGS -L$libpath"
 ## for libffi
 PWD=`pwd`
 export LIBFFI_CFLAGS="-I$PWD/../libffi-3.0.11/oldbld/libffi/include"
-export LIBFFI_LIBS="-L$PWD/../libffi-3.0.11/oldbld/libffi/lib"
+export LIBFFI_LIBS="-L$PWD/../libffi-3.0.11/oldbld/libffi/lib -lffi"
+export LDFLAGS="$LDFLAGS $LIBFFI_LIBS"
+
 
 ##
 ## start configure
@@ -79,7 +81,11 @@ ac_cv_func_posix_getgrgid_r=no
 __EOF
 chmod a-w $CACHE_FILE
 
+PWD=`pwd`
+PREFIX=$PWD/libglib
+
 ../configure \
+    --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
     --cache-file=$CACHE_FILE \
     --disable-selinux --disable-fam --disable-xattr
