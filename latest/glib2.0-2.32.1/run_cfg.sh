@@ -55,7 +55,7 @@ if [ ! -f $libpath/libintl.a ]; then
     ln -sf $libpath/libandroid_support.a $libpath/libintl.a
 fi
 
-export CFLAGS="$CFLAGS -I$ROOT/sources/android/support/include -I$incpath"
+export CFLAGS="$CFLAGS -DANDROID -I$ROOT/sources/android/support/include -I$incpath"
 export LDFLAGS="$LDFLAGS -L$libpath"
 
 ##
@@ -73,7 +73,6 @@ cd oldbld
 
 chmod a+w $CACHE_FILE
 cat > $CACHE_FILE << __EOF
-ac_cv_header_pwd_h=no
 glib_cv_stack_grows=no
 glib_cv_uscore=no
 ac_cv_func_posix_getpwuid_r=no
