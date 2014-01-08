@@ -26263,6 +26263,7 @@ $as_echo "no" >&6; }
 elif test $pkg_failed = untried; then
 	HAVE_X11=no
 else
+if test -z $USE_NO_X11; then
 	X11_CFLAGS=$pkg_cv_X11_CFLAGS
 	X11_LIBS=$pkg_cv_X11_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
@@ -26270,6 +26271,7 @@ $as_echo "yes" >&6; }
 	HAVE_X11=yes
 fi
 
+fi
 
 
  if test "x$HAVE_X11" = "xyes"; then
