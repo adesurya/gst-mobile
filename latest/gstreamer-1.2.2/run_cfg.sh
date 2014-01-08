@@ -46,10 +46,9 @@ mkdir -p $PREFIX
     --disable-examples \
     --enable-static-plugins \
     --disable-tests --disable-failing-tests --disable-benchmarks \
-    --disable-tools --disable-largefile \
-    --disable-check --disable-Bsymbolic \
+    --disable-largefile \
+    --disable-Bsymbolic \
     --without-libiconv-prefix \
     --without-libintl-prefix 
 
 make && make install
-
