@@ -1,18 +1,18 @@
-ROOT=/opt/zdisk/zerox/android/android-ndk-r9
+if test -z $ROOT; then
+    ROOT=/opt/zdisk/zerox/android/android-ndk-r9
+    CCROOT=$ROOT/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86
+    SYSROOT=$ROOT/platforms/android-14/arch-arm/
+    HOST=arm-linux-androideabi
+    CACHE_FILE=./arm-linux.cache
 
-CCROOT=$ROOT/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86
-SYSROOT=$ROOT/platforms/android-14/arch-arm/
-HOST=arm-linux-androideabi
-CACHE_FILE=./arm-linux.cache
-
-#export AR="$CCROOT/bin/$HOST-ar --sysroot=$SYSROOT"
-export CC="$CCROOT/bin/$HOST-gcc --sysroot=$SYSROOT"
-export CXX="$CCROOT/bin/$HOST-g++ --sysroot=$SYSROOT"
-export STRIP="$CCROOT/bin/$HOST-strip --sysroot=$SYSROOT"
-#export RANLIB="$CCROOT/bin/$HOST-ranlib --sysroot=$SYSROOT"
-export CFLAGS=""
-export LDFLAGS=""
-
+    #export AR="$CCROOT/bin/$HOST-ar --sysroot=$SYSROOT"
+    export CC="$CCROOT/bin/$HOST-gcc --sysroot=$SYSROOT"
+    export CXX="$CCROOT/bin/$HOST-g++ --sysroot=$SYSROOT"
+    export STRIP="$CCROOT/bin/$HOST-strip --sysroot=$SYSROOT"
+    #export RANLIB="$CCROOT/bin/$HOST-ranlib --sysroot=$SYSROOT"
+    export CFLAGS=""
+    export LDFLAGS=""
+fi
 
 
 ##
@@ -35,6 +35,7 @@ __EOF
     $ROOT/ndk-build
     )
 fi
+
 if [ ! -f $libpath/libiconv.a ]; then
     ln -sf $libpath/libandroid_support.a $libpath/libiconv.a
 fi
@@ -62,8 +63,8 @@ export LDFLAGS="$LDFLAGS -L$libpath"
 ##
 ## for libffi
 PWD=`pwd`
-export LIBFFI_CFLAGS="-I$PWD/../libffi-3.0.11/oldbld/libffi/include"
-export LIBFFI_LIBS="-L$PWD/../libffi-3.0.11/oldbld/libffi/lib -lffi"
+export LIBFFI_CFLAGS="-I$PWD/../groot/include"
+export LIBFFI_LIBS="-L$PWD/../groot/lib -lffi"
 export LDFLAGS="$LDFLAGS $LIBFFI_LIBS $DBUS1_LIBS"
 
 
@@ -81,8 +82,8 @@ ac_cv_func_posix_getgrgid_r=no
 __EOF
 chmod a-w $CACHE_FILE
 
-PWD=`pwd`
-PREFIX=$PWD/libglib
+PREFIX=`pwd`/../../groot
+mkdir -p $PREFIX
 
 ../configure \
     --prefix=$PREFIX \
