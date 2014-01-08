@@ -38,10 +38,8 @@ mkdir -p oldbld
 cd oldbld
 
 PWD=`pwd`
-PREFIX=$PWD/libgstreamer
+PREFIX=$PWD/libgst-plugins-base
 
-# --disable-registry 
-#--disable-plugin 
 ../configure \
     --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
@@ -59,5 +57,5 @@ PREFIX=$PWD/libgstreamer
     --without-libiconv-prefix \
     --without-libintl-prefix
 
-#make && make install
+make && make install
 
