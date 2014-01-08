@@ -25196,12 +25196,12 @@ $as_echo "$as_me: using GStreamer Base Plugins in $GSTPB_PLUGINS_DIR" >&6;}
 
   fi
 
-
+if test -z $GST_TOOLS_DIR; then
 GST_TOOLS_DIR=`$PKG_CONFIG --variable=toolsdir gstreamer-$GST_API_VERSION`
 if test -z $GST_TOOLS_DIR; then
   as_fn_error $? "no tools dir defined in GStreamer pkg-config file; core upgrade needed." "$LINENO" 5
 fi
-
+fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: Using GStreamer Core Plugins in $GST_PLUGINS_DIR" >&5
 $as_echo "$as_me: Using GStreamer Core Plugins in $GST_PLUGINS_DIR" >&6;}
@@ -36711,7 +36711,8 @@ GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^_*gst_plugin_
 
 $MKDIR_P tests/check/orc
 
-ac_config_files="$ac_config_files Makefile gst/Makefile gst/alpha/Makefile gst/apetag/Makefile gst/audiofx/Makefile gst/audioparsers/Makefile gst/auparse/Makefile gst/autodetect/Makefile gst/avi/Makefile gst/cutter/Makefile gst/deinterlace/Makefile gst/dtmf/Makefile gst/debugutils/Makefile gst/effectv/Makefile gst/equalizer/Makefile gst/flv/Makefile gst/goom/Makefile gst/goom2k1/Makefile gst/id3demux/Makefile gst/icydemux/Makefile gst/imagefreeze/Makefile gst/interleave/Makefile gst/isomp4/Makefile gst/law/Makefile gst/level/Makefile gst/matroska/Makefile gst/monoscope/Makefile gst/multifile/Makefile gst/multipart/Makefile gst/replaygain/Makefile gst/rtp/Makefile gst/rtpmanager/Makefile gst/rtsp/Makefile gst/shapewipe/Makefile gst/smpte/Makefile gst/spectrum/Makefile gst/udp/Makefile gst/videobox/Makefile gst/videocrop/Makefile gst/videofilter/Makefile gst/videomixer/Makefile gst/wavenc/Makefile gst/wavparse/Makefile gst/flx/Makefile gst/y4m/Makefile ext/Makefile ext/aalib/Makefile ext/cairo/Makefile ext/dv/Makefile ext/flac/Makefile ext/gdk_pixbuf/Makefile ext/jack/Makefile ext/jpeg/Makefile ext/libcaca/Makefile ext/libpng/Makefile ext/pulse/Makefile ext/raw1394/Makefile ext/shout2/Makefile ext/soup/Makefile ext/speex/Makefile ext/taglib/Makefile ext/vpx/Makefile ext/wavpack/Makefile sys/Makefile sys/directsound/Makefile sys/oss/Makefile sys/oss4/Makefile sys/osxaudio/Makefile sys/osxvideo/Makefile sys/sunaudio/Makefile sys/v4l2/Makefile sys/waveform/Makefile sys/ximage/Makefile po/Makefile.in tests/Makefile tests/check/Makefile tests/examples/Makefile tests/examples/audiofx/Makefile tests/examples/cairo/Makefile tests/examples/equalizer/Makefile tests/examples/jack/Makefile tests/examples/level/Makefile tests/examples/pulse/Makefile tests/examples/rtp/Makefile tests/examples/shapewipe/Makefile tests/examples/spectrum/Makefile tests/examples/v4l2/Makefile tests/files/Makefile tests/icles/Makefile common/Makefile common/m4/Makefile m4/Makefile docs/Makefile docs/plugins/Makefile docs/version.entities pkgconfig/Makefile pkgconfig/gstreamer-plugins-good-uninstalled.pc gst-plugins-good.spec"
+ac_config_files="$ac_config_files Makefile gst/Makefile gst/alpha/Makefile gst/apetag/Makefile gst/audiofx/Makefile gst/audioparsers/Makefile gst/auparse/Makefile gst/autodetect/Makefile gst/avi/Makefile gst/cutter/Makefile gst/deinterlace/Makefile gst/dtmf/Makefile gst/debugutils/Makefile gst/effectv/Makefile gst/equalizer/Makefile gst/flv/Makefile gst/goom/Makefile gst/goom2k1/Makefile gst/id3demux/Makefile gst/icydemux/Makefile gst/imagefreeze/Makefile gst/interleave/Makefile gst/isomp4/Makefile gst/law/Makefile gst/level/Makefile gst/matroska/Makefile gst/monoscope/Makefile gst/multifile/Makefile gst/multipart/Makefile gst/replaygain/Makefile gst/rtp/Makefile gst/rtpmanager/Makefile gst/rtsp/Makefile gst/shapewipe/Makefile gst/smpte/Makefile gst/spectrum/Makefile gst/udp/Makefile gst/videobox/Makefile gst/videocrop/Makefile gst/videofilter/Makefile gst/videomixer/Makefile gst/wavenc/Makefile gst/wavparse/Makefile gst/flx/Makefile gst/y4m/Makefile ext/Makefile ext/aalib/Makefile ext/cairo/Makefile ext/dv/Makefile ext/flac/Makefile ext/gdk_pixbuf/Makefile ext/jack/Makefile ext/jpeg/Makefile ext/libcaca/Makefile ext/libpng/Makefile ext/pulse/Makefile ext/raw1394/Makefile ext/shout2/Makefile ext/soup/Makefile ext/speex/Makefile ext/taglib/Makefile ext/vpx/Makefile ext/wavpack/Makefile sys/Makefile sys/directsound/Makefile sys/oss/Makefile sys/oss4/Makefile sys/osxaudio/Makefile sys/osxvideo/Makefile sys/sunaudio/Makefile sys/v4l2/Makefile sys/waveform/Makefile sys/ximage/Makefile"
+miss_config_files="po/Makefile.in tests/Makefile tests/check/Makefile tests/examples/Makefile tests/examples/audiofx/Makefile tests/examples/cairo/Makefile tests/examples/equalizer/Makefile tests/examples/jack/Makefile tests/examples/level/Makefile tests/examples/pulse/Makefile tests/examples/rtp/Makefile tests/examples/shapewipe/Makefile tests/examples/spectrum/Makefile tests/examples/v4l2/Makefile tests/files/Makefile tests/icles/Makefile common/Makefile common/m4/Makefile m4/Makefile docs/Makefile docs/plugins/Makefile docs/version.entities pkgconfig/Makefile pkgconfig/gstreamer-plugins-good-uninstalled.pc gst-plugins-good.spec"
 
 
 sed \
