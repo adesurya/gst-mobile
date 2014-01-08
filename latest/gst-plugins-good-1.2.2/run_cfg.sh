@@ -1,40 +1,42 @@
-ROOT=/opt/zdisk/zerox/android/android-ndk-r9
+if test -z $ROOT; then
+    ROOT=/opt/zdisk/zerox/android/android-ndk-r9
+    CCROOT=$ROOT/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86
+    SYSROOT=$ROOT/platforms/android-14/arch-arm/
+    HOST=arm-linux-androideabi
+    CACHE_FILE=./arm-linux.cache
 
-CCROOT=$ROOT/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86
-SYSROOT=$ROOT/platforms/android-14/arch-arm/
-HOST=arm-linux-androideabi
-CACHE_FILE=./arm-linux.cache
-
-export AR="$CCROOT/bin/$HOST-ar --sysroot=$SYSROOT"
-export CC="$CCROOT/bin/$HOST-gcc --sysroot=$SYSROOT"
-export CXX="$CCROOT/bin/$HOST-g++ --sysroot=$SYSROOT"
-export STRIP="$CCROOT/bin/$HOST-strip --sysroot=$SYSROOT"
-export RANLIB="$CCROOT/bin/$HOST-ranlib --sysroot=$SYSROOT"
+    #export AR="$CCROOT/bin/$HOST-ar --sysroot=$SYSROOT"
+    export CC="$CCROOT/bin/$HOST-gcc --sysroot=$SYSROOT"
+    export CXX="$CCROOT/bin/$HOST-g++ --sysroot=$SYSROOT"
+    export STRIP="$CCROOT/bin/$HOST-strip --sysroot=$SYSROOT"
+    #export RANLIB="$CCROOT/bin/$HOST-ranlib --sysroot=$SYSROOT"
+fi
 export CFLAGS=""
 export LDFLAGS=""
 
 
 PWD=`pwd`
-export GLIB_CFLAGS="-I$PWD/../glib2.0-2.32.1/oldbld/libglib/include/glib-2.0 -I$PWD/../glib2.0-2.32.1/oldbld/libglib/lib/glib-2.0/include"
-export GLIB_LIBS="-L$PWD/../glib2.0-2.32.1/oldbld/libglib/lib -lglib-2.0 -lgobject-2.0 -lgmodule-2.0 -lm"
-export GIO_CFLAGS="-I$PWD/../glib2.0-2.32.1/oldbld/libglib/include/glib-2.0"
-export GIO_LIBS="-L$PWD/../glib2.0-2.32.1/oldbld/libglib/lib -lgio-2.0"
-export GST_CFLAGS="-I$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/include/gstreamer-1.0"
-export GST_LIBS="-L$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/lib -lgstreamer-1.0"
-export GST_BASE_CFLAGS="-I$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/include/gstreamer-1.0"
-export GST_BASE_LIBS="-L$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/lib -lgstbase-1.0"
-export GST_CONTROLLER_CFLAGS="-I$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/include/gstreamer-1.0"
-export GST_CONTROLLER_LIBS="-L$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/lib -lgstcontroller-1.0"
-export GST_NET_CFLAGS="-I$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/include/gstreamer-1.0"
-export GST_NET_LIBS="-L$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/lib -lgstnet-1.0"
-export GST_CHECK_CFLAGS="-I$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/include/gstreamer-1.0"
-export GST_CHECK_LIBS="-L$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/lib -lgstcheck-1.0"
-export GST_PLUGINS_BASE_CFLAGS="-I$PWD/../gst-plugins-base-1.2.2/oldbld/libgst-plugins-base/include/gstreamer-1.0"
-export GST_PLUGINS_BASE_LIBS="-L$PWD/../gst-plugins-base-1.2.2/oldbld/libgst-plugins-base/lib"
+export GLIB_CFLAGS="-I$PWD/../groot/include/glib-2.0 -I$PWD/../groot/lib/glib-2.0/include"
+export GLIB_LIBS="-L$PWD/../groot/lib -lglib-2.0 -lgobject-2.0 -lgmodule-2.0 -lm"
+export GIO_CFLAGS="-I$PWD/../groot/include/glib-2.0"
+export GIO_LIBS="-L$PWD/../groot/lib -lgio-2.0"
 
-export GST_TOOLS_DIR="$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/bin"
-export GST_PLUGINS_DIR="$PWD/../gstreamer-1.2.2/oldbld/libgstreamer/lib/gstreamer-1.0"
-export GSTPB_PLUGINS_DIR="$PWD/../gst-plugins-base-1.2.2/oldbld/libgst-plugins-base/lib/gstreamer-1.0"
+export GST_CFLAGS="-I$PWD/../groot/include/gstreamer-1.0"
+export GST_LIBS="-L$PWD/../groot/lib -lgstreamer-1.0"
+export GST_BASE_CFLAGS="-I$PWD/../groot/include/gstreamer-1.0"
+export GST_BASE_LIBS="-L$PWD/../groot/lib -lgstbase-1.0"
+export GST_CONTROLLER_CFLAGS="-I$PWD/../groot/include/gstreamer-1.0"
+export GST_CONTROLLER_LIBS="-L$PWD/../groot/lib -lgstcontroller-1.0"
+export GST_NET_CFLAGS="-I$PWD/../groot/include/gstreamer-1.0"
+export GST_NET_LIBS="-L$PWD/../groot/lib -lgstnet-1.0"
+export GST_CHECK_CFLAGS="-I$PWD/../groot/include/gstreamer-1.0"
+export GST_CHECK_LIBS="-L$PWD/../groot/lib -lgstcheck-1.0"
+export GST_PLUGINS_BASE_CFLAGS="-I$PWD/../groot/include/gstreamer-1.0"
+export GST_PLUGINS_BASE_LIBS="-L$PWD/../groot/lib"
+
+export GST_TOOLS_DIR="$PWD/../groot/bin"
+export GST_PLUGINS_DIR="$PWD/../groot/lib/gstreamer-1.0"
+export GSTPB_PLUGINS_DIR="$PWD/../groot/lib/gstreamer-1.0"
 
 export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS $GST_CFLAGS"
 export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS"
@@ -44,8 +46,8 @@ export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS"
 mkdir -p oldbld
 cd oldbld
 
-PWD=`pwd`
-PREFIX=$PWD/libgst-plugins-good
+PREFIX=`pwd`/../../groot
+mkdir -p $PREFIX
 
 ../configure \
     --prefix=$PREFIX \

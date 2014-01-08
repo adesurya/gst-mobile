@@ -10,9 +10,9 @@ if test -z $ROOT; then
     export CXX="$CCROOT/bin/$HOST-g++ --sysroot=$SYSROOT"
     export STRIP="$CCROOT/bin/$HOST-strip --sysroot=$SYSROOT"
     #export RANLIB="$CCROOT/bin/$HOST-ranlib --sysroot=$SYSROOT"
-    export CFLAGS=""
-    export LDFLAGS=""
 fi
+export CFLAGS=""
+export LDFLAGS=""
 
 
 ##
@@ -73,6 +73,9 @@ export LDFLAGS="$LDFLAGS $LIBFFI_LIBS $DBUS1_LIBS"
 mkdir -p oldbld
 cd oldbld
 
+PREFIX=`pwd`/../../groot
+mkdir -p $PREFIX
+
 chmod a+w $CACHE_FILE
 cat > $CACHE_FILE << __EOF
 glib_cv_stack_grows=no
@@ -81,9 +84,6 @@ ac_cv_func_posix_getpwuid_r=no
 ac_cv_func_posix_getgrgid_r=no
 __EOF
 chmod a-w $CACHE_FILE
-
-PREFIX=`pwd`/../../groot
-mkdir -p $PREFIX
 
 ../configure \
     --prefix=$PREFIX \

@@ -10,9 +10,9 @@ if test -z $ROOT; then
     export CXX="$CCROOT/bin/$HOST-g++ --sysroot=$SYSROOT"
     export STRIP="$CCROOT/bin/$HOST-strip --sysroot=$SYSROOT"
     #export RANLIB="$CCROOT/bin/$HOST-ranlib --sysroot=$SYSROOT"
-    export CFLAGS=""
-    export LDFLAGS=""
 fi
+export CFLAGS=""
+export LDFLAGS=""
 
 
 ##
