@@ -14,13 +14,13 @@ fi
 export CFLAGS=""
 export LDFLAGS=""
 
+PWD=`pwd`
 
 ##
 ## android support sources
 jnipath=andriod/support/jni
-libpath=`pwd`/$jnipath/../obj/local/armeabi-v7a
-incpath=`pwd`/$jnipath/../include
-if [ ! -f $libpath/libandroid_support.a ]; then
+libpath=$jnipath/../obj/local/armeabi-v7a
+if [ ! -f $PWD/../groot/lib/libandroid_support.a ]; then
     (
     mkdir -p $jnipath
     cd $jnipath
@@ -34,15 +34,19 @@ include $ROOT/sources/android/support/Android.mk
 __EOF
     $ROOT/ndk-build
     )
+
+    if [ -f $libpath/libandroid_support.a ]; then
+        cp -f $libpath/libandroid_support.a $PWD/../groot/lib/
+        cp -f $libpath/libandroid_support.a $PWD/../groot/lib/libintl.a
+        cp -f $libpath/libandroid_support.a $PWD/../groot/lib/libiconv.a
+        cp -f $libpath/libandroid_support.a $PWD/../groot/lib/libpthread.a
+        cp -f $libpath/libandroid_support.a $PWD/../groot/lib/librt.a
+    fi
 fi
 
-if [ ! -f $libpath/libiconv.a ]; then
-    ln -sf $libpath/libandroid_support.a $libpath/libiconv.a
-fi
-if [ ! -f $incpath/libintl.h ]; then
+if [ ! -f $PWD/../groot/android/include/libintl.h ]; then
     (
-    mkdir -p  $incpath
-    cat >  $incpath/libintl.h << __EOF
+    cat >  $PWD/../groot/android/include/libintl.h << __EOF
 #ifndef _LIBINTL_H_ANDROID_
 #define _LIBINTL_H_ANDROID_
 char *gettext(const char *msgid);
@@ -52,17 +56,12 @@ char *dcgettext(const char *domainname, const char *msgid, int category);
 __EOF
     )
 fi
-if [ ! -f $libpath/libintl.a ]; then
-    ln -sf $libpath/libandroid_support.a $libpath/libintl.a
-    ln -sf $libpath/libandroid_support.a $libpath/libpthread.a
-fi
 
-export CFLAGS="$CFLAGS -DANDROID -I$ROOT/sources/android/support/include -I$incpath"
-export LDFLAGS="$LDFLAGS -L$libpath"
+export CFLAGS="$CFLAGS -DANDROID -I$ROOT/sources/android/support/include -I$PWD/../groot/android/include"
+export LDFLAGS="$LDFLAGS -L$PWD/../groot/lib"
 
 ##
 ## for libffi
-PWD=`pwd`
 export LIBFFI_CFLAGS="-I$PWD/../groot/include"
 export LIBFFI_LIBS="-L$PWD/../groot/lib -lffi"
 export LDFLAGS="$LDFLAGS $LIBFFI_LIBS $DBUS1_LIBS"
