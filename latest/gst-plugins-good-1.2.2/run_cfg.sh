@@ -63,5 +63,4 @@ mkdir -p $PREFIX
     --with-gudev \
     --with-libv4l2
 
-#make && make install
-
+make && make install
