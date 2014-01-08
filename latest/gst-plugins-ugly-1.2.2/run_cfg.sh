@@ -17,12 +17,25 @@ export LDFLAGS=""
 
 PWD=`pwd`
 export GLIB_CFLAGS="-I$PWD/../groot/include/glib-2.0 -I$PWD/../groot/lib/glib-2.0/include"
-export GLIB_LIBS="-L$PWD/../groot/lib -lglib-2.0 -lgobject-2.0"
+export GLIB_LIBS="-L$PWD/../groot/lib -lglib-2.0 -lgobject-2.0 -lgmodule-2.0 -lm"
 export GIO_CFLAGS="-I$PWD/../groot/include/glib-2.0"
 export GIO_LIBS="-L$PWD/../groot/lib -lgio-2.0"
 
-export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS"
-export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS"
+export GST_CFLAGS="-I$PWD/../groot/include/gstreamer-1.0"
+export GST_LIBS="-L$PWD/../groot/lib -lgstreamer-1.0"
+export GST_BASE_CFLAGS="-I$PWD/../groot/include/gstreamer-1.0"
+export GST_BASE_LIBS="-L$PWD/../groot/lib -lgstbase-1.0"
+export GST_CHECK_CFLAGS="-I$PWD/../groot/include/gstreamer-1.0"
+export GST_CHECK_LIBS="-L$PWD/../groot/lib -lgstcheck-1.0"
+export GST_PLUGINS_BASE_CFLAGS="-I$PWD/../groot/include/gstreamer-1.0"
+export GST_PLUGINS_BASE_LIBS="-L$PWD/../groot/lib"
+
+export GST_TOOLS_DIR="$PWD/../groot/bin"
+export GST_PLUGINS_DIR="$PWD/../groot/lib/gstreamer-1.0"
+export GSTPB_PLUGINS_DIR="$PWD/../groot/lib/gstreamer-1.0"
+
+export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS $GST_CFLAGS"
+export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS"
 
 ##
 ## start configure
@@ -32,22 +45,15 @@ cd oldbld
 PREFIX=`pwd`/../../groot
 mkdir -p $PREFIX
 
-# --disable-registry 
-#--disable-plugin 
 ../configure \
     --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
     --disable-nls --disable-rpath \
-    --disable-gst-debug \
-    --disable-parse --disable-option-parsing \
-    --disable-trace --disable-alloc-trace \
     --disable-debug \
     --disable-valgrind \
     --disable-examples \
+    --disable-external \
     --enable-static-plugins \
-    --disable-tests --disable-failing-tests --disable-benchmarks \
-    --disable-largefile \
-    --disable-Bsymbolic \
     --without-libiconv-prefix \
     --without-libintl-prefix 
 
