@@ -10,11 +10,18 @@
 #include <jni.h>
 #include <android/log.h>
 
+#include "zeroptr.h"
+#include "mutex.h"
+#include "MediaPlayer.h"
+
 #define ALOGV
+#define ALOGE
 
 // ----------------------------------------------------------------------------
 
-using namespace keau;
+using namespace eau;
+
+typedef template <class T> class zeroptr sp;
 
 // ----------------------------------------------------------------------------
 
@@ -39,7 +46,7 @@ class JNIMediaPlayerListener: public MediaPlayerListener
 public:
     JNIMediaPlayerListener(JNIEnv* env, jobject thiz, jobject weak_thiz);
     ~JNIMediaPlayerListener();
-    virtual void notify(int msg, int ext1, int ext2, const Parcel *obj = NULL);
+
 private:
     JNIMediaPlayerListener();
     jclass      mClass;     // Reference to MediaPlayer class
@@ -48,7 +55,6 @@ private:
 
 JNIMediaPlayerListener::JNIMediaPlayerListener(JNIEnv* env, jobject thiz, jobject weak_thiz)
 {
-
     // Hold onto the MediaPlayer class for use in calling the static method
     // that posts events to the application thread.
     jclass clazz = env->GetObjectClass(thiz);
@@ -72,46 +78,24 @@ JNIMediaPlayerListener::~JNIMediaPlayerListener()
     env->DeleteGlobalRef(mClass);
 }
 
-void JNIMediaPlayerListener::notify(int msg, int ext1, int ext2, const Parcel *obj)
-{
-    JNIEnv *env = AndroidRuntime::getJNIEnv();
-    if (obj && obj->dataSize() > 0) {
-        jobject jParcel = createJavaParcelObject(env);
-        if (jParcel != NULL) {
-            Parcel* nativeParcel = parcelForJavaObject(env, jParcel);
-            nativeParcel->setData(obj->data(), obj->dataSize());
-            env->CallStaticVoidMethod(mClass, fields.post_event, mObject,
-                    msg, ext1, ext2, jParcel);
-        }
-    } else {
-        env->CallStaticVoidMethod(mClass, fields.post_event, mObject,
-                msg, ext1, ext2, NULL);
-    }
-    if (env->ExceptionCheck()) {
-        ALOGW("An exception occurred while notifying an event.");
-        LOGW_EX(env);
-        env->ExceptionClear();
-    }
-}
-
 // ----------------------------------------------------------------------------
 
 static sp<MediaPlayer> getMediaPlayer(JNIEnv* env, jobject thiz)
 {
-    Mutex::Autolock l(sLock);
+    Autolock l(sLock);
     MediaPlayer* const p = (MediaPlayer*)env->GetIntField(thiz, fields.context);
     return sp<MediaPlayer>(p);
 }
 
 static sp<MediaPlayer> setMediaPlayer(JNIEnv* env, jobject thiz, const sp<MediaPlayer>& player)
 {
-    Mutex::Autolock l(sLock);
+    Autolock l(sLock);
     sp<MediaPlayer> old = (MediaPlayer*)env->GetIntField(thiz, fields.context);
     if (player.get()) {
-        player->incStrong((void*)setMediaPlayer);
+        player->AddRef();
     }
     if (old != 0) {
-        old->decStrong((void*)setMediaPlayer);
+        old->Release();
     }
     env->SetIntField(thiz, fields.context, (int)player.get());
     return old;
@@ -126,7 +110,9 @@ static void process_media_player_call(JNIEnv *env, jobject thiz, status_t opStat
     if (exception == NULL) {  // Don't throw exception. Instead, send an event.
         if (opStatus != (status_t) OK) {
             sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
-            if (mp != 0) mp->notify(MEDIA_ERROR, opStatus, 0);
+            if (mp != 0) {
+                //TODO
+            }
         }
     } else {  // Throw exception!
         if ( opStatus == (status_t) INVALID_OPERATION ) {
@@ -147,8 +133,7 @@ static void process_media_player_call(JNIEnv *env, jobject thiz, status_t opStat
     }
 }
 
-static void
-k2_media_MediaPlayer_setDataSourceAndHeaders(
+static void k2_media_MediaPlayer_setDataSourceAndHeaders(
         JNIEnv *env, jobject thiz, jstring path,
         jobjectArray keys, jobjectArray values) {
 
@@ -169,29 +154,18 @@ k2_media_MediaPlayer_setDataSourceAndHeaders(
     }
     ALOGV("setDataSource: path %s", tmp);
 
-    String8 pathStr(tmp);
+    string pathStr(tmp);
     env->ReleaseStringUTFChars(path, tmp);
     tmp = NULL;
 
     // We build a KeyedVector out of the key and val arrays
-    KeyedVector<String8, String8> headersVector;
-    if (!ConvertKeyValueArraysToKeyedVector(
-            env, keys, values, &headersVector)) {
-        return;
-    }
-
-    status_t opStatus =
-        mp->setDataSource(
-                pathStr,
-                headersVector.size() > 0? &headersVector : NULL);
-
-    process_media_player_call(
-            env, thiz, opStatus, "java/io/IOException",
-            "setDataSource failed." );
+    // TODO for keys and values
+    vector<string> headersVector;
+    status_t opStatus = mp->setDataSource(pathStr, headersVector);
+    process_media_player_call(env, thiz, opStatus, "java/io/IOException", "setDataSource failed." );
 }
 
-static void
-k2_media_MediaPlayer_setDataSourceFD(JNIEnv *env, jobject thiz, jobject fileDescriptor, jlong offset, jlong length)
+static void k2_media_MediaPlayer_setDataSourceFD(JNIEnv *env, jobject thiz, jobject fileDescriptor, jlong offset, jlong length)
 {
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
     if (mp == NULL ) {
@@ -205,31 +179,15 @@ k2_media_MediaPlayer_setDataSourceFD(JNIEnv *env, jobject thiz, jobject fileDesc
     }
     int fd = jniGetFDFromFileDescriptor(env, fileDescriptor);
     ALOGV("setDataSourceFD: fd %d", fd);
-    process_media_player_call( env, thiz, mp->setDataSource(fd, offset, length), "java/io/IOException", "setDataSourceFD failed." );
+    process_media_player_call(env, thiz, mp->setDataSource(fd, offset, length), "java/io/IOException", "setDataSourceFD failed." );
 }
 
-static sp<IGraphicBufferProducer>
-getVideoSurfaceTexture(JNIEnv* env, jobject thiz) {
-    IGraphicBufferProducer * const p = (IGraphicBufferProducer*)env->GetIntField(thiz, fields.surface_texture);
-    return sp<IGraphicBufferProducer>(p);
-}
-
-static void
-decVideoSurfaceRef(JNIEnv *env, jobject thiz)
+static int getVideoSurfaceTexture(JNIEnv *env, jobject thiz)
 {
-    sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
-    if (mp == NULL) {
-        return;
-    }
-
-    sp<IGraphicBufferProducer> old_st = getVideoSurfaceTexture(env, thiz);
-    if (old_st != NULL) {
-        old_st->decStrong((void*)decVideoSurfaceRef);
-    }
+    return env->GetIntField(thiz, fields.surface_texture);
 }
 
-static void
-setVideoSurface(JNIEnv *env, jobject thiz, jobject jsurface, jboolean mediaPlayerMustBeAlive)
+static void setVideoSurface(JNIEnv *env, jobject thiz, jobject jsurface, jboolean mediaPlayerMustBeAlive)
 {
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
     if (mp == NULL) {
@@ -239,43 +197,21 @@ setVideoSurface(JNIEnv *env, jobject thiz, jobject jsurface, jboolean mediaPlaye
         return;
     }
 
-    decVideoSurfaceRef(env, thiz);
-
-    sp<IGraphicBufferProducer> new_st;
-    if (jsurface) {
-        sp<Surface> surface(android_view_Surface_getSurface(env, jsurface));
-        if (surface != NULL) {
-            new_st = surface->getIGraphicBufferProducer();
-            if (new_st == NULL) {
-                jniThrowException(env, "java/lang/IllegalArgumentException",
-                    "The surface does not have a binding SurfaceTexture!");
-                return;
-            }
-            new_st->incStrong((void*)decVideoSurfaceRef);
-        } else {
-            jniThrowException(env, "java/lang/IllegalArgumentException",
-                    "The surface has been released");
-            return;
-        }
-    }
-
-    env->SetIntField(thiz, fields.surface_texture, (int)new_st.get());
+    env->SetIntField(thiz, fields.surface_texture, (int)jsurface);
 
     // This will fail if the media player has not been initialized yet. This
     // can be the case if setDisplay() on MediaPlayer.java has been called
     // before setDataSource(). The redundant call to setVideoSurfaceTexture()
     // in prepare/prepareAsync covers for this case.
-    mp->setVideoSurfaceTexture(new_st);
+    mp->setVideoSurfaceTexture(jsurface);
 }
 
-static void
-k2_media_MediaPlayer_setVideoSurface(JNIEnv *env, jobject thiz, jobject jsurface)
+static void k2_media_MediaPlayer_setVideoSurface(JNIEnv *env, jobject thiz, jobject jsurface)
 {
     setVideoSurface(env, thiz, jsurface, true /* mediaPlayerMustBeAlive */);
 }
 
-static void
-k2_media_MediaPlayer_prepare(JNIEnv *env, jobject thiz)
+static void k2_media_MediaPlayer_prepare(JNIEnv *env, jobject thiz)
 {
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
     if (mp == NULL ) {
@@ -285,14 +221,12 @@ k2_media_MediaPlayer_prepare(JNIEnv *env, jobject thiz)
 
     // Handle the case where the display surface was set before the mp was
     // initialized. We try again to make it stick.
-    sp<IGraphicBufferProducer> st = getVideoSurfaceTexture(env, thiz);
-    mp->setVideoSurfaceTexture(st);
-
+    int texture = getVideoSurfaceTexture(env, thiz);
+    mp->setVideoSurfaceTexture(texture);
     process_media_player_call( env, thiz, mp->prepare(), "java/io/IOException", "Prepare failed." );
 }
 
-static void
-k2_media_MediaPlayer_prepareAsync(JNIEnv *env, jobject thiz)
+static void k2_media_MediaPlayer_prepareAsync(JNIEnv *env, jobject thiz)
 {
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
     if (mp == NULL ) {
@@ -302,14 +236,12 @@ k2_media_MediaPlayer_prepareAsync(JNIEnv *env, jobject thiz)
 
     // Handle the case where the display surface was set before the mp was
     // initialized. We try again to make it stick.
-    sp<IGraphicBufferProducer> st = getVideoSurfaceTexture(env, thiz);
-    mp->setVideoSurfaceTexture(st);
-
+    int texture = getVideoSurfaceTexture(env, thiz);
+    mp->setVideoSurfaceTexture(texture);
     process_media_player_call( env, thiz, mp->prepareAsync(), "java/io/IOException", "Prepare Async failed." );
 }
 
-static void
-k2_media_MediaPlayer_start(JNIEnv *env, jobject thiz)
+static void k2_media_MediaPlayer_start(JNIEnv *env, jobject thiz)
 {
     ALOGV("start");
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
@@ -320,8 +252,7 @@ k2_media_MediaPlayer_start(JNIEnv *env, jobject thiz)
     process_media_player_call( env, thiz, mp->start(), NULL, NULL );
 }
 
-static void
-k2_media_MediaPlayer_stop(JNIEnv *env, jobject thiz)
+static void k2_media_MediaPlayer_stop(JNIEnv *env, jobject thiz)
 {
     ALOGV("stop");
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
@@ -332,8 +263,7 @@ k2_media_MediaPlayer_stop(JNIEnv *env, jobject thiz)
     process_media_player_call( env, thiz, mp->stop(), NULL, NULL );
 }
 
-static void
-k2_media_MediaPlayer_pause(JNIEnv *env, jobject thiz)
+static void k2_media_MediaPlayer_pause(JNIEnv *env, jobject thiz)
 {
     ALOGV("pause");
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
@@ -344,8 +274,7 @@ k2_media_MediaPlayer_pause(JNIEnv *env, jobject thiz)
     process_media_player_call( env, thiz, mp->pause(), NULL, NULL );
 }
 
-static jboolean
-k2_media_MediaPlayer_isPlaying(JNIEnv *env, jobject thiz)
+static jboolean k2_media_MediaPlayer_isPlaying(JNIEnv *env, jobject thiz)
 {
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
     if (mp == NULL ) {
@@ -358,8 +287,7 @@ k2_media_MediaPlayer_isPlaying(JNIEnv *env, jobject thiz)
     return is_playing;
 }
 
-static void
-k2_media_MediaPlayer_seekTo(JNIEnv *env, jobject thiz, int msec)
+static void k2_media_MediaPlayer_seekTo(JNIEnv *env, jobject thiz, int msec)
 {
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
     if (mp == NULL ) {
@@ -370,8 +298,7 @@ k2_media_MediaPlayer_seekTo(JNIEnv *env, jobject thiz, int msec)
     process_media_player_call( env, thiz, mp->seekTo(msec), NULL, NULL );
 }
 
-static int
-k2_media_MediaPlayer_getVideoWidth(JNIEnv *env, jobject thiz)
+static int k2_media_MediaPlayer_getVideoWidth(JNIEnv *env, jobject thiz)
 {
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
     if (mp == NULL ) {
@@ -387,8 +314,7 @@ k2_media_MediaPlayer_getVideoWidth(JNIEnv *env, jobject thiz)
     return w;
 }
 
-static int
-k2_media_MediaPlayer_getVideoHeight(JNIEnv *env, jobject thiz)
+static int k2_media_MediaPlayer_getVideoHeight(JNIEnv *env, jobject thiz)
 {
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
     if (mp == NULL ) {
@@ -404,9 +330,7 @@ k2_media_MediaPlayer_getVideoHeight(JNIEnv *env, jobject thiz)
     return h;
 }
 
-
-static int
-k2_media_MediaPlayer_getCurrentPosition(JNIEnv *env, jobject thiz)
+static int k2_media_MediaPlayer_getCurrentPosition(JNIEnv *env, jobject thiz)
 {
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
     if (mp == NULL ) {
@@ -419,8 +343,7 @@ k2_media_MediaPlayer_getCurrentPosition(JNIEnv *env, jobject thiz)
     return msec;
 }
 
-static int
-k2_media_MediaPlayer_getDuration(JNIEnv *env, jobject thiz)
+static int k2_media_MediaPlayer_getDuration(JNIEnv *env, jobject thiz)
 {
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
     if (mp == NULL ) {
@@ -433,8 +356,7 @@ k2_media_MediaPlayer_getDuration(JNIEnv *env, jobject thiz)
     return msec;
 }
 
-static void
-k2_media_MediaPlayer_reset(JNIEnv *env, jobject thiz)
+static void k2_media_MediaPlayer_reset(JNIEnv *env, jobject thiz)
 {
     ALOGV("reset");
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
@@ -445,8 +367,7 @@ k2_media_MediaPlayer_reset(JNIEnv *env, jobject thiz)
     process_media_player_call( env, thiz, mp->reset(), NULL, NULL );
 }
 
-static void
-k2_media_MediaPlayer_setAudioStreamType(JNIEnv *env, jobject thiz, int streamtype)
+static void k2_media_MediaPlayer_setAudioStreamType(JNIEnv *env, jobject thiz, int streamtype)
 {
     ALOGV("setAudioStreamType: %d", streamtype);
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
@@ -457,8 +378,7 @@ k2_media_MediaPlayer_setAudioStreamType(JNIEnv *env, jobject thiz, int streamtyp
     process_media_player_call( env, thiz, mp->setAudioStreamType((audio_stream_type_t) streamtype) , NULL, NULL );
 }
 
-static void
-k2_media_MediaPlayer_setLooping(JNIEnv *env, jobject thiz, jboolean looping)
+static void k2_media_MediaPlayer_setLooping(JNIEnv *env, jobject thiz, jboolean looping)
 {
     ALOGV("setLooping: %d", looping);
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
@@ -469,8 +389,7 @@ k2_media_MediaPlayer_setLooping(JNIEnv *env, jobject thiz, jboolean looping)
     process_media_player_call( env, thiz, mp->setLooping(looping), NULL, NULL );
 }
 
-static jboolean
-k2_media_MediaPlayer_isLooping(JNIEnv *env, jobject thiz)
+static jboolean k2_media_MediaPlayer_isLooping(JNIEnv *env, jobject thiz)
 {
     ALOGV("isLooping");
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
@@ -481,8 +400,7 @@ k2_media_MediaPlayer_isLooping(JNIEnv *env, jobject thiz)
     return mp->isLooping();
 }
 
-static void
-k2_media_MediaPlayer_setVolume(JNIEnv *env, jobject thiz, float leftVolume, float rightVolume)
+static void k2_media_MediaPlayer_setVolume(JNIEnv *env, jobject thiz, float leftVolume, float rightVolume)
 {
     ALOGV("setVolume: left %f  right %f", leftVolume, rightVolume);
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
@@ -493,80 +411,13 @@ k2_media_MediaPlayer_setVolume(JNIEnv *env, jobject thiz, float leftVolume, floa
     process_media_player_call( env, thiz, mp->setVolume(leftVolume, rightVolume), NULL, NULL );
 }
 
-// Sends the request and reply parcels to the media player via the
-// binder interface.
-static jint
-k2_media_MediaPlayer_invoke(JNIEnv *env, jobject thiz,
-                                 jobject java_request, jobject java_reply)
-{
-    sp<MediaPlayer> media_player = getMediaPlayer(env, thiz);
-    if (media_player == NULL ) {
-        jniThrowException(env, "java/lang/IllegalStateException", NULL);
-        return UNKNOWN_ERROR;
-    }
-
-    Parcel *request = parcelForJavaObject(env, java_request);
-    Parcel *reply = parcelForJavaObject(env, java_reply);
-
-    // Don't use process_media_player_call which use the async loop to
-    // report errors, instead returns the status.
-    return media_player->invoke(*request, reply);
-}
-
-// Sends the new filter to the client.
-static jint
-k2_media_MediaPlayer_setMetadataFilter(JNIEnv *env, jobject thiz, jobject request)
-{
-    sp<MediaPlayer> media_player = getMediaPlayer(env, thiz);
-    if (media_player == NULL ) {
-        jniThrowException(env, "java/lang/IllegalStateException", NULL);
-        return UNKNOWN_ERROR;
-    }
-
-    Parcel *filter = parcelForJavaObject(env, request);
-
-    if (filter == NULL ) {
-        jniThrowException(env, "java/lang/RuntimeException", "Filter is null");
-        return UNKNOWN_ERROR;
-    }
-
-    return media_player->setMetadataFilter(*filter);
-}
-
-static jboolean
-k2_media_MediaPlayer_getMetadata(JNIEnv *env, jobject thiz, jboolean update_only,
-                                      jboolean apply_filter, jobject reply)
-{
-    sp<MediaPlayer> media_player = getMediaPlayer(env, thiz);
-    if (media_player == NULL ) {
-        jniThrowException(env, "java/lang/IllegalStateException", NULL);
-        return false;
-    }
-
-    Parcel *metadata = parcelForJavaObject(env, reply);
-
-    if (metadata == NULL ) {
-        jniThrowException(env, "java/lang/RuntimeException", "Reply parcel is null");
-        return false;
-    }
-
-    metadata->freeData();
-    // On return metadata is positioned at the beginning of the
-    // metadata. Note however that the parcel actually starts with the
-    // return code so you should not rewind the parcel using
-    // setDataPosition(0).
-    return media_player->getMetadata(update_only, apply_filter, metadata) == OK;
-}
-
 // This function gets some field IDs, which in turn causes class initialization.
 // It is called from a static block in MediaPlayer, which won't run until the
 // first time an instance of this class is used.
-static void
-k2_media_MediaPlayer_native_init(JNIEnv *env)
+static void k2_media_MediaPlayer_native_init(JNIEnv *env)
 {
     jclass clazz;
-
-    clazz = env->FindClass("android/media/MediaPlayer");
+    clazz = env->FindClass("k2/media/MediaPlayer");
     if (clazz == NULL) {
         return;
     }
@@ -587,23 +438,12 @@ k2_media_MediaPlayer_native_init(JNIEnv *env)
         return;
     }
 
-    clazz = env->FindClass("android/net/ProxyProperties");
-    if (clazz == NULL) {
-        return;
-    }
-
-    fields.proxyConfigGetHost =
-        env->GetMethodID(clazz, "getHost", "()Ljava/lang/String;");
-
-    fields.proxyConfigGetPort =
-        env->GetMethodID(clazz, "getPort", "()I");
-
-    fields.proxyConfigGetExclusionList =
-        env->GetMethodID(clazz, "getExclusionList", "()Ljava/lang/String;");
+    fields.proxyConfigGetHost = env->GetMethodID(clazz, "getHost", "()Ljava/lang/String;");
+    fields.proxyConfigGetPort = env->GetMethodID(clazz, "getPort", "()I");
+    fields.proxyConfigGetExclusionList = env->GetMethodID(clazz, "getExclusionList", "()Ljava/lang/String;");
 }
 
-static void
-k2_media_MediaPlayer_native_setup(JNIEnv *env, jobject thiz, jobject weak_this)
+static void k2_media_MediaPlayer_native_setup(JNIEnv *env, jobject thiz, jobject weak_this)
 {
     ALOGV("native_setup");
     sp<MediaPlayer> mp = new MediaPlayer();
@@ -620,8 +460,7 @@ k2_media_MediaPlayer_native_setup(JNIEnv *env, jobject thiz, jobject weak_this)
     setMediaPlayer(env, thiz, mp);
 }
 
-static void
-k2_media_MediaPlayer_release(JNIEnv *env, jobject thiz)
+static void k2_media_MediaPlayer_release(JNIEnv *env, jobject thiz)
 {
     ALOGV("release");
     decVideoSurfaceRef(env, thiz);
@@ -633,8 +472,7 @@ k2_media_MediaPlayer_release(JNIEnv *env, jobject thiz)
     }
 }
 
-static void
-k2_media_MediaPlayer_native_finalize(JNIEnv *env, jobject thiz)
+static void k2_media_MediaPlayer_native_finalize(JNIEnv *env, jobject thiz)
 {
     ALOGV("native_finalize");
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
@@ -665,8 +503,7 @@ static jint k2_media_MediaPlayer_get_audio_session_id(JNIEnv *env,  jobject thiz
     return mp->getAudioSessionId();
 }
 
-static void
-k2_media_MediaPlayer_setAuxEffectSendLevel(JNIEnv *env, jobject thiz, jfloat level)
+static void k2_media_MediaPlayer_setAuxEffectSendLevel(JNIEnv *env, jobject thiz, jfloat level)
 {
     ALOGV("setAuxEffectSendLevel: level %f", level);
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
@@ -687,23 +524,7 @@ static void k2_media_MediaPlayer_attachAuxEffect(JNIEnv *env,  jobject thiz, jin
     process_media_player_call( env, thiz, mp->attachAuxEffect(effectId), NULL, NULL );
 }
 
-static jint
-k2_media_MediaPlayer_pullBatteryData(JNIEnv *env, jobject thiz, jobject java_reply)
-{
-    sp<IBinder> binder = defaultServiceManager()->getService(String16("media.player"));
-    sp<IMediaPlayerService> service = interface_cast<IMediaPlayerService>(binder);
-    if (service.get() == NULL) {
-        jniThrowException(env, "java/lang/RuntimeException", "cannot get MediaPlayerService");
-        return UNKNOWN_ERROR;
-    }
-
-    Parcel *reply = parcelForJavaObject(env, java_reply);
-
-    return service->pullBatteryData(reply);
-}
-
-static jint
-k2_media_MediaPlayer_setRetransmitEndpoint(JNIEnv *env, jobject thiz,
+static jint k2_media_MediaPlayer_setRetransmitEndpoint(JNIEnv *env, jobject thiz,
                                                 jstring addrString, jint port) {
     sp<MediaPlayer> mp = getMediaPlayer(env, thiz);
     if (mp == NULL ) {
@@ -712,15 +533,13 @@ k2_media_MediaPlayer_setRetransmitEndpoint(JNIEnv *env, jobject thiz,
     }
 
     const char *cAddrString = NULL;
-
     if (NULL != addrString) {
         cAddrString = env->GetStringUTFChars(addrString, NULL);
         if (cAddrString == NULL) {  // Out of memory
             return NO_MEMORY;
         }
     }
-    ALOGV("setRetransmitEndpoint: %s:%d",
-            cAddrString ? cAddrString : "(null)", port);
+    ALOGV("setRetransmitEndpoint: %s:%d", cAddrString ? cAddrString : "(null)", port);
 
     status_t ret;
     if (cAddrString && (port > 0xFFFF)) {
@@ -741,8 +560,7 @@ k2_media_MediaPlayer_setRetransmitEndpoint(JNIEnv *env, jobject thiz,
     return ret;
 }
 
-static void
-k2_media_MediaPlayer_setNextMediaPlayer(JNIEnv *env, jobject thiz, jobject java_player)
+static void k2_media_MediaPlayer_setNextMediaPlayer(JNIEnv *env, jobject thiz, jobject java_player)
 {
     ALOGV("setNextMediaPlayer");
     sp<MediaPlayer> thisplayer = getMediaPlayer(env, thiz);
@@ -768,9 +586,7 @@ k2_media_MediaPlayer_setNextMediaPlayer(JNIEnv *env, jobject thiz, jobject java_
     ;
 }
 
-static void
-k2_media_MediaPlayer_updateProxyConfig(
-        JNIEnv *env, jobject thiz, jobject proxyProps)
+static void k2_media_MediaPlayer_updateProxyConfig(JNIEnv *env, jobject thiz, jobject proxyProps)
 {
     ALOGV("updateProxyConfig");
     sp<MediaPlayer> thisplayer = getMediaPlayer(env, thiz);
@@ -782,8 +598,7 @@ k2_media_MediaPlayer_updateProxyConfig(
         thisplayer->updateProxyConfig(
                 NULL /* host */, 0 /* port */, NULL /* exclusionList */);
     } else {
-        jstring hostObj = (jstring)env->CallObjectMethod(
-                proxyProps, fields.proxyConfigGetHost);
+        jstring hostObj = (jstring)env->CallObjectMethod(proxyProps, fields.proxyConfigGetHost);
 
         const char *host = env->GetStringUTFChars(hostObj, NULL);
 
@@ -839,9 +654,6 @@ static JNINativeMethod gMethods[] = {
     {"setLooping",          "(Z)V",                             (void *)k2_media_MediaPlayer_setLooping},
     {"isLooping",           "()Z",                              (void *)k2_media_MediaPlayer_isLooping},
     {"setVolume",           "(FF)V",                            (void *)k2_media_MediaPlayer_setVolume},
-    {"native_invoke",       "(Landroid/os/Parcel;Landroid/os/Parcel;)I",(void *)k2_media_MediaPlayer_invoke},
-    {"native_setMetadataFilter", "(Landroid/os/Parcel;)I",      (void *)k2_media_MediaPlayer_setMetadataFilter},
-    {"native_getMetadata", "(ZZLandroid/os/Parcel;)Z",          (void *)k2_media_MediaPlayer_getMetadata},
     {"native_init",         "()V",                              (void *)k2_media_MediaPlayer_native_init},
     {"native_setup",        "(Ljava/lang/Object;)V",            (void *)k2_media_MediaPlayer_native_setup},
     {"native_finalize",     "()V",                              (void *)k2_media_MediaPlayer_native_finalize},
@@ -849,13 +661,12 @@ static JNINativeMethod gMethods[] = {
     {"setAudioSessionId",   "(I)V",                             (void *)k2_media_MediaPlayer_set_audio_session_id},
     {"setAuxEffectSendLevel", "(F)V",                           (void *)k2_media_MediaPlayer_setAuxEffectSendLevel},
     {"attachAuxEffect",     "(I)V",                             (void *)k2_media_MediaPlayer_attachAuxEffect},
-    {"native_pullBatteryData", "(Landroid/os/Parcel;)I",        (void *)k2_media_MediaPlayer_pullBatteryData},
     {"native_setRetransmitEndpoint", "(Ljava/lang/String;I)I",  (void *)k2_media_MediaPlayer_setRetransmitEndpoint},
     {"setNextMediaPlayer",  "(Landroid/media/MediaPlayer;)V",   (void *)k2_media_MediaPlayer_setNextMediaPlayer},
     {"updateProxyConfig", "(Landroid/net/ProxyProperties;)V", (void *)k2_media_MediaPlayer_updateProxyConfig},
 };
 
-static const char* const kClassPathName = "keau/media/MediaPlayer";
+static const char* const kClassPathName = "k2/media/MediaPlayer";
 
 // This function only registers the native methods
 static int register_k2_media_MediaPlayer(JNIEnv *env)
