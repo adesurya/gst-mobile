@@ -13,9 +13,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.os.ParcelFileDescriptor;
 import android.os.Process;
 import android.os.PowerManager;
 import android.util.Log;
@@ -76,7 +73,7 @@ public class MediaPlayer
     public static final boolean BYPASS_METADATA_FILTER = false;
 
     static {
-        System.loadLibrary("media_jni");
+        System.loadLibrary("k2player");
         native_init();
     }
 
@@ -84,7 +81,7 @@ public class MediaPlayer
     // Name of the remote interface for the media player. Must be kept
     // in sync with the 2nd parameter of the IMPLEMENT_META_INTERFACE
     // macro invocation in IMediaPlayer.cpp
-    private final static String IMEDIA_PLAYER = "android.media.IMediaPlayer";
+    private final static String IMEDIA_PLAYER = "k2.media.IMediaPlayer";
 
     private int mNativeContext; // accessed by native methods
     private int mNativeSurfaceTexture;  // accessed by native methods
@@ -653,89 +650,6 @@ public class MediaPlayer
     public native int getDuration();
 
     /**
-     * Gets the media metadata.
-     *
-     * @param update_only controls whether the full set of available
-     * metadata is returned or just the set that changed since the
-     * last call. See {@see #METADATA_UPDATE_ONLY} and {@see
-     * #METADATA_ALL}.
-     *
-     * @param apply_filter if true only metadata that matches the
-     * filter is returned. See {@see #APPLY_METADATA_FILTER} and {@see
-     * #BYPASS_METADATA_FILTER}.
-     *
-     * @return The metadata, possibly empty. null if an error occured.
-     // FIXME: unhide.
-     * {@hide}
-     */
-    public Metadata getMetadata(final boolean update_only,
-                                final boolean apply_filter) {
-        Parcel reply = Parcel.obtain();
-        Metadata data = new Metadata();
-
-        if (!native_getMetadata(update_only, apply_filter, reply)) {
-            reply.recycle();
-            return null;
-        }
-
-        // Metadata takes over the parcel, don't recycle it unless
-        // there is an error.
-        if (!data.parse(reply)) {
-            reply.recycle();
-            return null;
-        }
-        return data;
-    }
-
-    /**
-     * Set a filter for the metadata update notification and update
-     * retrieval. The caller provides 2 set of metadata keys, allowed
-     * and blocked. The blocked set always takes precedence over the
-     * allowed one.
-     * Metadata.MATCH_ALL and Metadata.MATCH_NONE are 2 sets available as
-     * shorthands to allow/block all or no metadata.
-     *
-     * By default, there is no filter set.
-     *
-     * @param allow Is the set of metadata the client is interested
-     *              in receiving new notifications for.
-     * @param block Is the set of metadata the client is not interested
-     *              in receiving new notifications for.
-     * @return The call status code.
-     *
-     // FIXME: unhide.
-     * {@hide}
-     */
-    public int setMetadataFilter(Set<Integer> allow, Set<Integer> block) {
-        // Do our serialization manually instead of calling
-        // Parcel.writeArray since the sets are made of the same type
-        // we avoid paying the price of calling writeValue (used by
-        // writeArray) which burns an extra int per element to encode
-        // the type.
-        Parcel request =  newRequest();
-
-        // The parcel starts already with an interface token. There
-        // are 2 filters. Each one starts with a 4bytes number to
-        // store the len followed by a number of int (4 bytes as well)
-        // representing the metadata type.
-        int capacity = request.dataSize() + 4 * (1 + allow.size() + 1 + block.size());
-
-        if (request.dataCapacity() < capacity) {
-            request.setDataCapacity(capacity);
-        }
-
-        request.writeInt(allow.size());
-        for(Integer t: allow) {
-            request.writeInt(t);
-        }
-        request.writeInt(block.size());
-        for(Integer t: block) {
-            request.writeInt(t);
-        }
-        return native_setMetadataFilter(request);
-    }
-
-    /**
      * Set the MediaPlayer to start when this MediaPlayer finishes playback
      * (i.e. reaches the end of the stream).
      * The media framework will attempt to transition from this player to
@@ -940,195 +854,9 @@ public class MediaPlayer
      */
     public native void setAuxEffectSendLevel(float level);
 
-    /*
-     * @param request Parcel destinated to the media player. The
-     *                Interface token must be set to the IMediaPlayer
-     *                one to be routed correctly through the system.
-     * @param reply[out] Parcel that will contain the reply.
-     * @return The status code.
-     */
-    private native final int native_invoke(Parcel request, Parcel reply);
-
-
-    /*
-     * @param update_only If true fetch only the set of metadata that have
-     *                    changed since the last invocation of getMetadata.
-     *                    The set is built using the unfiltered
-     *                    notifications the native player sent to the
-     *                    MediaPlayerService during that period of
-     *                    time. If false, all the metadatas are considered.
-     * @param apply_filter  If true, once the metadata set has been built based on
-     *                     the value update_only, the current filter is applied.
-     * @param reply[out] On return contains the serialized
-     *                   metadata. Valid only if the call was successful.
-     * @return The status code.
-     */
-    private native final boolean native_getMetadata(boolean update_only,
-                                                    boolean apply_filter,
-                                                    Parcel reply);
-
-    /*
-     * @param request Parcel with the 2 serialized lists of allowed
-     *                metadata types followed by the one to be
-     *                dropped. Each list starts with an integer
-     *                indicating the number of metadata type elements.
-     * @return The status code.
-     */
-    private native final int native_setMetadataFilter(Parcel request);
-
     private static native final void native_init();
     private native final void native_setup(Object mediaplayer_this);
     private native final void native_finalize();
-
-    /**
-     * Class for MediaPlayer to return each audio/video/subtitle track's metadata.
-     *
-     * @see android.media.MediaPlayer#getTrackInfo
-     */
-    static public class TrackInfo implements Parcelable {
-        /**
-         * Gets the track type.
-         * @return TrackType which indicates if the track is video, audio, timed text.
-         */
-        public int getTrackType() {
-            return mTrackType;
-        }
-
-        /**
-         * Gets the language code of the track.
-         * @return a language code in either way of ISO-639-1 or ISO-639-2.
-         * When the language is unknown or could not be determined,
-         * ISO-639-2 language code, "und", is returned.
-         */
-        public String getLanguage() {
-            String language = mFormat.getString(MediaFormat.KEY_LANGUAGE);
-            return language == null ? "und" : language;
-        }
-
-        /**
-         * Gets the {@link MediaFormat} of the track.  If the format is
-         * unknown or could not be determined, null is returned.
-         */
-        public MediaFormat getFormat() {
-            if (mTrackType == MEDIA_TRACK_TYPE_TIMEDTEXT
-                    || mTrackType == MEDIA_TRACK_TYPE_SUBTITLE) {
-                return mFormat;
-            }
-            return null;
-        }
-
-        public static final int MEDIA_TRACK_TYPE_UNKNOWN = 0;
-        public static final int MEDIA_TRACK_TYPE_VIDEO = 1;
-        public static final int MEDIA_TRACK_TYPE_AUDIO = 2;
-        public static final int MEDIA_TRACK_TYPE_TIMEDTEXT = 3;
-        /** @hide */
-        public static final int MEDIA_TRACK_TYPE_SUBTITLE = 4;
-
-        final int mTrackType;
-        final MediaFormat mFormat;
-
-        TrackInfo(Parcel in) {
-            mTrackType = in.readInt();
-            // TODO: parcel in the full MediaFormat
-            String language = in.readString();
-
-            if (mTrackType == MEDIA_TRACK_TYPE_TIMEDTEXT) {
-                mFormat = MediaFormat.createSubtitleFormat(
-                    MEDIA_MIMETYPE_TEXT_SUBRIP, language);
-            } else if (mTrackType == MEDIA_TRACK_TYPE_SUBTITLE) {
-                mFormat = MediaFormat.createSubtitleFormat(
-                    MEDIA_MIMETYPE_TEXT_VTT, language);
-                mFormat.setInteger(MediaFormat.KEY_IS_AUTOSELECT, in.readInt());
-                mFormat.setInteger(MediaFormat.KEY_IS_DEFAULT, in.readInt());
-                mFormat.setInteger(MediaFormat.KEY_IS_FORCED_SUBTITLE, in.readInt());
-            } else {
-                mFormat = new MediaFormat();
-                mFormat.setString(MediaFormat.KEY_LANGUAGE, language);
-            }
-        }
-
-        /** @hide */
-        TrackInfo(int type, MediaFormat format) {
-            mTrackType = type;
-            mFormat = format;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(mTrackType);
-            dest.writeString(getLanguage());
-
-            if (mTrackType == MEDIA_TRACK_TYPE_SUBTITLE) {
-                dest.writeInt(mFormat.getInteger(MediaFormat.KEY_IS_AUTOSELECT));
-                dest.writeInt(mFormat.getInteger(MediaFormat.KEY_IS_DEFAULT));
-                dest.writeInt(mFormat.getInteger(MediaFormat.KEY_IS_FORCED_SUBTITLE));
-            }
-        }
-
-        /**
-         * Used to read a TrackInfo from a Parcel.
-         */
-        static final Parcelable.Creator<TrackInfo> CREATOR
-                = new Parcelable.Creator<TrackInfo>() {
-                    @Override
-                    public TrackInfo createFromParcel(Parcel in) {
-                        return new TrackInfo(in);
-                    }
-
-                    @Override
-                    public TrackInfo[] newArray(int size) {
-                        return new TrackInfo[size];
-                    }
-                };
-
-    };
-
-    /**
-     * Returns an array of track information.
-     *
-     * @return Array of track info. The total number of tracks is the array length.
-     * Must be called again if an external timed text source has been added after any of the
-     * addTimedTextSource methods are called.
-     * @throws IllegalStateException if it is called in an invalid state.
-     */
-    public TrackInfo[] getTrackInfo() throws IllegalStateException {
-        TrackInfo trackInfo[] = getInbandTrackInfo();
-        // add out-of-band tracks
-        TrackInfo allTrackInfo[] = new TrackInfo[trackInfo.length + mOutOfBandSubtitleTracks.size()];
-        System.arraycopy(trackInfo, 0, allTrackInfo, 0, trackInfo.length);
-        int i = trackInfo.length;
-        for (SubtitleTrack track: mOutOfBandSubtitleTracks) {
-            allTrackInfo[i] = new TrackInfo(TrackInfo.MEDIA_TRACK_TYPE_SUBTITLE, track.getFormat());
-            ++i;
-        }
-        return allTrackInfo;
-    }
-
-    private TrackInfo[] getInbandTrackInfo() throws IllegalStateException {
-        Parcel request = Parcel.obtain();
-        Parcel reply = Parcel.obtain();
-        try {
-            request.writeInterfaceToken(IMEDIA_PLAYER);
-            request.writeInt(INVOKE_ID_GET_TRACK_INFO);
-            invoke(request, reply);
-            TrackInfo trackInfo[] = reply.createTypedArray(TrackInfo.CREATOR);
-            return trackInfo;
-        } finally {
-            request.recycle();
-            reply.recycle();
-        }
-    }
 
     /* Do not change these values without updating their counterparts
      * in include/media/stagefright/MediaDefs.h and media/libstagefright/MediaDefs.cpp!
@@ -1396,144 +1124,6 @@ public class MediaPlayer
     }
 
     /**
-     * Adds an external timed text file (FileDescriptor).
-     *
-     * It is the caller's responsibility to close the file descriptor.
-     * It is safe to do so as soon as this call returns.
-     *
-     * Currently supported format is SubRip. Note that a single external timed text source may
-     * contain multiple tracks in it. One can find the total number of available tracks
-     * using {@link #getTrackInfo()} to see what additional tracks become available
-     * after this method call.
-     *
-     * @param fd the FileDescriptor for the file you want to play
-     * @param offset the offset into the file where the data to be played starts, in bytes
-     * @param length the length in bytes of the data to be played
-     * @param mimeType The mime type of the file. Must be one of the mime types listed above.
-     * @throws IllegalArgumentException if the mimeType is not supported.
-     * @throws IllegalStateException if called in an invalid state.
-     */
-    public void addTimedTextSource(FileDescriptor fd, long offset, long length, String mimeType)
-            throws IllegalArgumentException, IllegalStateException {
-        if (!availableMimeTypeForExternalSource(mimeType)) {
-            throw new IllegalArgumentException("Illegal mimeType for timed text source: " + mimeType);
-        }
-
-        Parcel request = Parcel.obtain();
-        Parcel reply = Parcel.obtain();
-        try {
-            request.writeInterfaceToken(IMEDIA_PLAYER);
-            request.writeInt(INVOKE_ID_ADD_EXTERNAL_SOURCE_FD);
-            request.writeFileDescriptor(fd);
-            request.writeLong(offset);
-            request.writeLong(length);
-            request.writeString(mimeType);
-            invoke(request, reply);
-        } finally {
-            request.recycle();
-            reply.recycle();
-        }
-    }
-
-    /**
-     * Selects a track.
-     * <p>
-     * If a MediaPlayer is in invalid state, it throws an IllegalStateException exception.
-     * If a MediaPlayer is in <em>Started</em> state, the selected track is presented immediately.
-     * If a MediaPlayer is not in Started state, it just marks the track to be played.
-     * </p>
-     * <p>
-     * In any valid state, if it is called multiple times on the same type of track (ie. Video,
-     * Audio, Timed Text), the most recent one will be chosen.
-     * </p>
-     * <p>
-     * The first audio and video tracks are selected by default if available, even though
-     * this method is not called. However, no timed text track will be selected until
-     * this function is called.
-     * </p>
-     * <p>
-     * Currently, only timed text tracks or audio tracks can be selected via this method.
-     * In addition, the support for selecting an audio track at runtime is pretty limited
-     * in that an audio track can only be selected in the <em>Prepared</em> state.
-     * </p>
-     * @param index the index of the track to be selected. The valid range of the index
-     * is 0..total number of track - 1. The total number of tracks as well as the type of
-     * each individual track can be found by calling {@link #getTrackInfo()} method.
-     * @throws IllegalStateException if called in an invalid state.
-     *
-     * @see android.media.MediaPlayer#getTrackInfo
-     */
-    public void selectTrack(int index) throws IllegalStateException {
-        selectOrDeselectTrack(index, true /* select */);
-    }
-
-    /**
-     * Deselect a track.
-     * <p>
-     * Currently, the track must be a timed text track and no audio or video tracks can be
-     * deselected. If the timed text track identified by index has not been
-     * selected before, it throws an exception.
-     * </p>
-     * @param index the index of the track to be deselected. The valid range of the index
-     * is 0..total number of tracks - 1. The total number of tracks as well as the type of
-     * each individual track can be found by calling {@link #getTrackInfo()} method.
-     * @throws IllegalStateException if called in an invalid state.
-     *
-     * @see android.media.MediaPlayer#getTrackInfo
-     */
-    public void deselectTrack(int index) throws IllegalStateException {
-        selectOrDeselectTrack(index, false /* select */);
-    }
-
-    private void selectOrDeselectTrack(int index, boolean select)
-            throws IllegalStateException {
-        // handle subtitle track through subtitle controller
-        SubtitleTrack track = null;
-        if (index < mInbandSubtitleTracks.length) {
-            track = mInbandSubtitleTracks[index];
-        } else if (index < mInbandSubtitleTracks.length + mOutOfBandSubtitleTracks.size()) {
-            track = mOutOfBandSubtitleTracks.get(index - mInbandSubtitleTracks.length);
-        }
-
-        if (mSubtitleController != null && track != null) {
-            if (select) {
-                mSubtitleController.selectTrack(track);
-            } else if (mSubtitleController.getSelectedTrack() == track) {
-                mSubtitleController.selectTrack(null);
-            } else {
-                Log.w(TAG, "trying to deselect track that was not selected");
-            }
-            return;
-        }
-
-        selectOrDeselectInbandTrack(index, select);
-    }
-
-    private void selectOrDeselectInbandTrack(int index, boolean select)
-            throws IllegalStateException {
-        Parcel request = Parcel.obtain();
-        Parcel reply = Parcel.obtain();
-        try {
-            request.writeInterfaceToken(IMEDIA_PLAYER);
-            request.writeInt(select? INVOKE_ID_SELECT_TRACK: INVOKE_ID_DESELECT_TRACK);
-            request.writeInt(index);
-            invoke(request, reply);
-        } finally {
-            request.recycle();
-            reply.recycle();
-        }
-    }
-
-
-    /**
-     * @param reply Parcel with audio/video duration info for battery
-                    tracking usage
-     * @return The status code.
-     * {@hide}
-     */
-    public native static int native_pullBatteryData(Parcel reply);
-
-    /**
      * Sets the target UDP re-transmit endpoint for the low level player.
      * Generally, the address portion of the endpoint is an IP multicast
      * address, although a unicast address would be equally valid.  When a valid
@@ -1707,35 +1297,11 @@ public class MediaPlayer
                 // No real default action so far.
                 return;
             case MEDIA_TIMED_TEXT:
-                if (mOnTimedTextListener == null)
-                    return;
-                if (msg.obj == null) {
-                    mOnTimedTextListener.onTimedText(mMediaPlayer, null);
-                } else {
-                    if (msg.obj instanceof Parcel) {
-                        Parcel parcel = (Parcel)msg.obj;
-                        TimedText text = new TimedText(parcel);
-                        parcel.recycle();
-                        mOnTimedTextListener.onTimedText(mMediaPlayer, text);
-                    }
-                }
                 return;
-
             case MEDIA_SUBTITLE_DATA:
-                if (mOnSubtitleDataListener == null) {
-                    return;
-                }
-                if (msg.obj instanceof Parcel) {
-                    Parcel parcel = (Parcel) msg.obj;
-                    SubtitleData data = new SubtitleData(parcel);
-                    parcel.recycle();
-                    mOnSubtitleDataListener.onSubtitleData(mMediaPlayer, data);
-                }
                 return;
-
             case MEDIA_NOP: // interface test message - ignore
                 break;
-
             default:
                 Log.e(TAG, "Unknown message type " + msg.what);
                 return;

@@ -84,8 +84,8 @@ static jclass findClass(JNIEnv* env, const char* name) {
 }
 
 void JniConstants::init(JNIEnv* env) {
-    bidiRunClass = findClass(env, "java/text/Bidi$Run");
-    bigDecimalClass = findClass(env, "java/math/BigDecimal");
+    //bidiRunClass = findClass(env, "java/text/Bidi$Run");
+    //bigDecimalClass = findClass(env, "java/math/BigDecimal");
     booleanClass = findClass(env, "java/lang/Boolean");
     byteClass = findClass(env, "java/lang/Byte");
     byteArrayClass = findClass(env, "[B");
@@ -96,9 +96,9 @@ void JniConstants::init(JNIEnv* env) {
     floatClass = findClass(env, "java/lang/Float");
     deflaterClass = findClass(env, "java/util/zip/Deflater");
     doubleClass = findClass(env, "java/lang/Double");
-    errnoExceptionClass = findClass(env, "libcore/io/ErrnoException");
+    //errnoExceptionClass = findClass(env, "libcore/io/ErrnoException");
     fieldClass = findClass(env, "java/lang/reflect/Field");
-    fieldPositionIteratorClass = findClass(env, "libcore/icu/NativeDecimalFormat$FieldPositionIterator");
+    //fieldPositionIteratorClass = findClass(env, "libcore/icu/NativeDecimalFormat$FieldPositionIterator");
     fileDescriptorClass = findClass(env, "java/io/FileDescriptor");
     gaiExceptionClass = findClass(env, "libcore/io/GaiException");
     inet6AddressClass = findClass(env, "java/net/Inet6Address");
@@ -124,6 +124,7 @@ void JniConstants::init(JNIEnv* env) {
     socketClass = findClass(env, "java/net/Socket");
     socketImplClass = findClass(env, "java/net/SocketImpl");
     stringClass = findClass(env, "java/lang/String");
+#if 0
     structAddrinfoClass = findClass(env, "libcore/io/StructAddrinfo");
     structFlockClass = findClass(env, "libcore/io/StructFlock");
     structGroupReqClass = findClass(env, "libcore/io/StructGroupReq");
@@ -135,4 +136,5 @@ void JniConstants::init(JNIEnv* env) {
     structTimevalClass = findClass(env, "libcore/io/StructTimeval");
     structUcredClass = findClass(env, "libcore/io/StructUcred");
     structUtsnameClass = findClass(env, "libcore/io/StructUtsname");
+#endif
 }

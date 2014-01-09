@@ -2,6 +2,8 @@
 #define _MEDIA_PLAYER_H_
 
 #include "Errors.h"
+using namespace android;
+
 #include "refcount.h"
 
 #include <string>

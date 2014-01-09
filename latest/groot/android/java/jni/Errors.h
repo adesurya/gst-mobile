@@ -20,7 +20,7 @@
 #include <sys/types.h>
 #include <errno.h>
 
-namespace eau {
+namespace android {
 
 // use this type to return error codes
 #ifdef HAVE_MS_C_RUNTIME

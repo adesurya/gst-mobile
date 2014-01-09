@@ -16,7 +16,7 @@
 
 #define LOG_TAG "JNIHelp"
 
-#define LIBCORE_CPP_JNI_HELPERS
+//#define LIBCORE_CPP_JNI_HELPERS
 
 #include "JniConstants.h"
 #include "JNIHelp.h"
@@ -258,7 +258,11 @@ int jniThrowIOException(C_JNIEnv* env, int errnum) {
 }
 
 void jniLogException(C_JNIEnv* env, int priority, const char* tag, jthrowable exception) {
+#ifdef LIBCORE_CPP_JNI_HELPERS
     std::string trace(jniGetStackTrace(env, exception));
+#else
+    std::string trace("jniLogException");
+#endif
     __android_log_write(priority, tag, trace.c_str());
 }
 

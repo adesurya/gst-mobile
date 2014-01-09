@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include "JniConstants.h"
 #include "JNIHelp.h"
 #include "MediaPlayer.h"
 #include "ALog-priv.h"
@@ -691,6 +692,8 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 
     /* success -- return valid version number */
     result = JNI_VERSION_1_4;
+
+    JniConstants::init(env);
 
 bail:
     return result;
