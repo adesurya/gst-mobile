@@ -73,7 +73,7 @@ namespace eau
     };
 
     typedef SmartScopedLock ScopedLock;
-    typedef SmartScopedLock AutoLock;
+    typedef SmartScopedLock Autolock;
 
 } // namespace eau
 

@@ -1,34 +1,30 @@
 #ifndef _MEDIA_PLAYER_H_
 #define _MEDIA_PLAYER_H_
 
+#include "Errors.h"
+#include "refcount.h"
+
 #include <string>
 #include <vector>
 using namespace std;
 
-#define INVALID_OPERATION -1
-#define NO_MEMORY -2
-#define BAD_VALUE -3
+namespace eau
+{
 
-enum status_t {
-    OK = 0,
-};
-
-enum audio_stream_type_t {
-};
-
-class MediaPlayerListener
+class CMediaPlayerListener : public RefCount
 {
 
 };
+typedef RefCounted<CMediaPlayerListener> MediaPlayerListener;
 
-class MediaPlayer : RefCounted<MediaPlayer>
+class CMediaPlayer : public RefCount
 {
 public:
-    MediaPlayer();
-    virtual ~MediaPlayer();
+    CMediaPlayer();
+    virtual ~CMediaPlayer();
 
     void setListener(MediaPlayerListener *listener);
-    status_t setNextMediaPlayer(MediaPlayer *player);
+    status_t setNextMediaPlayer(CMediaPlayer *player);
 
 public:
     status_t setDataSource(const string &path, const vector<string> &headers);
@@ -44,11 +40,11 @@ public:
     bool isPlaying();
     status_t seekTo(int msec);
     int getVideoWidth(int *width);
-    int getVideoheight(int *height);
+    int getVideoHeight(int *height);
     status_t getCurrentPosition(int *msec);
     status_t getDuration(int *msec);
-    status_t reset(int *msec);
-    status_t setAudioStreamType(audio_stream_type_t stype);
+    status_t reset();
+    status_t setAudioStreamType(int stype);
     status_t setLooping(bool looping);
     bool isLooping();
     status_t setVolume(float leftVolume, float rightVolume);
@@ -56,12 +52,15 @@ public:
     void disconnect();
 
     status_t setAudioSessionId(int sessionId);
-    int setAudioSessionId();
+    int getAudioSessionId();
     status_t setAuxEffectSendLevel(float level);
     status_t attachAuxEffect(int effectId);
 
     int setRetransmitEndpoint(const char *addr, unsigned short port);
     void updateProxyConfig(const char *host, unsigned short port, const char *exclusionList);
 };
+typedef RefCounted<CMediaPlayer> MediaPlayer;
+
+} // namespace eau
 
 #endif // _MEDIA_PLAYER_H_
