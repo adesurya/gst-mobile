@@ -39,49 +39,12 @@ import java.lang.ref.WeakReference;
  */
 public class MediaPlayer
 {
-    /**
-       Constant to retrieve only the new metadata since the last
-       call.
-       // FIXME: unhide.
-       // FIXME: add link to getMetadata(boolean, boolean)
-       {@hide}
-     */
-    public static final boolean METADATA_UPDATE_ONLY = true;
-
-    /**
-       Constant to retrieve all the metadata.
-       // FIXME: unhide.
-       // FIXME: add link to getMetadata(boolean, boolean)
-       {@hide}
-     */
-    public static final boolean METADATA_ALL = false;
-
-    /**
-       Constant to enable the metadata filter during retrieval.
-       // FIXME: unhide.
-       // FIXME: add link to getMetadata(boolean, boolean)
-       {@hide}
-     */
-    public static final boolean APPLY_METADATA_FILTER = true;
-
-    /**
-       Constant to disable the metadata filter during retrieval.
-       // FIXME: unhide.
-       // FIXME: add link to getMetadata(boolean, boolean)
-       {@hide}
-     */
-    public static final boolean BYPASS_METADATA_FILTER = false;
-
     static {
         System.loadLibrary("k2player");
         native_init();
     }
 
     private final static String TAG = "MediaPlayer";
-    // Name of the remote interface for the media player. Must be kept
-    // in sync with the 2nd parameter of the IMPLEMENT_META_INTERFACE
-    // macro invocation in IMediaPlayer.cpp
-    private final static String IMEDIA_PLAYER = "k2.media.IMediaPlayer";
 
     private int mNativeContext; // accessed by native methods
     private int mNativeSurfaceTexture;  // accessed by native methods
@@ -92,6 +55,51 @@ public class MediaPlayer
     private boolean mScreenOnWhilePlaying;
     private boolean mStayAwake;
 
+    /// -------------------------------------------------------------
+
+    /**
+     * All native methods 
+     */ 
+    private native void _setVideoSurface(Surface surface);
+    private native void _setDataSource(String path, String[] keys, String[] values)
+            throws IOException, IllegalArgumentException, SecurityException, IllegalStateException;
+    private native void _setDataSource(FileDescriptor fd, long offset, long length)
+            throws IOException, IllegalArgumentException, IllegalStateException;
+
+    public native void prepare() throws IOException, IllegalStateException;
+    public native void prepareAsync() throws IllegalStateException;
+
+    private native void _start() throws IllegalStateException;
+    private native void _stop() throws IllegalStateException;
+    private native void _pause() throws IllegalStateException;
+    private native void _reset();
+    private native void _release();
+
+    public native int getVideoWidth();
+    public native int getVideoHeight();
+    public native boolean isPlaying();
+    public native void seekTo(int msec) throws IllegalStateException;
+    public native int getCurrentPosition();
+    public native int getDuration();
+    public native void setNextMediaPlayer(MediaPlayer next);
+    public native void setAudioStreamType(int streamtype);
+    public native void setLooping(boolean looping);
+    public native boolean isLooping();
+    public native void setVolume(float leftVolume, float rightVolume);
+    public native void setAudioSessionId(int sessionId)  
+            throws IllegalArgumentException, IllegalStateException;
+    public native int getAudioSessionId();
+    public native void attachAuxEffect(int effectId);
+    public native void setAuxEffectSendLevel(float level);
+
+    private native void updateProxyConfig(ProxyProperties props);
+    private static native final void native_init();
+    private native final void native_setup(Object mediaplayer_this);
+    private native final void native_finalize();
+    private native final int native_setRetransmitEndpoint(String addrString, int port);
+
+    /// -------------------------------------------------------------
+
     /**
      * Default constructor. Consider using one of the create() methods for
      * synchronously instantiating a MediaPlayer from a Uri or resource.
@@ -101,12 +109,6 @@ public class MediaPlayer
      */
     public MediaPlayer() {
     }
-
-    /**
-     * Update the MediaPlayer SurfaceTexture.
-     * Call after setting a new display surface.
-     */
-    private native void _setVideoSurface(Surface surface);
 
     /**
      * Sets the {@link SurfaceHolder} to use for displaying the video
@@ -200,6 +202,7 @@ public class MediaPlayer
      * @see MediaPlayer#VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
      */
     public void setVideoScalingMode(int mode) {
+        //TODO
     }
 
     /**
@@ -230,7 +233,6 @@ public class MediaPlayer
      * @return a MediaPlayer object, or null if creation failed
      */
     public static MediaPlayer create(Context context, Uri uri, SurfaceHolder holder) {
-
         try {
             MediaPlayer mp = new MediaPlayer();
             mp.setDataSource(context, uri);
@@ -241,13 +243,10 @@ public class MediaPlayer
             return mp;
         } catch (IOException ex) {
             Log.d(TAG, "create failed:", ex);
-            // fall through
         } catch (IllegalArgumentException ex) {
             Log.d(TAG, "create failed:", ex);
-            // fall through
         } catch (SecurityException ex) {
             Log.d(TAG, "create failed:", ex);
-            // fall through
         }
 
         return null;
@@ -279,13 +278,10 @@ public class MediaPlayer
             return mp;
         } catch (IOException ex) {
             Log.d(TAG, "create failed:", ex);
-            // fall through
         } catch (IllegalArgumentException ex) {
             Log.d(TAG, "create failed:", ex);
-           // fall through
         } catch (SecurityException ex) {
             Log.d(TAG, "create failed:", ex);
-            // fall through
         }
         return null;
     }
@@ -345,9 +341,7 @@ public class MediaPlayer
         }
 
         Log.d(TAG, "Couldn't open file on client side, trying server side");
-
         setDataSource(uri.toString(), headers);
-
         if (scheme.equalsIgnoreCase("http")
                 || scheme.equalsIgnoreCase("https")) {
             setupProxyListener(context);
@@ -385,7 +379,6 @@ public class MediaPlayer
     {
         String[] keys = null;
         String[] values = null;
-
         if (headers != null) {
             keys = new String[headers.size()];
             values = new String[headers.size()];
@@ -420,11 +413,6 @@ public class MediaPlayer
         }
     }
 
-    // TODO
-    private native void _setDataSource(
-        String path, String[] keys, String[] values)
-        throws IOException, IllegalArgumentException, SecurityException, IllegalStateException;
-
     /**
      * Sets the data source (FileDescriptor) to use. It is the caller's responsibility
      * to close the file descriptor. It is safe to do so as soon as this call returns.
@@ -454,32 +442,6 @@ public class MediaPlayer
         _setDataSource(fd, offset, length);
     }
 
-    private native void _setDataSource(FileDescriptor fd, long offset, long length)
-            throws IOException, IllegalArgumentException, IllegalStateException;
-
-    /**
-     * Prepares the player for playback, synchronously.
-     *
-     * After setting the datasource and the display surface, you need to either
-     * call prepare() or prepareAsync(). For files, it is OK to call prepare(),
-     * which blocks until MediaPlayer is ready for playback.
-     *
-     * @throws IllegalStateException if it is called in an invalid state
-     */
-    public native void prepare() throws IOException, IllegalStateException;
-
-    /**
-     * Prepares the player for playback, asynchronously.
-     *
-     * After setting the datasource and the display surface, you need to either
-     * call prepare() or prepareAsync(). For streams, you should call prepareAsync(),
-     * which returns immediately, rather than blocking until enough data has been
-     * buffered.
-     *
-     * @throws IllegalStateException if it is called in an invalid state
-     */
-    public native void prepareAsync() throws IllegalStateException;
-
     /**
      * Starts or resumes playback. If playback had previously been paused,
      * playback will continue from where it was paused. If playback had
@@ -488,12 +450,10 @@ public class MediaPlayer
      *
      * @throws IllegalStateException if it is called in an invalid state
      */
-    public  void start() throws IllegalStateException {
+    public void start() throws IllegalStateException {
         stayAwake(true);
         _start();
     }
-
-    private native void _start() throws IllegalStateException;
 
     /**
      * Stops playback after playback has been stopped or paused.
@@ -506,8 +466,6 @@ public class MediaPlayer
         _stop();
     }
 
-    private native void _stop() throws IllegalStateException;
-
     /**
      * Pauses playback. Call start() to resume.
      *
@@ -518,8 +476,6 @@ public class MediaPlayer
         stayAwake(false);
         _pause();
     }
-
-    private native void _pause() throws IllegalStateException;
 
     /**
      * Set the low-level power management behavior for this MediaPlayer.  This
@@ -595,80 +551,6 @@ public class MediaPlayer
     }
 
     /**
-     * Returns the width of the video.
-     *
-     * @return the width of the video, or 0 if there is no video,
-     * no display surface was set, or the width has not been determined
-     * yet. The OnVideoSizeChangedListener can be registered via
-     * {@link #setOnVideoSizeChangedListener(OnVideoSizeChangedListener)}
-     * to provide a notification when the width is available.
-     */
-    public native int getVideoWidth();
-
-    /**
-     * Returns the height of the video.
-     *
-     * @return the height of the video, or 0 if there is no video,
-     * no display surface was set, or the height has not been determined
-     * yet. The OnVideoSizeChangedListener can be registered via
-     * {@link #setOnVideoSizeChangedListener(OnVideoSizeChangedListener)}
-     * to provide a notification when the height is available.
-     */
-    public native int getVideoHeight();
-
-    /**
-     * Checks whether the MediaPlayer is playing.
-     *
-     * @return true if currently playing, false otherwise
-     * @throws IllegalStateException if the internal player engine has not been
-     * initialized or has been released.
-     */
-    public native boolean isPlaying();
-
-    /**
-     * Seeks to specified time position.
-     *
-     * @param msec the offset in milliseconds from the start to seek to
-     * @throws IllegalStateException if the internal player engine has not been
-     * initialized
-     */
-    public native void seekTo(int msec) throws IllegalStateException;
-
-    /**
-     * Gets the current playback position.
-     *
-     * @return the current position in milliseconds
-     */
-    public native int getCurrentPosition();
-
-    /**
-     * Gets the duration of the file.
-     *
-     * @return the duration in milliseconds, if no duration is available
-     *         (for example, if streaming live content), -1 is returned.
-     */
-    public native int getDuration();
-
-    /**
-     * Set the MediaPlayer to start when this MediaPlayer finishes playback
-     * (i.e. reaches the end of the stream).
-     * The media framework will attempt to transition from this player to
-     * the next as seamlessly as possible. The next player can be set at
-     * any time before completion. The next player must be prepared by the
-     * app, and the application should not call start() on it.
-     * The next MediaPlayer must be different from 'this'. An exception
-     * will be thrown if next == this.
-     * The application may call setNextMediaPlayer(null) to indicate no
-     * next player should be started at the end of playback.
-     * If the current player is looping, it will keep looping and the next
-     * player will not be started.
-     *
-     * @param next the player to start after this one completes playback.
-     *
-     */
-    public native void setNextMediaPlayer(MediaPlayer next);
-
-    /**
      * Releases resources associated with this MediaPlayer object.
      * It is considered good practice to call this method when you're
      * done using the MediaPlayer. In particular, whenever an Activity
@@ -704,8 +586,6 @@ public class MediaPlayer
         mOnSubtitleDataListener = null;
         _release();
     }
-
-    private native void _release();
 
     /**
      * Resets the MediaPlayer to its uninitialized state. After calling
@@ -743,52 +623,6 @@ public class MediaPlayer
         disableProxyListener();
     }
 
-    private native void _reset();
-
-    /**
-     * Sets the audio stream type for this MediaPlayer. See {@link AudioManager}
-     * for a list of stream types. Must call this method before prepare() or
-     * prepareAsync() in order for the target stream type to become effective
-     * thereafter.
-     *
-     * @param streamtype the audio stream type
-     * @see android.media.AudioManager
-     */
-    public native void setAudioStreamType(int streamtype);
-
-    /**
-     * Sets the player to be looping or non-looping.
-     *
-     * @param looping whether to loop or not
-     */
-    public native void setLooping(boolean looping);
-
-    /**
-     * Checks whether the MediaPlayer is looping or non-looping.
-     *
-     * @return true if the MediaPlayer is currently looping, false otherwise
-     */
-    public native boolean isLooping();
-
-    /**
-     * Sets the volume on this player.
-     * This API is recommended for balancing the output of audio streams
-     * within an application. Unless you are writing an application to
-     * control user settings, this API should be used in preference to
-     * {@link AudioManager#setStreamVolume(int, int, int)} which sets the volume of ALL streams of
-     * a particular type. Note that the passed volume values are raw scalars in range 0.0 to 1.0.
-     * UI controls should be scaled logarithmically.
-     *
-     * @param leftVolume left volume scalar
-     * @param rightVolume right volume scalar
-     */
-    /*
-     * FIXME: Merge this into javadoc comment above when setVolume(float) is not @hide.
-     * The single parameter form below is preferred if the channel volumes don't need
-     * to be set independently.
-     */
-    public native void setVolume(float leftVolume, float rightVolume);
-
     /**
      * Similar, excepts sets volume of all channels to same value.
      * @hide
@@ -796,67 +630,6 @@ public class MediaPlayer
     public void setVolume(float volume) {
         setVolume(volume, volume);
     }
-
-    /**
-     * Sets the audio session ID.
-     *
-     * @param sessionId the audio session ID.
-     * The audio session ID is a system wide unique identifier for the audio stream played by
-     * this MediaPlayer instance.
-     * The primary use of the audio session ID  is to associate audio effects to a particular
-     * instance of MediaPlayer: if an audio session ID is provided when creating an audio effect,
-     * this effect will be applied only to the audio content of media players within the same
-     * audio session and not to the output mix.
-     * When created, a MediaPlayer instance automatically generates its own audio session ID.
-     * However, it is possible to force this player to be part of an already existing audio session
-     * by calling this method.
-     * This method must be called before one of the overloaded <code> setDataSource </code> methods.
-     * @throws IllegalStateException if it is called in an invalid state
-     */
-    public native void setAudioSessionId(int sessionId)  throws IllegalArgumentException, IllegalStateException;
-
-    /**
-     * Returns the audio session ID.
-     *
-     * @return the audio session ID. {@see #setAudioSessionId(int)}
-     * Note that the audio session ID is 0 only if a problem occured when the MediaPlayer was contructed.
-     */
-    public native int getAudioSessionId();
-
-    /**
-     * Attaches an auxiliary effect to the player. A typical auxiliary effect is a reverberation
-     * effect which can be applied on any sound source that directs a certain amount of its
-     * energy to this effect. This amount is defined by setAuxEffectSendLevel().
-     * {@see #setAuxEffectSendLevel(float)}.
-     * <p>After creating an auxiliary effect (e.g.
-     * {@link android.media.audiofx.EnvironmentalReverb}), retrieve its ID with
-     * {@link android.media.audiofx.AudioEffect#getId()} and use it when calling this method
-     * to attach the player to the effect.
-     * <p>To detach the effect from the player, call this method with a null effect id.
-     * <p>This method must be called after one of the overloaded <code> setDataSource </code>
-     * methods.
-     * @param effectId system wide unique id of the effect to attach
-     */
-    public native void attachAuxEffect(int effectId);
-
-
-    /**
-     * Sets the send level of the player to the attached auxiliary effect
-     * {@see #attachAuxEffect(int)}. The level value range is 0 to 1.0.
-     * <p>By default the send level is 0, so even if an effect is attached to the player
-     * this method must be called for the effect to be applied.
-     * <p>Note that the passed level value is a raw scalar. UI controls should be scaled
-     * logarithmically: the gain applied by audio framework ranges from -72dB to 0dB,
-     * so an appropriate conversion from linear UI input x to level is:
-     * x == 0 -> level = 0
-     * 0 < x <= R -> level = 10^(72*(x-R)/20/R)
-     * @param level send level scalar
-     */
-    public native void setAuxEffectSendLevel(float level);
-
-    private static native final void native_init();
-    private native final void native_setup(Object mediaplayer_this);
-    private native final void native_finalize();
 
     /* Do not change these values without updating their counterparts
      * in include/media/stagefright/MediaDefs.h and media/libstagefright/MediaDefs.cpp!
@@ -868,7 +641,6 @@ public class MediaPlayer
 
     /**
      * MIME type for WebVTT subtitle data.
-     * @hide
      */
     public static final String MEDIA_MIMETYPE_TEXT_VTT = "text/vtt";
 
@@ -884,7 +656,6 @@ public class MediaPlayer
 
     private SubtitleController mSubtitleController;
 
-    /** @hide */
     public void setSubtitleAnchor(
             SubtitleController controller,
             SubtitleController.Anchor anchor) {
@@ -921,7 +692,6 @@ public class MediaPlayer
         }
     };
 
-    /** @hide */
     @Override
     public void onSubtitleTrackSelected(SubtitleTrack track) {
         if (mSelectedSubtitleTrackIndex >= 0) {
@@ -948,81 +718,6 @@ public class MediaPlayer
             }
         }
         // no need to select out-of-band tracks
-    }
-
-    /** @hide */
-    public void addSubtitleSource(InputStream is, MediaFormat format)
-            throws IllegalStateException
-    {
-        final InputStream fIs = is;
-        final MediaFormat fFormat = format;
-
-        // Ensure all input streams are closed.  It is also a handy
-        // way to implement timeouts in the future.
-        synchronized(mOpenSubtitleSources) {
-            mOpenSubtitleSources.add(is);
-        }
-
-        // process each subtitle in its own thread
-        final HandlerThread thread = new HandlerThread("SubtitleReadThread",
-              Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_MORE_FAVORABLE);
-        thread.start();
-        Handler handler = new Handler(thread.getLooper());
-        handler.post(new Runnable() {
-            private int addTrack() {
-                if (fIs == null || mSubtitleController == null) {
-                    return MEDIA_INFO_UNSUPPORTED_SUBTITLE;
-                }
-
-                SubtitleTrack track = mSubtitleController.addTrack(fFormat);
-                if (track == null) {
-                    return MEDIA_INFO_UNSUPPORTED_SUBTITLE;
-                }
-
-                // TODO: do the conversion in the subtitle track
-                Scanner scanner = new Scanner(fIs, "UTF-8");
-                String contents = scanner.useDelimiter("\\A").next();
-                synchronized(mOpenSubtitleSources) {
-                    mOpenSubtitleSources.remove(fIs);
-                }
-                scanner.close();
-                mOutOfBandSubtitleTracks.add(track);
-                track.onData(contents, true /* eos */, ~0 /* runID: keep forever */);
-                return MEDIA_INFO_EXTERNAL_METADATA_UPDATE;
-            }
-
-            public void run() {
-                int res = addTrack();
-                if (mEventHandler != null) {
-                    Message m = mEventHandler.obtainMessage(MEDIA_INFO, res, 0, null);
-                    mEventHandler.sendMessage(m);
-                }
-                thread.getLooper().quitSafely();
-            }
-        });
-    }
-
-    private void scanInternalSubtitleTracks() {
-        if (mSubtitleController == null) {
-            Log.e(TAG, "Should have subtitle controller already set");
-            return;
-        }
-
-        TrackInfo[] tracks = getInbandTrackInfo();
-        SubtitleTrack[] inbandTracks = new SubtitleTrack[tracks.length];
-        for (int i=0; i < tracks.length; i++) {
-            if (tracks[i].getTrackType() == TrackInfo.MEDIA_TRACK_TYPE_SUBTITLE) {
-                if (i < mInbandSubtitleTracks.length) {
-                    inbandTracks[i] = mInbandSubtitleTracks[i];
-                } else {
-                    SubtitleTrack track = mSubtitleController.addTrack(
-                            tracks[i].getFormat());
-                    inbandTracks[i] = track;
-                }
-            }
-        }
-        mInbandSubtitleTracks = inbandTracks;
-        mSubtitleController.selectDefaultTrack();
     }
 
     /* TODO: Limit the total number of external timed text source to a reasonable number.
@@ -1167,8 +862,6 @@ public class MediaPlayer
         }
     }
 
-    private native final int native_setRetransmitEndpoint(String addrString, int port);
-
     @Override
     protected void finalize() { native_finalize(); }
 
@@ -1192,7 +885,6 @@ public class MediaPlayer
 
     private TimeProvider mTimeProvider;
 
-    /** @hide */
     public MediaTimeProvider getMediaTimeProvider() {
         if (mTimeProvider == null) {
             mTimeProvider = new TimeProvider(this);
@@ -1217,7 +909,6 @@ public class MediaPlayer
             }
             switch(msg.what) {
             case MEDIA_PREPARED:
-                scanInternalSubtitleTracks();
                 if (mOnPreparedListener != null)
                     mOnPreparedListener.onPrepared(mMediaPlayer);
                 return;
@@ -1281,9 +972,6 @@ public class MediaPlayer
                     Log.i(TAG, "Info (" + msg.arg1 + "," + msg.arg2 + ")");
                     break;
                 case MEDIA_INFO_METADATA_UPDATE:
-                    scanInternalSubtitleTracks();
-                    // fall through
-
                 case MEDIA_INFO_EXTERNAL_METADATA_UPDATE:
                     msg.arg1 = MEDIA_INFO_METADATA_UPDATE;
                     // update default track selection
@@ -1791,9 +1479,6 @@ public class MediaPlayer
         }
     }
 
-    private native void updateProxyConfig(ProxyProperties props);
-
-    /** @hide */
     static class TimeProvider implements MediaPlayer.OnSeekCompleteListener,
             MediaTimeProvider {
         private static final String TAG = "MTP";
@@ -1821,8 +1506,6 @@ public class MediaPlayer
         private static final int NOTIFY_STOP = 2;
         private static final int NOTIFY_SEEK = 3;
         private HandlerThread mHandlerThread;
-
-        /** @hide */
         public boolean DEBUG = false;
 
         public TimeProvider(MediaPlayer mp) {
@@ -1864,7 +1547,6 @@ public class MediaPlayer
             mEventHandler.sendMessageDelayed(msg, (int) (delayUs / 1000));
         }
 
-        /** @hide */
         public void close() {
             mEventHandler.removeMessages(NOTIFY);
             if (mHandlerThread != null) {
@@ -1873,14 +1555,12 @@ public class MediaPlayer
             }
         }
 
-        /** @hide */
         protected void finalize() {
             if (mHandlerThread != null) {
                 mHandlerThread.quitSafely();
             }
         }
 
-        /** @hide */
         public void onPaused(boolean paused) {
             synchronized(this) {
                 if (DEBUG) Log.d(TAG, "onPaused: " + paused);
@@ -1896,7 +1576,6 @@ public class MediaPlayer
             }
         }
 
-        /** @hide */
         public void onStopped() {
             synchronized(this) {
                 if (DEBUG) Log.d(TAG, "onStopped");
@@ -1907,7 +1586,6 @@ public class MediaPlayer
             }
         }
 
-        /** @hide */
         @Override
         public void onSeekComplete(MediaPlayer mp) {
             synchronized(this) {
@@ -1917,7 +1595,6 @@ public class MediaPlayer
             }
         }
 
-        /** @hide */
         public void onNewPlayer() {
             if (mRefresh) {
                 synchronized(this) {
