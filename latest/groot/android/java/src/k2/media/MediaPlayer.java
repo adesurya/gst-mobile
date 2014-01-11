@@ -692,34 +692,6 @@ public class MediaPlayer
         }
     };
 
-    @Override
-    public void onSubtitleTrackSelected(SubtitleTrack track) {
-        if (mSelectedSubtitleTrackIndex >= 0) {
-            try {
-                selectOrDeselectInbandTrack(mSelectedSubtitleTrackIndex, false);
-            } catch (IllegalStateException e) {
-            }
-            mSelectedSubtitleTrackIndex = -1;
-        }
-        setOnSubtitleDataListener(null);
-        if (track == null) {
-            return;
-        }
-        for (int i = 0; i < mInbandSubtitleTracks.length; i++) {
-            if (mInbandSubtitleTracks[i] == track) {
-                Log.v(TAG, "Selecting subtitle track " + i);
-                mSelectedSubtitleTrackIndex = i;
-                try {
-                    selectOrDeselectInbandTrack(mSelectedSubtitleTrackIndex, true);
-                } catch (IllegalStateException e) {
-                }
-                setOnSubtitleDataListener(mSubtitleDataListener);
-                break;
-            }
-        }
-        // no need to select out-of-band tracks
-    }
-
     /* TODO: Limit the total number of external timed text source to a reasonable number.
      */
     /**
