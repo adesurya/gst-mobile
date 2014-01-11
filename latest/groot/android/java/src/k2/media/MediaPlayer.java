@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.AssetFileDescriptor;
 import android.net.Proxy;
-//import android.net.ProxyProperties;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -44,7 +43,7 @@ public class MediaPlayer
         native_init();
     }
 
-    private final static String TAG = "MediaPlayer";
+    private final static String TAG = "k2player";
 
     private int mNativeContext; // accessed by native methods
     private int mNativeSurfaceTexture;  // accessed by native methods
@@ -593,29 +592,6 @@ public class MediaPlayer
         setVolume(volume, volume);
     }
 
-    /* Do not change these values without updating their counterparts
-     * in include/media/stagefright/MediaDefs.h and media/libstagefright/MediaDefs.cpp!
-     */
-    /**
-     * MIME type for SubRip (SRT) container. Used in addTimedTextSource APIs.
-     */
-    public static final String MEDIA_MIMETYPE_TEXT_SUBRIP = "application/x-subrip";
-
-    /**
-     * MIME type for WebVTT subtitle data.
-     */
-    public static final String MEDIA_MIMETYPE_TEXT_VTT = "text/vtt";
-
-    /*
-     * A helper function to check if the mime type is supported by media framework.
-     */
-    private static boolean availableMimeTypeForExternalSource(String mimeType) {
-        if (mimeType == MEDIA_MIMETYPE_TEXT_SUBRIP) {
-            return true;
-        }
-        return false;
-    }
-
     /**
      * Sets the target UDP re-transmit endpoint for the low level player.
      * Generally, the address portion of the endpoint is an IP multicast
@@ -801,6 +777,19 @@ public class MediaPlayer
         }
     }
 
+
+    /**
+     * For MediaPlayer's listener
+     */ 
+    private OnPreparedListener mOnPreparedListener;
+    private OnCompletionListener mOnCompletionListener;
+    private OnBufferingUpdateListener mOnBufferingUpdateListener;
+    private OnSeekCompleteListener mOnSeekCompleteListener;
+    private OnVideoSizeChangedListener mOnVideoSizeChangedListener;
+    private OnErrorListener mOnErrorListener;
+    private OnInfoListener mOnInfoListener;
+
+
     /**
      * Interface definition for a callback to be invoked when the media
      * source is ready for playback.
@@ -826,8 +815,6 @@ public class MediaPlayer
         mOnPreparedListener = listener;
     }
 
-    private OnPreparedListener mOnPreparedListener;
-
     /**
      * Interface definition for a callback to be invoked when playback of
      * a media source has completed.
@@ -852,8 +839,6 @@ public class MediaPlayer
     {
         mOnCompletionListener = listener;
     }
-
-    private OnCompletionListener mOnCompletionListener;
 
     /**
      * Interface definition of a callback to be invoked indicating buffering
@@ -887,8 +872,6 @@ public class MediaPlayer
         mOnBufferingUpdateListener = listener;
     }
 
-    private OnBufferingUpdateListener mOnBufferingUpdateListener;
-
     /**
      * Interface definition of a callback to be invoked indicating
      * the completion of a seek operation.
@@ -913,8 +896,6 @@ public class MediaPlayer
     {
         mOnSeekCompleteListener = listener;
     }
-
-    private OnSeekCompleteListener mOnSeekCompleteListener;
 
     /**
      * Interface definition of a callback to be invoked when the
@@ -946,7 +927,6 @@ public class MediaPlayer
         mOnVideoSizeChangedListener = listener;
     }
 
-    private OnVideoSizeChangedListener mOnVideoSizeChangedListener;
 
     /* Do not change these values without updating their counterparts
      * in include/media/mediaplayer.h!
@@ -1020,8 +1000,6 @@ public class MediaPlayer
     {
         mOnErrorListener = listener;
     }
-
-    private OnErrorListener mOnErrorListener;
 
 
     /* Do not change these values without updating their counterparts
@@ -1142,8 +1120,6 @@ public class MediaPlayer
     {
         mOnInfoListener = listener;
     }
-
-    private OnInfoListener mOnInfoListener;
 
     /*
      * Test whether a given video scaling mode is supported.
