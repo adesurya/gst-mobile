@@ -10,7 +10,7 @@
         <activity android:name=".k2player"
                   android:label="@string/app_name">
             <meta-data android:name="android.app.lib_name"
-                    android:value="k2player">
+                    android:value="k2player"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
