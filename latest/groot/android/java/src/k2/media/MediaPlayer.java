@@ -36,7 +36,7 @@ import java.lang.ref.WeakReference;
 /**
  * MediaPlayer can be used to control playback of audio/video files and streams. 
  */
-public class MediaPlayer
+public class MediaPlayer extends MediaConsts
 {
     static {
         System.loadLibrary("k2player");
@@ -159,28 +159,6 @@ public class MediaPlayer
         updateSurfaceScreenOn();
     }
 
-    /* Do not change these video scaling mode values below without updating
-     * their counterparts in system/window.h! Please do not forget to update
-     * {@link #isVideoScalingModeSupported} when new video scaling modes
-     * are added.
-     */
-    /**
-     * Specifies a video scaling mode. The content is stretched to the
-     * surface rendering area. When the surface has the same aspect ratio
-     * as the content, the aspect ratio of the content is maintained;
-     * otherwise, the aspect ratio of the content is not maintained when video
-     * is being rendered. Unlike {@link #VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING},
-     * there is no content cropping with this video scaling mode.
-     */
-    public static final int VIDEO_SCALING_MODE_SCALE_TO_FIT = 1;
-
-    /**
-     * Specifies a video scaling mode. The content is scaled, maintaining
-     * its aspect ratio. The whole surface area is always used. When the
-     * aspect ratio of the content is the same as the surface, no content
-     * is cropped; otherwise, content is cropped to fit the surface.
-     */
-    public static final int VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING = 2;
     /**
      * Sets video scaling mode. To make the target video scaling mode
      * effective during playback, this method must be called after
@@ -639,24 +617,9 @@ public class MediaPlayer
     @Override
     protected void finalize() { native_finalize(); }
 
-    /* Do not change these values without updating their counterparts
-     * in include/media/mediaplayer.h!
-     */
-    private static final int MEDIA_NOP = 0; // interface test message
-    private static final int MEDIA_PREPARED = 1;
-    private static final int MEDIA_PLAYBACK_COMPLETE = 2;
-    private static final int MEDIA_BUFFERING_UPDATE = 3;
-    private static final int MEDIA_SEEK_COMPLETE = 4;
-    private static final int MEDIA_SET_VIDEO_SIZE = 5;
-    private static final int MEDIA_STARTED = 6;
-    private static final int MEDIA_PAUSED = 7;
-    private static final int MEDIA_STOPPED = 8;
-    private static final int MEDIA_SKIPPED = 9;
-    private static final int MEDIA_TIMED_TEXT = 99;
-    private static final int MEDIA_ERROR = 100;
-    private static final int MEDIA_INFO = 200;
-    private static final int MEDIA_SUBTITLE_DATA = 201;
-
+    /**
+     * For events processing loop
+     */ 
     private class EventHandler extends Handler
     {
         private MediaPlayer mMediaPlayer;
@@ -777,7 +740,6 @@ public class MediaPlayer
         }
     }
 
-
     /**
      * For MediaPlayer's listener
      */ 
@@ -788,7 +750,6 @@ public class MediaPlayer
     private OnVideoSizeChangedListener mOnVideoSizeChangedListener;
     private OnErrorListener mOnErrorListener;
     private OnInfoListener mOnInfoListener;
-
 
     /**
      * Interface definition for a callback to be invoked when the media
@@ -927,38 +888,6 @@ public class MediaPlayer
         mOnVideoSizeChangedListener = listener;
     }
 
-
-    /* Do not change these values without updating their counterparts
-     * in include/media/mediaplayer.h!
-     */
-    /** Unspecified media player error.
-     * @see android.media.MediaPlayer.OnErrorListener
-     */
-    public static final int MEDIA_ERROR_UNKNOWN = 1;
-
-    /** Media server died. In this case, the application must release the
-     * MediaPlayer object and instantiate a new one.
-     * @see android.media.MediaPlayer.OnErrorListener
-     */
-    public static final int MEDIA_ERROR_SERVER_DIED = 100;
-
-    /** The video is streamed and its container is not valid for progressive
-     * playback i.e the video's index (e.g moov atom) is not at the start of the
-     * file.
-     * @see android.media.MediaPlayer.OnErrorListener
-     */
-    public static final int MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK = 200;
-
-    /** File or network related operation errors. */
-    public static final int MEDIA_ERROR_IO = -1004;
-    /** Bitstream is not conforming to the related coding standard or file spec. */
-    public static final int MEDIA_ERROR_MALFORMED = -1007;
-    /** Bitstream is conforming to the related coding standard or file spec, but
-     * the media framework does not support the feature. */
-    public static final int MEDIA_ERROR_UNSUPPORTED = -1010;
-    /** Some operation takes too long to complete, usually more than 3-5 seconds. */
-    public static final int MEDIA_ERROR_TIMED_OUT = -110;
-
     /**
      * Interface definition of a callback to be invoked when there
      * has been an error during an asynchronous operation (other errors
@@ -1000,6 +929,135 @@ public class MediaPlayer
     {
         mOnErrorListener = listener;
     }
+
+    /**
+     * Interface definition of a callback to be invoked to communicate some
+     * info and/or warning about the media or its playback.
+     */
+    public interface OnInfoListener
+    {
+        /**
+         * Called to indicate an info or a warning.
+         *
+         * @param mp      the MediaPlayer the info pertains to.
+         * @param what    the type of info or warning.
+         * <ul>
+         * <li>{@link #MEDIA_INFO_UNKNOWN}
+         * <li>{@link #MEDIA_INFO_VIDEO_TRACK_LAGGING}
+         * <li>{@link #MEDIA_INFO_VIDEO_RENDERING_START}
+         * <li>{@link #MEDIA_INFO_BUFFERING_START}
+         * <li>{@link #MEDIA_INFO_BUFFERING_END}
+         * <li>{@link #MEDIA_INFO_BAD_INTERLEAVING}
+         * <li>{@link #MEDIA_INFO_NOT_SEEKABLE}
+         * <li>{@link #MEDIA_INFO_METADATA_UPDATE}
+         * <li>{@link #MEDIA_INFO_UNSUPPORTED_SUBTITLE}
+         * <li>{@link #MEDIA_INFO_SUBTITLE_TIMED_OUT}
+         * </ul>
+         * @param extra an extra code, specific to the info. Typically
+         * implementation dependent.
+         * @return True if the method handled the info, false if it didn't.
+         * Returning false, or not having an OnErrorListener at all, will
+         * cause the info to be discarded.
+         */
+        boolean onInfo(MediaPlayer mp, int what, int extra);
+    }
+
+    /**
+     * Register a callback to be invoked when an info/warning is available.
+     *
+     * @param listener the callback that will be run
+     */
+    public void setOnInfoListener(OnInfoListener listener)
+    {
+        mOnInfoListener = listener;
+    }
+
+    /*
+     * Test whether a given video scaling mode is supported.
+     */
+    private boolean isVideoScalingModeSupported(int mode) {
+        return (mode == VIDEO_SCALING_MODE_SCALE_TO_FIT ||
+                mode == VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+    }
+
+}
+
+class MediaConsts {
+    /* Do not change these video scaling mode values below without updating
+     * their counterparts in system/window.h! Please do not forget to update
+     * {@link #isVideoScalingModeSupported} when new video scaling modes
+     * are added.
+     */
+    /**
+     * Specifies a video scaling mode. The content is stretched to the
+     * surface rendering area. When the surface has the same aspect ratio
+     * as the content, the aspect ratio of the content is maintained;
+     * otherwise, the aspect ratio of the content is not maintained when video
+     * is being rendered. Unlike {@link #VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING},
+     * there is no content cropping with this video scaling mode.
+     */
+    public static final int VIDEO_SCALING_MODE_SCALE_TO_FIT = 1;
+    /**
+     * Specifies a video scaling mode. The content is scaled, maintaining
+     * its aspect ratio. The whole surface area is always used. When the
+     * aspect ratio of the content is the same as the surface, no content
+     * is cropped; otherwise, content is cropped to fit the surface.
+     */
+    public static final int VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING = 2;
+
+
+
+    /* Do not change these values without updating their counterparts
+     * in include/media/mediaplayer.h!
+     */
+    protected static final int MEDIA_NOP = 0; // interface test message
+    protected static final int MEDIA_PREPARED = 1;
+    protected static final int MEDIA_PLAYBACK_COMPLETE = 2;
+    protected static final int MEDIA_BUFFERING_UPDATE = 3;
+    protected static final int MEDIA_SEEK_COMPLETE = 4;
+    protected static final int MEDIA_SET_VIDEO_SIZE = 5;
+    protected static final int MEDIA_STARTED = 6;
+    protected static final int MEDIA_PAUSED = 7;
+    protected static final int MEDIA_STOPPED = 8;
+    protected static final int MEDIA_SKIPPED = 9;
+    protected static final int MEDIA_TIMED_TEXT = 99;
+    protected static final int MEDIA_ERROR = 100;
+    protected static final int MEDIA_INFO = 200;
+    protected static final int MEDIA_SUBTITLE_DATA = 201;
+
+
+
+    /* Do not change these values without updating their counterparts
+     * in include/media/mediaplayer.h!
+     */
+    /** Unspecified media player error.
+     * @see android.media.MediaPlayer.OnErrorListener
+     */
+    public static final int MEDIA_ERROR_UNKNOWN = 1;
+
+    /** Media server died. In this case, the application must release the
+     * MediaPlayer object and instantiate a new one.
+     * @see android.media.MediaPlayer.OnErrorListener
+     */
+    public static final int MEDIA_ERROR_SERVER_DIED = 100;
+
+    /** The video is streamed and its container is not valid for progressive
+     * playback i.e the video's index (e.g moov atom) is not at the start of the
+     * file.
+     * @see android.media.MediaPlayer.OnErrorListener
+     */
+    public static final int MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK = 200;
+
+    /** File or network related operation errors. */
+    public static final int MEDIA_ERROR_IO = -1004;
+    /** Bitstream is not conforming to the related coding standard or file spec. */
+    public static final int MEDIA_ERROR_MALFORMED = -1007;
+    /** Bitstream is conforming to the related coding standard or file spec, but
+     * the media framework does not support the feature. */
+    public static final int MEDIA_ERROR_UNSUPPORTED = -1010;
+    /** Some operation takes too long to complete, usually more than 3-5 seconds. */
+    public static final int MEDIA_ERROR_TIMED_OUT = -110;
+
 
 
     /* Do not change these values without updating their counterparts
@@ -1079,54 +1137,5 @@ public class MediaPlayer
      */
     public static final int MEDIA_INFO_SUBTITLE_TIMED_OUT = 902;
 
-    /**
-     * Interface definition of a callback to be invoked to communicate some
-     * info and/or warning about the media or its playback.
-     */
-    public interface OnInfoListener
-    {
-        /**
-         * Called to indicate an info or a warning.
-         *
-         * @param mp      the MediaPlayer the info pertains to.
-         * @param what    the type of info or warning.
-         * <ul>
-         * <li>{@link #MEDIA_INFO_UNKNOWN}
-         * <li>{@link #MEDIA_INFO_VIDEO_TRACK_LAGGING}
-         * <li>{@link #MEDIA_INFO_VIDEO_RENDERING_START}
-         * <li>{@link #MEDIA_INFO_BUFFERING_START}
-         * <li>{@link #MEDIA_INFO_BUFFERING_END}
-         * <li>{@link #MEDIA_INFO_BAD_INTERLEAVING}
-         * <li>{@link #MEDIA_INFO_NOT_SEEKABLE}
-         * <li>{@link #MEDIA_INFO_METADATA_UPDATE}
-         * <li>{@link #MEDIA_INFO_UNSUPPORTED_SUBTITLE}
-         * <li>{@link #MEDIA_INFO_SUBTITLE_TIMED_OUT}
-         * </ul>
-         * @param extra an extra code, specific to the info. Typically
-         * implementation dependent.
-         * @return True if the method handled the info, false if it didn't.
-         * Returning false, or not having an OnErrorListener at all, will
-         * cause the info to be discarded.
-         */
-        boolean onInfo(MediaPlayer mp, int what, int extra);
-    }
-
-    /**
-     * Register a callback to be invoked when an info/warning is available.
-     *
-     * @param listener the callback that will be run
-     */
-    public void setOnInfoListener(OnInfoListener listener)
-    {
-        mOnInfoListener = listener;
-    }
-
-    /*
-     * Test whether a given video scaling mode is supported.
-     */
-    private boolean isVideoScalingModeSupported(int mode) {
-        return (mode == VIDEO_SCALING_MODE_SCALE_TO_FIT ||
-                mode == VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-    }
-
 }
+
