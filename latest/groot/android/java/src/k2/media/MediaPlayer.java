@@ -617,6 +617,8 @@ public class MediaPlayer extends MediaConsts
     @Override
     protected void finalize() { native_finalize(); }
 
+    /// -------------------------------------------------------------
+
     /**
      * For events processing loop
      */ 
@@ -732,6 +734,8 @@ public class MediaPlayer extends MediaConsts
             mp.mEventHandler.sendMessage(m);
         }
     }
+
+    /// -------------------------------------------------------------
 
     /**
      * For MediaPlayer's listener
@@ -962,6 +966,8 @@ public class MediaPlayer extends MediaConsts
         mOnInfoListener = listener;
     }
 
+    /// -------------------------------------------------------------
+
     /*
      * Test whether a given video scaling mode is supported.
      */
@@ -995,6 +1001,7 @@ class MediaConsts {
      */
     public static final int VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING = 2;
 
+    /// -------------------------------------------------------------
 
     /* Do not change these values without updating their counterparts
      * in include/media/mediaplayer.h!
@@ -1013,6 +1020,7 @@ class MediaConsts {
     protected static final int MEDIA_ERROR = 100;
     protected static final int MEDIA_INFO = 200;
 
+    /// -------------------------------------------------------------
 
     /* Do not change these values without updating their counterparts
      * in include/media/mediaplayer.h!
@@ -1045,6 +1053,7 @@ class MediaConsts {
     /** Some operation takes too long to complete, usually more than 3-5 seconds. */
     public static final int MEDIA_ERROR_TIMED_OUT = -110;
 
+    /// -------------------------------------------------------------
 
     /* Do not change these values without updating their counterparts
      * in include/media/mediaplayer.h!
@@ -1094,7 +1103,6 @@ class MediaConsts {
      * @see android.media.MediaPlayer.OnInfoListener
      */
     public static final int MEDIA_INFO_NOT_SEEKABLE = 801;
-
 
 }
 
