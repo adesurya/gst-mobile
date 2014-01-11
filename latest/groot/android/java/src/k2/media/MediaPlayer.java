@@ -690,11 +690,6 @@ public class MediaPlayer extends MediaConsts
                 case MEDIA_INFO_VIDEO_TRACK_LAGGING:
                     Log.i(TAG, "Info (" + msg.arg1 + "," + msg.arg2 + ")");
                     break;
-                case MEDIA_INFO_METADATA_UPDATE:
-                case MEDIA_INFO_EXTERNAL_METADATA_UPDATE:
-                    msg.arg1 = MEDIA_INFO_METADATA_UPDATE;
-                    // update default track selection
-                    break;
                 }
 
                 if (mOnInfoListener != null) {
@@ -703,8 +698,6 @@ public class MediaPlayer extends MediaConsts
                 // No real default action so far.
                 return;
             case MEDIA_TIMED_TEXT:
-                return;
-            case MEDIA_SUBTITLE_DATA:
                 return;
             case MEDIA_NOP: // interface test message - ignore
                 break;
@@ -949,9 +942,6 @@ public class MediaPlayer extends MediaConsts
          * <li>{@link #MEDIA_INFO_BUFFERING_END}
          * <li>{@link #MEDIA_INFO_BAD_INTERLEAVING}
          * <li>{@link #MEDIA_INFO_NOT_SEEKABLE}
-         * <li>{@link #MEDIA_INFO_METADATA_UPDATE}
-         * <li>{@link #MEDIA_INFO_UNSUPPORTED_SUBTITLE}
-         * <li>{@link #MEDIA_INFO_SUBTITLE_TIMED_OUT}
          * </ul>
          * @param extra an extra code, specific to the info. Typically
          * implementation dependent.
@@ -1006,7 +996,6 @@ class MediaConsts {
     public static final int VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING = 2;
 
 
-
     /* Do not change these values without updating their counterparts
      * in include/media/mediaplayer.h!
      */
@@ -1023,8 +1012,6 @@ class MediaConsts {
     protected static final int MEDIA_TIMED_TEXT = 99;
     protected static final int MEDIA_ERROR = 100;
     protected static final int MEDIA_INFO = 200;
-    protected static final int MEDIA_SUBTITLE_DATA = 201;
-
 
 
     /* Do not change these values without updating their counterparts
@@ -1057,7 +1044,6 @@ class MediaConsts {
     public static final int MEDIA_ERROR_UNSUPPORTED = -1010;
     /** Some operation takes too long to complete, usually more than 3-5 seconds. */
     public static final int MEDIA_ERROR_TIMED_OUT = -110;
-
 
 
     /* Do not change these values without updating their counterparts
@@ -1109,33 +1095,6 @@ class MediaConsts {
      */
     public static final int MEDIA_INFO_NOT_SEEKABLE = 801;
 
-    /** A new set of metadata is available.
-     * @see android.media.MediaPlayer.OnInfoListener
-     */
-    public static final int MEDIA_INFO_METADATA_UPDATE = 802;
-
-    /** A new set of external-only metadata is available.  Used by
-     *  JAVA framework to avoid triggering track scanning.
-     * @hide
-     */
-    public static final int MEDIA_INFO_EXTERNAL_METADATA_UPDATE = 803;
-
-    /** Failed to handle timed text track properly.
-     * @see android.media.MediaPlayer.OnInfoListener
-     *
-     * {@hide}
-     */
-    public static final int MEDIA_INFO_TIMED_TEXT_ERROR = 900;
-
-    /** Subtitle track was not supported by the media framework.
-     * @see android.media.MediaPlayer.OnInfoListener
-     */
-    public static final int MEDIA_INFO_UNSUPPORTED_SUBTITLE = 901;
-
-    /** Reading the subtitle track takes too long.
-     * @see android.media.MediaPlayer.OnInfoListener
-     */
-    public static final int MEDIA_INFO_SUBTITLE_TIMED_OUT = 902;
 
 }
 
