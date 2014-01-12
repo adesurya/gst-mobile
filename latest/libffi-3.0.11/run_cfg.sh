@@ -26,3 +26,5 @@ mkdir -p $PREFIX
 ../configure --prefix=$PREFIX --host=arm 
 
 make && make install
+
+exit 0

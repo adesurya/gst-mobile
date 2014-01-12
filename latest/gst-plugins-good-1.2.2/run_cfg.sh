@@ -57,6 +57,8 @@ mkdir -p $PREFIX
     --disable-nls --disable-rpath \
     --disable-debug \
     --disable-valgrind \
+    --disable-gdk_pixbuf \
+    --disable-libpng \
     --enable-static-plugins \
     --without-libiconv-prefix \
     --without-libintl-prefix \

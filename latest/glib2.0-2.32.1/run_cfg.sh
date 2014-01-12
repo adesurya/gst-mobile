@@ -95,3 +95,5 @@ cp -f ../gio/tests/test*.xml gio/tests
 cp -f ../gio/tests/test*.txt gio/tests
 
 make && make install
+
+exit 0
