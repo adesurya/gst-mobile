@@ -42,15 +42,15 @@ cd oldbld
 PREFIX=`pwd`/../../groot
 mkdir -p $PREFIX
 
+#--disable-examples
+#--disable-external
+#--disable-largefile
 ../configure \
     --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
     --disable-nls --disable-rpath \
     --disable-debug \
     --disable-valgrind \
-    --disable-examples \
-    --disable-external \
-    --disable-largefile \
     --disable-Bsymbolic \
     --enable-static-plugins \
     --disable-x --disable-xvideo --disable-xshm \

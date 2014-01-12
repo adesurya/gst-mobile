@@ -34,19 +34,19 @@ mkdir -p $PREFIX
 
 # --disable-registry 
 #--disable-plugin 
+#--disable-examples 
+#--disable-parse --disable-option-parsing
+#--disable-largefile
 ../configure \
     --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
     --disable-nls --disable-rpath \
     --disable-gst-debug \
-    --disable-parse --disable-option-parsing \
     --disable-trace --disable-alloc-trace \
     --disable-debug \
     --disable-valgrind \
-    --disable-examples \
     --enable-static-plugins \
     --disable-tests --disable-failing-tests --disable-benchmarks \
-    --disable-largefile \
     --disable-Bsymbolic \
     --without-libiconv-prefix \
     --without-libintl-prefix 

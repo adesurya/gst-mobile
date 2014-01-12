@@ -26270,8 +26270,8 @@ if test -z $USE_NO_X11; then
 $as_echo "yes" >&6; }
 	HAVE_X11=yes
 fi
-
 fi
+
 
 
  if test "x$HAVE_X11" = "xyes"; then

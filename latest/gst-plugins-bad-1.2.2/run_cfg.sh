@@ -53,14 +53,14 @@ cd oldbld
 PREFIX=`pwd`/../../groot
 mkdir -p $PREFIX
 
+#--disable-examples
+#--disable-external
 ../configure \
     --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
     --disable-nls --disable-rpath \
     --disable-debug \
     --disable-valgrind \
-    --disable-examples \
-    --disable-external \
     --disable-xvid \
     --disable-opensles \
     --disable-sbc \
