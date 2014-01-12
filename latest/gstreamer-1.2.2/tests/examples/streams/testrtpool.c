@@ -67,9 +67,11 @@ default_push (GstTaskPool * pool, GstTaskPoolFunction func, gpointer data,
   if ((res = pthread_attr_setschedparam (&attr, &param)) != 0)
     g_warning ("setschedparam: failure: %p", g_strerror (res));
 
+#if !defined(ANDROID)
   g_message ("set inherit");
   if ((res = pthread_attr_setinheritsched (&attr, PTHREAD_EXPLICIT_SCHED)) != 0)
     g_warning ("setinheritsched: failure: %p", g_strerror (res));
+#endif
 
   g_message ("create thread");
   res = pthread_create (&tid->thread, &attr, (void *(*)(void *)) func, data);

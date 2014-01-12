@@ -21,7 +21,7 @@ export GLIB_LIBS="-L$PWD/../groot/lib -lglib-2.0 -lgobject-2.0"
 export GIO_CFLAGS="-I$PWD/../groot/include/glib-2.0"
 export GIO_LIBS="-L$PWD/../groot/lib -lgio-2.0"
 
-export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS"
+export CFLAGS="$CFLAGS -DANDROID $GLIB_CFLAGS $GIO_CFLAGS"
 export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS"
 
 ##
