@@ -525,7 +525,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 #GTESTER = gtester 			# for non-GLIB packages
-GTESTER = $(GTESTER_ENV) $(top_builddir)/glib/gtester	# for the GLIB package
+GTESTER = $(top_builddir)/glib/gtester			# for the GLIB package
 GTESTER_REPORT = $(top_builddir)/glib/gtester-report	# for the GLIB package
 
 # initialize variables for unconditional += appending
@@ -555,8 +555,8 @@ nodist_configexecinclude_HEADERS = glibconfig.h
 @HAVE_GOOD_PRINTF_FALSE@PRINTF_SUBDIR = gnulib
 @HAVE_GOOD_PRINTF_FALSE@printf_la = gnulib/libgnulib.la
 @USE_SYSTEM_PCRE_FALSE@MAYBE_PCRE = pcre 
-SUBDIRS = libcharset $(PRINTF_SUBDIR) $(MAYBE_PCRE) update-pcre . 
-DIST_SUBDIRS = libcharset gnulib pcre update-pcre 
+SUBDIRS = libcharset $(PRINTF_SUBDIR) $(MAYBE_PCRE) update-pcre . tests
+DIST_SUBDIRS = libcharset gnulib pcre update-pcre tests
 AM_CPPFLAGS = \
 	$(glib_INCLUDES) 		\
 	$(pcre_inc) 			\

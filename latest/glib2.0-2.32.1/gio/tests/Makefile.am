@@ -6,9 +6,6 @@ include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = gdbus-object-manager-example
 
-# Some tests need a dbus session
-GTESTER_ENV = dbus-launch
-
 INCLUDES = 			\
 	-g 			\
 	$(gio_INCLUDES)		\

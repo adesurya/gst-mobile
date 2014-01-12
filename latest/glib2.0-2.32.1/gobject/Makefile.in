@@ -449,7 +449,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 #GTESTER = gtester 			# for non-GLIB packages
-GTESTER = $(GTESTER_ENV) $(top_builddir)/glib/gtester	# for the GLIB package
+GTESTER = $(top_builddir)/glib/gtester			# for the GLIB package
 GTESTER_REPORT = $(top_builddir)/glib/gtester-report	# for the GLIB package
 
 # initialize variables for unconditional += appending
@@ -465,7 +465,7 @@ TEST_PROGS =
 # GObject - GLib Type, Object, Parameter and Signal Library
 # Copyright (C) 1997,98,99,2000 Tim Janik and Red Hat, Inc.
 #
-SUBDIRS = . 
+SUBDIRS = . tests
 BUILT_SOURCES = $(am__append_1)
 CLEANFILES = $(am__append_2) gobject-public-headers.txt $(gen_sources) \
 	libgobject-gdb.py

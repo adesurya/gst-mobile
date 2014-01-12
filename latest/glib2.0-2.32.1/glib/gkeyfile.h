@@ -20,7 +20,7 @@
  *   Boston, MA 02111-1307, USA.
  */
 
-#if defined(G_DISABLE_SINGLE_INCLUDES) && !defined (__GLIB_H_INSIDE__) && !defined (GLIB_COMPILATION)
+#if !defined (__GLIB_H_INSIDE__) && !defined (GLIB_COMPILATION)
 #error "Only <glib.h> can be included directly."
 #endif
 
@@ -258,9 +258,6 @@ gboolean  g_key_file_remove_group           (GKeyFile             *key_file,
 #define G_KEY_FILE_DESKTOP_KEY_STARTUP_NOTIFY   "StartupNotify"
 #define G_KEY_FILE_DESKTOP_KEY_STARTUP_WM_CLASS "StartupWMClass"
 #define G_KEY_FILE_DESKTOP_KEY_URL              "URL"
-#define G_KEY_FILE_DESKTOP_KEY_GETTEXT_DOMAIN   "X-GNOME-Gettext-Domain"
-#define G_KEY_FILE_DESKTOP_KEY_FULLNAME         "X-GNOME-FullName"
-#define G_KEY_FILE_DESKTOP_KEY_KEYWORDS         "Keywords"
 
 #define G_KEY_FILE_DESKTOP_TYPE_APPLICATION     "Application"
 #define G_KEY_FILE_DESKTOP_TYPE_LINK            "Link"

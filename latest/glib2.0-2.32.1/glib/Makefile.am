@@ -35,9 +35,9 @@ else
 MAYBE_PCRE = pcre 
 endif
 
-SUBDIRS = libcharset $(PRINTF_SUBDIR) $(MAYBE_PCRE) update-pcre . 
+SUBDIRS = libcharset $(PRINTF_SUBDIR) $(MAYBE_PCRE) update-pcre . tests
 
-DIST_SUBDIRS = libcharset gnulib pcre update-pcre 
+DIST_SUBDIRS = libcharset gnulib pcre update-pcre tests
 
 AM_CPPFLAGS = 				\
 	$(glib_INCLUDES) 		\

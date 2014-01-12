@@ -899,8 +899,6 @@ _g_io_modules_ensure_loaded (void)
 
       /* Then load the compiled in path */
       g_io_modules_scan_all_in_directory_with_scope (GIO_MODULE_DIR, scope);
-      /* Hard-coded fallback directory for pre-multiarch compatibility */
-      g_io_modules_scan_all_in_directory ("/usr/lib/gio/modules");
 
       g_io_module_scope_free (scope);
 
