@@ -1095,9 +1095,7 @@ lookup_uid_data (uid_t uid)
       if (pwbufp->pw_name != NULL && pwbufp->pw_name[0] != 0)
 	data->user_name = convert_pwd_string_to_utf8 (pwbufp->pw_name);
 
-#if defined(ANDROID)
-      gecos = NULL;
-#else
+#if !defined(ANDROID)
       gecos = pwbufp->pw_gecos;
 #endif
 

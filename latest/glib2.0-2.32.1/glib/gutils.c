@@ -686,14 +686,11 @@ g_get_any_init_do (void)
     }
 #endif	/* !G_OS_WIN32 */
   
-  g_home_dir = g_strdup (g_getenv ("G_HOME"));
-  
 #ifdef G_OS_WIN32
   /* We check $HOME first for Win32, though it is a last resort for Unix
    * where we prefer the results of getpwuid().
    */
-  if (!g_home_dir)
-    g_home_dir = g_strdup (g_getenv ("HOME"));
+  g_home_dir = g_strdup (g_getenv ("HOME"));
 
   /* Only believe HOME if it is an absolute path and exists */
   if (g_home_dir)
@@ -818,9 +815,7 @@ g_get_any_init_do (void)
     
     if (!pw)
       {
-#if defined(ANDROID)
-    // no impl
-#else
+#if !defined(ANDROID)
 	setpwent ();
 #endif
 	pw = getpwuid (getuid ());
@@ -830,9 +825,7 @@ g_get_any_init_do (void)
       {
 	g_user_name = g_strdup (pw->pw_name);
 
-#if defined(ANDROID)
-    // no pw_gecos
-#else
+#if !defined(ANDROID)
 	if (pw->pw_gecos && *pw->pw_gecos != '\0') 
 	  {
 	    gchar **gecos_fields;
@@ -996,11 +989,6 @@ g_get_real_name (void)
  *   if (!homedir)
  *      homedir = g_get_home_dir (<!-- -->);
  * ]|
- *
- * However, to allow changing this value for testing and development
- * purposes, the value of the <envar>G_HOME</envar> environment 
- * variable, if set, will override the <filename>passwd</filename>
- * entry.
  *
  * Returns: the current user's home directory
  */
