@@ -1,8 +1,8 @@
 dnl Process this with autoconf to create configure
 
-AC_PREREQ(2.63)
+AC_PREREQ(2.68)
 
-AC_INIT([libffi], [3.0.11-rc1], [http://sourceware.org/libffi.html])
+AC_INIT([libffi], [3.0.11], [http://github.com/atgreen/libffi/issues])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -115,7 +115,7 @@ case "$host" in
 	TARGET=X86_64; TARGETDIR=x86
 	;;
   i?86-*-*)
-	TARGET=X86; TARGETDIR=x86
+	TARGET=X86_64; TARGETDIR=x86
 	;;
 
   ia64*-*-*)
@@ -139,7 +139,14 @@ case "$host" in
 	TARGET=MIPS; TARGETDIR=mips
 	;;
 
+  moxie-*-*)
+        TARGET=MOXIE; TARGETDIR=moxie
+	;;
+
   powerpc*-*-linux* | powerpc-*-sysv*)
+	TARGET=POWERPC; TARGETDIR=powerpc
+	;;
+  powerpc-*-amigaos*)
 	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
   powerpc-*-beos*)
@@ -182,6 +189,15 @@ case "$host" in
 
   x86_64-*-cygwin* | x86_64-*-mingw*)
 	TARGET=X86_WIN64; TARGETDIR=x86
+	# All mingw/cygwin/win32 builds require -no-undefined for sharedlib.
+	# We must also check with_cross_host to decide if this is a native
+	# or cross-build and select where to install dlls appropriately.
+	if test -n "$with_cross_host" &&
+	   test x"$with_cross_host" != x"no"; then
+	  AM_LTLDFLAGS='-no-undefined -bindir "$(toolexeclibdir)"';
+	else
+	  AM_LTLDFLAGS='-no-undefined -bindir "$(bindir)"';
+	fi
 	;;
 
   x86_64-*-*)
@@ -245,17 +261,7 @@ AC_SUBST(HAVE_LONG_DOUBLE)
 
 AC_C_BIGENDIAN
 
-AC_CACHE_CHECK([assembler .cfi pseudo-op support],
-    libffi_cv_as_cfi_pseudo_op, [
-    libffi_cv_as_cfi_pseudo_op=unknown
-    AC_TRY_COMPILE([asm (".cfi_startproc\n\t.cfi_endproc");],,
-		   [libffi_cv_as_cfi_pseudo_op=yes],
-		   [libffi_cv_as_cfi_pseudo_op=no])
-])
-if test "x$libffi_cv_as_cfi_pseudo_op" = xyes; then
-    AC_DEFINE(HAVE_AS_CFI_PSEUDO_OP, 1,
-	      [Define if your assembler supports .cfi_* directives.])
-fi
+GCC_AS_CFI_PSEUDO_OP
 
 if test x$TARGET = xSPARC; then
     AC_CACHE_CHECK([assembler and linker support unaligned pc related relocs],
@@ -291,10 +297,10 @@ fi
 if test x$TARGET = xX86 || test x$TARGET = xX86_WIN32 || test x$TARGET = xX86_64; then
     AC_CACHE_CHECK([assembler supports pc related relocs],
 	libffi_cv_as_x86_pcrel, [
-	libffi_cv_as_x86_pcrel=no
+	libffi_cv_as_x86_pcrel=yes
 	echo '.text; foo: nop; .data; .long foo-.; .text' > conftest.s
-	if $CC $CFLAGS -c conftest.s > /dev/null; then
-	   libffi_cv_as_x86_pcrel=yes
+	if $CC $CFLAGS -c conftest.s 2>&1 | $EGREP -i 'illegal|warning' > /dev/null; then
+	    libffi_cv_as_x86_pcrel=no
 	fi
 	])
     if test "x$libffi_cv_as_x86_pcrel" = xyes; then
@@ -345,7 +351,7 @@ case "$target" in
                  [Cannot use PROT_EXEC on this target, so, we revert to
                    alternative means])
      ;;
-     *-apple-darwin10* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
+     *-apple-darwin1[[10]]* | *-*-freebsd* | *-*-kfreebsd* | *-*-openbsd* | *-pc-solaris*)
        AC_DEFINE(FFI_MMAP_EXEC_WRIT, 1,
                  [Cannot use malloc on this target, so, we revert to
                    alternative means])

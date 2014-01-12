@@ -213,10 +213,6 @@ ffi_closure_v8:
 	be,a	done1
 	 ldd	[%fp-8], %i0
 
-	cmp	%o0, FFI_TYPE_UINT64
-	be,a	done1
-	 ldd	[%fp-8], %i0
-
 	ld	[%fp-8], %i0
 done1:
 	jmp	%i7+8

@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------------
    ffi.c - Copyright (C) 2011 Anthony Green
+           Copyright (C) 2011 Kyle Moffett
            Copyright (C) 2008 Red Hat, Inc
            Copyright (C) 2007, 2008 Free Software Foundation, Inc
 	   Copyright (c) 1998 Geoffrey Keating
@@ -46,11 +47,6 @@ enum {
   FLAG_RETURNS_64BITS   = 1 << (31-28),
 
   FLAG_RETURNS_128BITS  = 1 << (31-27), /* cr6  */
-  FLAG_SYSV_SMST_R4     = 1 << (31-26), /* use r4 for FFI_SYSV 8 byte
-					   structs.  */
-  FLAG_SYSV_SMST_R3     = 1 << (31-25), /* use r3 for FFI_SYSV 4 byte
-					   structs.  */
-  /* Bits (31-24) through (31-19) store shift value for SMST */
 
   FLAG_ARG_NEEDS_COPY   = 1 << (31- 7),
 #ifndef __NO_FPRS__
@@ -150,6 +146,7 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
   gpr_base.u = stacktop.u - ASM_NEEDS_REGISTERS - NUM_GPR_ARG_REGISTERS;
   intarg_count = 0;
 #ifndef __NO_FPRS__
+  double double_tmp;
   fpr_base.d = gpr_base.d - NUM_FPR_ARG_REGISTERS;
   fparg_count = 0;
   copy_space.c = ((flags & FLAG_FP_ARGUMENTS) ? fpr_base.c : gpr_base.c);
@@ -159,9 +156,9 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
   next_arg.u = stack + 2;
 
   /* Check that everything starts aligned properly.  */
-  FFI_ASSERT (((unsigned) (char *) stack & 0xF) == 0);
-  FFI_ASSERT (((unsigned) copy_space.c & 0xF) == 0);
-  FFI_ASSERT (((unsigned) stacktop.c & 0xF) == 0);
+  FFI_ASSERT (((unsigned long) (char *) stack & 0xF) == 0);
+  FFI_ASSERT (((unsigned long) copy_space.c & 0xF) == 0);
+  FFI_ASSERT (((unsigned long) stacktop.c & 0xF) == 0);
   FFI_ASSERT ((bytes & 0xF) == 0);
   FFI_ASSERT (copy_space.c >= next_arg.c);
 
@@ -197,7 +194,6 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
 
       /* Now test the translated value */
       switch (typenum) {
-        double double_tmp;
 #ifndef __NO_FPRS__
 	case FFI_TYPE_FLOAT:
 	  /* With FFI_LINUX_SOFT_FLOAT floats are handled like UINT32.  */
@@ -265,8 +261,8 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
 	  break;
 #endif
 #endif /* have FPRs */
-	
-	/* 
+
+	/*
 	 * The soft float ABI for long doubles works like this, a long double
 	 * is passed in four consecutive GPRs if available.  A maximum of 2
 	 * long doubles can be passed in gprs.  If we do not have 4 GPRs
@@ -688,34 +684,18 @@ ffi_prep_cif_machdep (ffi_cif *cif)
       break;
 
     case FFI_TYPE_STRUCT:
-      if (cif->abi == FFI_SYSV)
-	{
-	  /* The final SYSV ABI says that structures smaller or equal 8 bytes
-	     are returned in r3/r4. The FFI_GCC_SYSV ABI instead returns them
-	     in memory.  */
-
-	  /* Treat structs with size <= 8 bytes.  */
-	  if (size <= 8)
-	    {
-	      flags |= FLAG_RETURNS_SMST;
-	      /* These structs are returned in r3. We pack the type and the
-		 precalculated shift value (needed in the sysv.S) into flags.
-		 The same applies for the structs returned in r3/r4.  */
-	      if (size <= 4)
-		{
-		  flags |= FLAG_SYSV_SMST_R3;
-		  flags |= 8 * (4 - size) << 8;
-		  break;
-		}
-	      /* These structs are returned in r3 and r4. See above.   */
-	      if  (size <= 8)
-		{
-		  flags |= FLAG_SYSV_SMST_R3 | FLAG_SYSV_SMST_R4;
-		  flags |= 8 * (8 - size) << 8;
-		  break;
-		}
-	    }
-	}
+      /*
+       * The final SYSV ABI says that structures smaller or equal 8 bytes
+       * are returned in r3/r4. The FFI_GCC_SYSV ABI instead returns them
+       * in memory.
+       *
+       * NOTE: The assembly code can safely assume that it just needs to
+       *       store both r3 and r4 into a 8-byte word-aligned buffer, as
+       *       we allocate a temporary buffer in ffi_call() if this flag is
+       *       set.
+       */
+      if (cif->abi == FFI_SYSV && size <= 8)
+	flags |= FLAG_RETURNS_SMST;
       intarg_count++;
       flags |= FLAG_RETVAL_REFERENCE;
       /* Fall through.  */
@@ -776,7 +756,7 @@ ffi_prep_cif_machdep (ffi_cif *cif)
 	    break;
 #endif
 	  case FFI_TYPE_UINT128:
-		/* 
+		/*
 		 * A long double in FFI_LINUX_SOFT_FLOAT can use only a set
 		 * of four consecutive gprs. If we do not have enough, we
 		 * have to adjust the intarg_count value.
@@ -932,21 +912,32 @@ extern void FFI_HIDDEN ffi_call_LINUX64(extended_cif *, unsigned long,
 void
 ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 {
+  /*
+   * The final SYSV ABI says that structures smaller or equal 8 bytes
+   * are returned in r3/r4. The FFI_GCC_SYSV ABI instead returns them
+   * in memory.
+   *
+   * Just to keep things simple for the assembly code, we will always
+   * bounce-buffer struct return values less than or equal to 8 bytes.
+   * This allows the ASM to handle SYSV small structures by directly
+   * writing r3 and r4 to memory without worrying about struct size.
+   */
+  unsigned int smst_buffer[2];
   extended_cif ecif;
+  unsigned int rsize = 0;
 
   ecif.cif = cif;
   ecif.avalue = avalue;
 
-  /* If the return value is a struct and we don't have a return	*/
-  /* value address then we need to make one		        */
-
-  if ((rvalue == NULL) && (cif->rtype->type == FFI_TYPE_STRUCT))
-    {
-      ecif.rvalue = alloca(cif->rtype->size);
-    }
-  else
-    ecif.rvalue = rvalue;
-
+  /* Ensure that we have a valid struct return value */
+  ecif.rvalue = rvalue;
+  if (cif->rtype->type == FFI_TYPE_STRUCT) {
+    rsize = cif->rtype->size;
+    if (rsize <= 8)
+      ecif.rvalue = smst_buffer;
+    else if (!rvalue)
+      ecif.rvalue = alloca(rsize);
+  }
 
   switch (cif->abi)
     {
@@ -968,6 +959,10 @@ ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
       FFI_ASSERT (0);
       break;
     }
+
+  /* Check for a bounce-buffered return value */
+  if (rvalue && ecif.rvalue == smst_buffer)
+    memcpy(rvalue, smst_buffer, rsize);
 }
 
 
@@ -1194,7 +1189,7 @@ ffi_closure_helper_SYSV (ffi_closure *closure, void *rvalue,
 #endif /* have FPRS */
 
 	case FFI_TYPE_UINT128:
-		/* 
+		/*
 		 * Test if for the whole long double, 4 gprs are available.
 		 * otherwise the stuff ends up on the stack.
 		 */
