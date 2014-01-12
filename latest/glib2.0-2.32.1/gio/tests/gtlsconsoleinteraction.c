@@ -75,7 +75,9 @@ g_tls_console_interaction_ask_password (GTlsInteraction    *interaction,
   gchar *prompt;
 
   prompt = g_strdup_printf ("Password \"%s\"': ", g_tls_password_get_description (password));
+#if !defined(ANDROID)
   value = getpass (prompt);
+#endif
   g_free (prompt);
 
   if (g_cancellable_set_error_if_cancelled (cancellable, error))
