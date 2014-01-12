@@ -91,4 +91,7 @@ chmod a-w $CACHE_FILE
     --enable-static \
     --disable-selinux --disable-fam --disable-xattr
 
+cp -f ../gio/tests/test*.xml gio/tests
+cp -f ../gio/tests/test*.txt gio/tests
+
 make && make install
