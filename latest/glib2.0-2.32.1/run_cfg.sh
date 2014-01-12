@@ -62,7 +62,7 @@ export LDFLAGS="$LDFLAGS -L$PWD/../groot/lib"
 
 ##
 ## for libffi
-export LIBFFI_CFLAGS="-I$PWD/../groot/include"
+export LIBFFI_CFLAGS="-I$PWD/../groot/lib/libffi-3.0.11/include"
 export LIBFFI_LIBS="-L$PWD/../groot/lib -lffi"
 export LDFLAGS="$LDFLAGS $LIBFFI_LIBS $DBUS1_LIBS"
 
