@@ -7064,7 +7064,6 @@ fi
 
 
 
-
 if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
 	if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
@@ -7906,7 +7905,6 @@ if test -n "$ZLIB_CFLAGS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_ZLIB_CFLAGS=`$PKG_CONFIG --cflags "zlib" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -7923,7 +7921,6 @@ if test -n "$ZLIB_LIBS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_ZLIB_LIBS=`$PKG_CONFIG --libs "zlib" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -7943,9 +7940,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        ZLIB_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "zlib" 2>&1`
+	        ZLIB_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "zlib" 2>&1`
         else
-	        ZLIB_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "zlib" 2>&1`
+	        ZLIB_PKG_ERRORS=`$PKG_CONFIG --print-errors "zlib" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$ZLIB_PKG_ERRORS" >&5
@@ -8159,7 +8156,6 @@ if test -n "$LIBFFI_CFLAGS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_LIBFFI_CFLAGS=`$PKG_CONFIG --cflags "libffi >= 3.0.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -8176,7 +8172,6 @@ if test -n "$LIBFFI_LIBS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_LIBFFI_LIBS=`$PKG_CONFIG --libs "libffi >= 3.0.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -8196,9 +8191,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        LIBFFI_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "libffi >= 3.0.0" 2>&1`
+	        LIBFFI_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libffi >= 3.0.0" 2>&1`
         else
-	        LIBFFI_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "libffi >= 3.0.0" 2>&1`
+	        LIBFFI_PKG_ERRORS=`$PKG_CONFIG --print-errors "libffi >= 3.0.0" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$LIBFFI_PKG_ERRORS" >&5
@@ -8213,6 +8208,7 @@ installed software in a non-standard prefix.
 Alternatively, you may set the environment variables LIBFFI_CFLAGS
 and LIBFFI_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
+
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
@@ -8228,6 +8224,7 @@ See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }
+
 else
 	LIBFFI_CFLAGS=$pkg_cv_LIBFFI_CFLAGS
 	LIBFFI_LIBS=$pkg_cv_LIBFFI_LIBS
@@ -21283,8 +21280,6 @@ if test "x$GCC" = "xyes"; then
   esac
 fi
 
-CPPFLAGS="$CPPFLAGS -DG_DISABLE_SINGLE_INCLUDES"
-
 if test "$glib_native_win32" = "yes"; then
   if test x$enable_static = xyes -a x$enable_shared = xyes; then
     as_fn_error $? "Can not build both shared and static at the same time on Windows." "$LINENO" 5
@@ -25971,7 +25966,6 @@ if test -n "$LIBELF_CFLAGS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_LIBELF_CFLAGS=`$PKG_CONFIG --cflags "libelf" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -25988,7 +25982,6 @@ if test -n "$LIBELF_LIBS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_LIBELF_LIBS=`$PKG_CONFIG --libs "libelf" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -26008,9 +26001,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        LIBELF_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "libelf" 2>&1`
+	        LIBELF_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libelf" 2>&1`
         else
-	        LIBELF_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "libelf" 2>&1`
+	        LIBELF_PKG_ERRORS=`$PKG_CONFIG --print-errors "libelf" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$LIBELF_PKG_ERRORS" >&5
@@ -27352,7 +27345,6 @@ if test -n "$PCRE_CFLAGS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_PCRE_CFLAGS=`$PKG_CONFIG --cflags "libpcre >= $PCRE_REQUIRED_VERSION" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -27369,7 +27361,6 @@ if test -n "$PCRE_LIBS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_PCRE_LIBS=`$PKG_CONFIG --libs "libpcre >= $PCRE_REQUIRED_VERSION" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -27389,9 +27380,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        PCRE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "libpcre >= $PCRE_REQUIRED_VERSION" 2>&1`
+	        PCRE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libpcre >= $PCRE_REQUIRED_VERSION" 2>&1`
         else
-	        PCRE_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "libpcre >= $PCRE_REQUIRED_VERSION" 2>&1`
+	        PCRE_PKG_ERRORS=`$PKG_CONFIG --print-errors "libpcre >= $PCRE_REQUIRED_VERSION" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$PCRE_PKG_ERRORS" >&5
@@ -27406,6 +27397,7 @@ installed software in a non-standard prefix.
 Alternatively, you may set the environment variables PCRE_CFLAGS
 and PCRE_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
+
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
@@ -27421,6 +27413,7 @@ See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }
+
 else
 	PCRE_CFLAGS=$pkg_cv_PCRE_CFLAGS
 	PCRE_LIBS=$pkg_cv_PCRE_LIBS
@@ -27876,7 +27869,6 @@ if test -n "$GTKDOC_DEPS_CFLAGS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_GTKDOC_DEPS_CFLAGS=`$PKG_CONFIG --cflags "glib-2.0 >= 2.10.0 gobject-2.0  >= 2.10.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -27893,7 +27885,6 @@ if test -n "$GTKDOC_DEPS_LIBS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_GTKDOC_DEPS_LIBS=`$PKG_CONFIG --libs "glib-2.0 >= 2.10.0 gobject-2.0  >= 2.10.0" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -27913,9 +27904,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        GTKDOC_DEPS_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "glib-2.0 >= 2.10.0 gobject-2.0  >= 2.10.0" 2>&1`
+	        GTKDOC_DEPS_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "glib-2.0 >= 2.10.0 gobject-2.0  >= 2.10.0" 2>&1`
         else
-	        GTKDOC_DEPS_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "glib-2.0 >= 2.10.0 gobject-2.0  >= 2.10.0" 2>&1`
+	        GTKDOC_DEPS_PKG_ERRORS=`$PKG_CONFIG --print-errors "glib-2.0 >= 2.10.0 gobject-2.0  >= 2.10.0" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$GTKDOC_DEPS_PKG_ERRORS" >&5
@@ -27930,6 +27921,7 @@ installed software in a non-standard prefix.
 Alternatively, you may set the environment variables GTKDOC_DEPS_CFLAGS
 and GTKDOC_DEPS_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
+
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
@@ -27945,6 +27937,7 @@ See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }
+
 else
 	GTKDOC_DEPS_CFLAGS=$pkg_cv_GTKDOC_DEPS_CFLAGS
 	GTKDOC_DEPS_LIBS=$pkg_cv_GTKDOC_DEPS_LIBS
@@ -28664,7 +28657,6 @@ if test -n "$DBUS1_CFLAGS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_DBUS1_CFLAGS=`$PKG_CONFIG --cflags "dbus-1 >= 1.2.14" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -28681,7 +28673,6 @@ if test -n "$DBUS1_LIBS"; then
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
   pkg_cv_DBUS1_LIBS=`$PKG_CONFIG --libs "dbus-1 >= 1.2.14" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
 fi
@@ -28701,9 +28692,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        DBUS1_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "dbus-1 >= 1.2.14" 2>&1`
+	        DBUS1_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "dbus-1 >= 1.2.14" 2>&1`
         else
-	        DBUS1_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "dbus-1 >= 1.2.14" 2>&1`
+	        DBUS1_PKG_ERRORS=`$PKG_CONFIG --print-errors "dbus-1 >= 1.2.14" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$DBUS1_PKG_ERRORS" >&5
