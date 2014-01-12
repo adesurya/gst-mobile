@@ -53,7 +53,6 @@ cd oldbld
 PREFIX=`pwd`/../../groot
 mkdir -p $PREFIX
 
-#--disable-examples
 #--disable-external
 ../configure \
     --prefix=$PREFIX \
@@ -63,8 +62,12 @@ mkdir -p $PREFIX
     --disable-valgrind \
     --disable-xvid \
     --disable-opensles \
+    --disable-decklink \
+    --disable-dash \
+    --disable-smoothstreaming \
     --disable-sbc \
     --enable-static-plugins \
+    --disable-examples \
     --without-libiconv-prefix \
     --without-libintl-prefix 
 
