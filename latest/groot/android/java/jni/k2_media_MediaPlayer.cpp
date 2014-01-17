@@ -99,7 +99,7 @@ static zeroptr<MediaPlayer> setMediaPlayer(JNIEnv* env, jobject thiz, const zero
     Autolock l(sLock);
     zeroptr<MediaPlayer> old = (MediaPlayer*)env->GetIntField(thiz, fields.context);
     if (player.get()) {
-        player->AddRef();
+        player->AddRef(); // Add extra ref count
     }
     if (old != 0) {
         old->Release();
@@ -444,10 +444,11 @@ static void k2_media_MediaPlayer_native_init(JNIEnv *env)
     if (fields.surface_texture == NULL) {
         return;
     }
-
+#if 0
     fields.proxyConfigGetHost = env->GetMethodID(clazz, "getHost", "()Ljava/lang/String;");
     fields.proxyConfigGetPort = env->GetMethodID(clazz, "getPort", "()I");
     fields.proxyConfigGetExclusionList = env->GetMethodID(clazz, "getExclusionList", "()Ljava/lang/String;");
+#endif
 }
 
 static void k2_media_MediaPlayer_native_setup(JNIEnv *env, jobject thiz, jobject weak_this)

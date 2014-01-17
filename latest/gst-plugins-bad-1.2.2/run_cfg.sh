@@ -61,7 +61,7 @@ mkdir -p $PREFIX
     --disable-debug \
     --disable-valgrind \
     --disable-xvid \
-    --disable-opensles \
+    --disable-curl \
     --disable-decklink \
     --disable-dash \
     --disable-smoothstreaming \

@@ -5,6 +5,7 @@
 using namespace android;
 
 #include "refcount.h"
+#include "zeroptr.h"
 
 #include <string>
 #include <vector>
@@ -13,11 +14,11 @@ using namespace std;
 namespace eau
 {
 
-class CMediaPlayerListener : public RefCount
+class IMediaPlayerListener : public RefCount
 {
 
 };
-typedef RefCounted<CMediaPlayerListener> MediaPlayerListener;
+typedef RefCounted<IMediaPlayerListener> MediaPlayerListener;
 
 class CMediaPlayer : public RefCount
 {
@@ -25,8 +26,8 @@ public:
     CMediaPlayer();
     virtual ~CMediaPlayer();
 
-    void setListener(MediaPlayerListener *listener);
-    status_t setNextMediaPlayer(CMediaPlayer *player);
+    void setListener(zeroptr<MediaPlayerListener> listener);
+    status_t setNextMediaPlayer(zeroptr<CMediaPlayer> player);
 
 public:
     status_t setDataSource(const string &path, const vector<string> &headers);
@@ -60,6 +61,12 @@ public:
 
     int setRetransmitEndpoint(const char *addr, unsigned short port);
     void updateProxyConfig(const char *host, unsigned short port, const char *exclusionList);
+
+private:
+    zeroptr<MediaPlayerListener> m_pListener;
+    string m_szPath;
+    int m_fd;
+    bool m_bPlaying;
 };
 typedef RefCounted<CMediaPlayer> MediaPlayer;
 

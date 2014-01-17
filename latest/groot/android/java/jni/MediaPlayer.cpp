@@ -1,29 +1,37 @@
 #include "MediaPlayer.h"
+#include "gstapi.h"
 
 namespace eau
 {
 
 CMediaPlayer::CMediaPlayer()
-{}
+{
+    m_pListener = NULL;
+    m_bPlaying = false;
+}
 
 CMediaPlayer::~CMediaPlayer()
 {}
 
-void CMediaPlayer::setListener(MediaPlayerListener *listener)
-{}
+void CMediaPlayer::setListener(zeroptr<MediaPlayerListener> listener)
+{
+    m_pListener = listener;
+}
 
-status_t CMediaPlayer::setNextMediaPlayer(CMediaPlayer *player)
+status_t CMediaPlayer::setNextMediaPlayer(zeroptr<CMediaPlayer> player)
 {
     return OK;
 }
 
 status_t CMediaPlayer::setDataSource(const string &path, const vector<string> &headers)
 {
+    m_szPath = path;
     return OK;
 }
 
 status_t CMediaPlayer::setDataSource(int fd, long offset, long length)
 {
+    m_fd = fd;
     return OK;
 }
 
@@ -43,11 +51,19 @@ status_t CMediaPlayer::prepareAsync()
 
 status_t CMediaPlayer::start()
 {
+    int argc = 2;
+    char *argv[2] = {NULL, NULL};
+    argv[0] = (char *)"k2player";
+    argv[1] = (char *)m_szPath.c_str();
+    m_bPlaying = true;
+    playbin2_player(argc, argv);
+    m_bPlaying = false;
     return OK;
 }
 
 status_t CMediaPlayer::stop()
 {
+    m_bPlaying = false;
     return OK;
 }
 
@@ -58,7 +74,7 @@ status_t CMediaPlayer::pause()
 
 bool CMediaPlayer::isPlaying()
 {
-    return false;
+    return m_bPlaying;
 }
 
 status_t CMediaPlayer::seekTo(int msec)

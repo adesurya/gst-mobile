@@ -41,8 +41,9 @@ static void on_pad_added(GstElement *element, GstPad *pad, gpointer data)
     gst_object_unref (sinkpad);
 }
 
-int xmain (int argc, char *argv[])
-{
+
+int ogg_player (int argc, char *argv[]) {
+
     GMainLoop *loop;
     GstElement *pipeline, *source, *demuxer, *decoder, *conv, *sink;
     GstBus *bus;
@@ -117,3 +118,41 @@ int xmain (int argc, char *argv[])
 
     return 0;
 }
+
+
+int playbin2_player(int argc, char *argv[]) {
+
+    GstElement *pipeline;
+    GstBus *bus;
+    GstMessage *msg;
+
+    gchar uri[512] = {0};
+    if (argc != 2) {
+        g_print ("playbin2 [options] uri\n");
+        return -1;
+    }
+    /* playbin2 uri=http://docs.gstreamer.com/media/sintel_trailer-480p.webm */
+    g_snprintf(uri, sizeof(uri), "playbin2 uri=%s", argv[1]);
+
+    /* Initialize GStreamer */
+    gst_init (&argc, &argv);
+
+    /* Build the pipeline */
+    pipeline = gst_parse_launch (uri, NULL);
+
+    /* Start playing */
+    gst_element_set_state (pipeline, GST_STATE_PLAYING);
+
+    /* Wait until error or EOS */
+    bus = gst_element_get_bus (pipeline);
+    msg = gst_bus_timed_pop_filtered (bus, GST_CLOCK_TIME_NONE, (GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
+
+    /* Free resources */
+    if (msg != NULL)
+        gst_message_unref (msg);
+    gst_object_unref (bus);
+    gst_element_set_state (pipeline, GST_STATE_NULL);
+    gst_object_unref (pipeline);
+    return 0;
+}
+
