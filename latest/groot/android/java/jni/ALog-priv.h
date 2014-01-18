@@ -63,4 +63,12 @@
 #define ALOGE(...) ((void)ALOG(LOG_ERROR, LOG_TAG, __VA_ARGS__))
 #endif
 
+#ifndef returnb_assert
+#define returnb_assert(p)   if (!(p)) {return false;}
+#endif
+
+#ifndef returnv_assert
+#define returnv_assert(p, v) if (!(p)) {return (v);}
+#endif
+
 #endif

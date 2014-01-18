@@ -1,6 +1,7 @@
 #include <gst/gst.h>
 #include <glib.h>
-
+#include "gstapi.h"
+#include "ALog-priv.h"
 
 static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 {
@@ -156,3 +157,139 @@ int playbin2_player(int argc, char *argv[]) {
     return 0;
 }
 
+namespace eau
+{
+
+gboolean CGstPlayback::handle_message (GstBus *bus, GstMessage *msg, void *data)
+{
+    CGstPlayback *thiz = (CGstPlayback *)data;
+    if (thiz)
+        return thiz->HandleMessage(bus, msg);
+    return false;
+}
+ 
+bool CGstPlayback::Init(int argc, char *argv[])
+{
+    returnb_assert(argc == 2);
+    g_snprintf(m_uri, sizeof(m_uri), "%s", argv[1]);
+
+    gst_init (&argc, &argv);
+    m_playbin2 = gst_element_factory_make ("playbin2", "playbin2");
+    returnb_assert(m_playbin2);
+    g_object_set (m_playbin2, "uri", m_uri, NULL);
+
+    g_object_get (m_playbin2, "flags", &m_flags, NULL);
+    m_flags |= GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO;
+    m_flags &= ~GST_PLAY_FLAG_TEXT;
+    g_object_set (m_playbin2, "flags", m_flags, NULL);
+
+    g_object_set (m_playbin2, "connection-speed", 56, NULL);
+
+    m_bus = gst_element_get_bus (m_playbin2);
+    gst_bus_add_watch (m_bus, (GstBusFunc)handle_message, this);
+
+    return true;
+}
+
+bool CGstPlayback::Play()
+{
+    gint iret = gst_element_set_state (m_playbin2, GST_STATE_PLAYING);
+    if (iret == GST_STATE_CHANGE_FAILURE) {
+        g_printerr ("Unable to set the pipeline to the playing state.\n");
+        gst_object_unref (m_playbin2);
+        return false;
+    }
+
+    /* Create a GLib Main Loop and set it to run */
+    m_main_loop = g_main_loop_new (NULL, FALSE);
+    g_main_loop_run (m_main_loop);
+    return true;
+}
+
+bool CGstPlayback::Pause()
+{
+    gint iret = gst_element_set_state (m_playbin2, GST_STATE_PAUSED);
+    if (iret == GST_STATE_CHANGE_FAILURE) {
+        g_printerr ("Unable to set the pipeline to the playing state.\n");
+        return false;
+    }
+    return true;
+}
+
+void CGstPlayback::Uninit()
+{
+    g_main_loop_unref (m_main_loop);
+    gst_object_unref (m_bus);
+    gst_element_set_state (m_playbin2, GST_STATE_NULL);
+    gst_object_unref (m_playbin2);
+}
+
+void CGstPlayback::AnalyzeStreams()
+{
+    g_object_get (m_playbin2, "n-video", &m_numVideo, NULL);
+    g_object_get (m_playbin2, "n-audio", &m_numAudio, NULL);
+    g_object_get (m_playbin2, "n-text", &m_numText, NULL);   
+
+    for (gint i = 0; i < m_numVideo; i++) {
+        GstTagList *tags = NULL;
+        gchar *str = NULL;
+        /* Retrieve the stream's video tags */
+        g_signal_emit_by_name (m_playbin2, "get-video-tags", i, &tags);
+        if (tags) {
+            g_print ("video stream %d:\n", i);
+            gst_tag_list_get_string (tags, GST_TAG_VIDEO_CODEC, &str);
+            g_print ("  codec: %s\n", str ? str : "unknown");
+            g_free (str);
+            gst_tag_list_free (tags);
+        }
+    }
+
+    for (gint i = 0; i < m_numAudio; i++) {
+        GstTagList *tags = NULL;
+        gchar *str = NULL;
+        guint rate = 0;
+        /* Retrieve the stream's audio tags */
+        g_signal_emit_by_name (m_playbin2, "get-audio-tags", i, &tags);
+        if (tags) {
+            g_print ("audio stream %d:\n", i);
+            if (gst_tag_list_get_string (tags, GST_TAG_AUDIO_CODEC, &str)) {
+                g_print ("  codec: %s\n", str);
+                g_free (str);
+            }
+            if (gst_tag_list_get_string (tags, GST_TAG_LANGUAGE_CODE, &str)) {
+                g_print ("  language: %s\n", str);
+                g_free (str);
+            }
+            if (gst_tag_list_get_uint (tags, GST_TAG_BITRATE, &rate)) {
+                g_print ("  bitrate: %d\n", rate);
+            }
+            gst_tag_list_free (tags);
+        }
+    }
+
+    for (gint i = 0; i < m_numText; i++) {
+        GstTagList *tags = NULL;
+        gchar *str = NULL;
+        /* Retrieve the stream's subtitle tags */
+        g_signal_emit_by_name (m_playbin2, "get-text-tags", i, &tags);
+        if (tags) {
+            g_print ("subtitle stream %d:\n", i);
+            if (gst_tag_list_get_string (tags, GST_TAG_LANGUAGE_CODE, &str)) {
+                g_print ("  language: %s\n", str);
+                g_free (str);
+            }
+            gst_tag_list_free (tags);
+        }
+    }
+
+    g_object_get (m_playbin2, "current-video", &m_curVideo, NULL);
+    g_object_get (m_playbin2, "current-audio", &m_curAudio, NULL);
+    g_object_get (m_playbin2, "current-text", &m_curText, NULL);
+}
+
+gboolean CGstPlayback::HandleMessage(GstBus *bus, GstMessage *msg)
+{
+    return false;
+}
+
+} // namespace eau
