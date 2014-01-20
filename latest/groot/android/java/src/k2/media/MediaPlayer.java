@@ -39,6 +39,10 @@ import java.lang.ref.WeakReference;
 public class MediaPlayer extends MediaConsts
 {
     static {
+        System.loadLibrary("glib-2.0");
+        System.loadLibrary("gthread-2.0");
+        System.loadLibrary("gobject-2.0");
+        System.loadLibrary("gstreamer-1.0");
         System.loadLibrary("k2player");
         native_init();
     }

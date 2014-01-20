@@ -6,6 +6,7 @@ using namespace android;
 
 #include "refcount.h"
 #include "zeroptr.h"
+#include "gstapi.h"
 
 #include <string>
 #include <vector>
@@ -67,6 +68,7 @@ private:
     string m_szPath;
     int m_fd;
     bool m_bPlaying;
+    GstPlayback *m_pPlayer;
 };
 typedef RefCounted<CMediaPlayer> MediaPlayer;
 

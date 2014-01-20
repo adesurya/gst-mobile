@@ -193,6 +193,8 @@ bool CGstPlayback::Init(int argc, char *argv[])
 
 bool CGstPlayback::Play()
 {
+    returnb_assert(m_playbin2);
+
     gint iret = gst_element_set_state (m_playbin2, GST_STATE_PLAYING);
     if (iret == GST_STATE_CHANGE_FAILURE) {
         g_printerr ("Unable to set the pipeline to the playing state.\n");
@@ -208,6 +210,8 @@ bool CGstPlayback::Play()
 
 bool CGstPlayback::Pause()
 {
+    returnb_assert(m_playbin2);
+
     gint iret = gst_element_set_state (m_playbin2, GST_STATE_PAUSED);
     if (iret == GST_STATE_CHANGE_FAILURE) {
         g_printerr ("Unable to set the pipeline to the playing state.\n");
@@ -218,14 +222,23 @@ bool CGstPlayback::Pause()
 
 void CGstPlayback::Uninit()
 {
-    g_main_loop_unref (m_main_loop);
-    gst_object_unref (m_bus);
-    gst_element_set_state (m_playbin2, GST_STATE_NULL);
-    gst_object_unref (m_playbin2);
+    if (m_main_loop)
+        g_main_loop_unref (m_main_loop);
+    if (m_bus)
+        gst_object_unref (m_bus);
+    if (m_playbin2) {
+        gst_element_set_state (m_playbin2, GST_STATE_NULL);
+        gst_object_unref (m_playbin2);
+    }
+    m_main_loop = NULL;
+    m_bus = NULL;
+    m_playbin2 = NULL;
 }
 
 void CGstPlayback::AnalyzeStreams()
 {
+    return_assert(m_playbin2);
+
     g_object_get (m_playbin2, "n-video", &m_numVideo, NULL);
     g_object_get (m_playbin2, "n-audio", &m_numAudio, NULL);
     g_object_get (m_playbin2, "n-text", &m_numText, NULL);   
