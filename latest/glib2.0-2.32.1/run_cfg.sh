@@ -89,6 +89,7 @@ chmod a-w $CACHE_FILE
     --host=arm-linux-androideabi  \
     --cache-file=$CACHE_FILE \
     --enable-static \
+    --disable-shared \
     --disable-selinux --disable-fam --disable-xattr
 
 cp -f ../gio/tests/test*.xml gio/tests

@@ -32,7 +32,7 @@ cd oldbld
 PREFIX=`pwd`/../../groot
 mkdir -p $PREFIX
 
-# --disable-registry 
+#--disable-registry 
 #--disable-plugin 
 #--disable-examples 
 #--disable-parse --disable-option-parsing
@@ -45,9 +45,10 @@ mkdir -p $PREFIX
     --disable-trace --disable-alloc-trace \
     --disable-debug \
     --disable-valgrind \
+    --enable-static \
+    --disable-shared \
     --enable-static-plugins \
     --disable-tests --disable-failing-tests --disable-benchmarks \
-    --disable-Bsymbolic \
     --without-libiconv-prefix \
     --without-libintl-prefix 
 
