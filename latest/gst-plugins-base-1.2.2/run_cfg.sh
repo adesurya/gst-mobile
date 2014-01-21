@@ -52,9 +52,15 @@ mkdir -p $PREFIX
     --disable-debug \
     --disable-valgrind \
     --disable-Bsymbolic \
+    --enable-static \
+    --disable-shared \
     --enable-static-plugins \
     --disable-x --disable-xvideo --disable-xshm \
+    --disable-alsa \
+    --disable-ogg \
     --disable-pango \
+    --disable-theora \
+    --disable-vorbis \
     --disable-freetypetest \
     --without-libiconv-prefix \
     --without-libintl-prefix

@@ -59,7 +59,11 @@ mkdir -p $PREFIX
     --disable-valgrind \
     --disable-gdk_pixbuf \
     --disable-libpng \
+    --enable-static \
+    --disable-shared \
     --enable-static-plugins \
+    --disable-libcaca \
+    --disable-cairo \
     --without-libiconv-prefix \
     --without-libintl-prefix \
     --with-gudev \
