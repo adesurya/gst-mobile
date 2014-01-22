@@ -53,6 +53,8 @@ mkdir -p $PREFIX
     --disable-nls --disable-rpath \
     --disable-debug \
     --disable-valgrind \
+    --enable-static \
+    --disable-shared \
     --enable-static-plugins \
     --without-libiconv-prefix \
     --without-libintl-prefix 

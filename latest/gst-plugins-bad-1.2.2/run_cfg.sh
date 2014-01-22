@@ -60,10 +60,13 @@ mkdir -p $PREFIX
     --disable-nls --disable-rpath \
     --disable-debug \
     --disable-valgrind \
+    --enable-static \
+    --disable-shared \
     --disable-xvid \
     --disable-curl \
     --disable-decklink \
     --disable-dash \
+    --disable-opensles \
     --disable-smoothstreaming \
     --disable-sbc \
     --enable-static-plugins \
