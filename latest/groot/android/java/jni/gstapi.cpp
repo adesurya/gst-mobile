@@ -167,9 +167,42 @@ gboolean CGstPlayback::handle_message (GstBus *bus, GstMessage *msg, void *data)
         return thiz->HandleMessage(bus, msg);
     return false;
 }
- 
+
+#define LOG_TAG "k2player"
+static void print_func(const gchar *string)
+{
+    ALOGI("%s", string);
+}
+
+static void log_func(const gchar   *log_domain,
+        GLogLevelFlags log_level,
+        const gchar   *message,
+        gpointer       user_data)
+{
+    switch(log_level) {
+    case G_LOG_LEVEL_ERROR:
+    case G_LOG_LEVEL_CRITICAL:
+        ALOGE("%s", message);
+        break;
+    case G_LOG_LEVEL_WARNING:
+        ALOGW("%s", message);
+        break;
+    case G_LOG_LEVEL_MESSAGE:
+    case G_LOG_LEVEL_INFO:
+        ALOGI("%s", message);
+        break;
+    case G_LOG_LEVEL_DEBUG:
+        ALOGD("%s", message);
+        break;
+    }
+}
+
 bool CGstPlayback::Init(int argc, char *argv[])
 {
+    gint level = 0xff;
+    g_set_print_handler(print_func);
+    g_log_set_handler("k2player", (GLogLevelFlags)level, log_func, NULL);
+
     returnb_assert(argc == 2);
     g_snprintf(m_uri, sizeof(m_uri), "%s", argv[1]);
 
