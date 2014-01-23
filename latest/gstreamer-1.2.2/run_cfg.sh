@@ -37,11 +37,11 @@ mkdir -p $PREFIX
 #--disable-examples 
 #--disable-parse --disable-option-parsing
 #--disable-largefile
+#--disable-gst-debug
 ../configure \
     --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
     --disable-nls --disable-rpath \
-    --disable-gst-debug \
     --disable-trace --disable-alloc-trace \
     --disable-debug \
     --disable-valgrind \

@@ -19,6 +19,11 @@
 
 #include <android/log.h>
 
+#ifndef LOG_TAG
+#define LOG_NDEBUG 0
+#define LOG_TAG "k2player"
+#endif
+
 #ifndef LOG_NDEBUG
 #ifdef NDEBUG
 #define LOG_NDEBUG 1
@@ -63,16 +68,20 @@
 #define ALOGE(...) ((void)ALOG(LOG_ERROR, LOG_TAG, __VA_ARGS__))
 #endif
 
+#ifndef log_info
+#define log_info(p)  ALOGW("[%s][%s:%d], %s is null/false", __func__, __FILE__, __LINE__, p)
+#endif
+
 #ifndef return_assert
-#define return_assert(p)    if (!(p)) {return;}
+#define return_assert(p)    if (!(p)) {log_info(#p); return;}
 #endif
 
 #ifndef returnb_assert
-#define returnb_assert(p)   if (!(p)) {return false;}
+#define returnb_assert(p)   if (!(p)) {log_info(#p); return false;}
 #endif
 
 #ifndef returnv_assert
-#define returnv_assert(p, v) if (!(p)) {return (v);}
+#define returnv_assert(p, v) if (!(p)) {log_info(#p); return (v);}
 #endif
 
 #endif

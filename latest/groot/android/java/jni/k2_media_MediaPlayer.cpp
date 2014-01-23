@@ -81,7 +81,9 @@ JNIMediaPlayerListener::~JNIMediaPlayerListener()
 {
     // remove global references
     JNIEnv *env = getJNIEnv();
-    env->DeleteGlobalRef(mObject);
+    if (env && mObject)
+        env->DeleteGlobalRef(mObject);
+    if (env && mClass)
     env->DeleteGlobalRef(mClass);
 }
 
@@ -157,6 +159,7 @@ static void k2_media_MediaPlayer_setDataSourceAndHeaders(
 
     const char *tmp = env->GetStringUTFChars(path, NULL);
     if (tmp == NULL) {  // Out of memory
+        ALOGW("setDataSource: out of memory for path");
         return;
     }
     ALOGV("setDataSource: path %s", tmp);
@@ -461,7 +464,7 @@ static void k2_media_MediaPlayer_native_setup(JNIEnv *env, jobject thiz, jobject
     }
 
     // create new listener and give it to MediaPlayer
-    zeroptr<JNIMediaPlayerListener> listener = new JNIMediaPlayerListener(env, thiz, weak_this);
+    zeroptr<MediaPlayerListener> listener = new JNIMediaPlayerListener(env, thiz, weak_this);
     mp->setListener(listener);
 
     // Stow our new C++ MediaPlayer in an opaque field in the Java object.

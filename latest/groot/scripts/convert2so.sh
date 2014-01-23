@@ -82,14 +82,57 @@ make_gstapi ()
 {
     target="gstapi"
     ldflags="-lc -lz -lm -lEGL -L../../lib/ -lglibapi"
-    thelibs="
-    ../lib/libgstallocators-1.0.a        ../lib/libgstcodecparsers-1.0.a  ../lib/libgstnet-1.0.a          ../lib/libgstrtsp-1.0.a        
-    ../lib/libgstapp-1.0.a               ../lib/libgstcontroller-1.0.a    ../lib/libgstpbutils-1.0.a      ../lib/libgstsdp-1.0.a          
-    ../lib/libgstaudio-1.0.a             ../lib/libgstegl-1.0.a           ../lib/libgstphotography-1.0.a  ../lib/libgsttag-1.0.a           
-    ../lib/libgstbase-1.0.a              ../lib/libgstfft-1.0.a           ../lib/libgstreamer-1.0.a       ../lib/libgsturidownloader-1.0.a  
-    ../lib/libgstbasecamerabinsrc-1.0.a  ../lib/libgstinsertbin-1.0.a     ../lib/libgstriff-1.0.a         ../lib/libgstvideo-1.0.a
-    ../lib/libgstcheck-1.0.a             ../lib/libgstmpegts-1.0.a        ../lib/libgstrtp-1.0.a          
+    thelibs=""
+
+    gst_libs="
+libgstparse.a
+libgstprintf.a
+libgstreamer-1.0.a
+libgstbase-1.0.a
+libcheckinternal.a
+libgstcheck-1.0.a
+libgstcontroller-1.0.a
+libgstnet-1.0.a
+libgstcoreelements.a
     "
+    gst_base_libs="
+libgstadder.a
+libgstapp.a
+libgstaudioconvert.a
+libgstaudiorate.a
+libgstaudiotestsrc.a
+libgstencodebin.a
+libgstvideoconvert.a
+libgstgio.a
+libgstplayback.a
+libgstaudioresample.a
+libgstsubparse.a
+libgsttcp.a
+libgsttypefindfunctions.a
+libgstvideotestsrc.a
+libgstvideorate.a
+libgstvideoscale.a
+libgstvolume.a
+libgstallocators-1.0.a
+libgstaudio-1.0.a
+libgstapp-1.0.a
+libgstfft-1.0.a
+libgstriff-1.0.a
+libgstrtp-1.0.a
+libgstrtsp-1.0.a
+libgstsdp-1.0.a
+libgsttag-1.0.a
+libgstpbutils-1.0.a
+libgstvideo-1.0.a
+    "
+
+    tmp_libs="$gst_libs $gst_base_libs"
+    for lib in $tmp_libs; do
+        lib=`find ../lib -name $lib`
+        if [ ! -z $lib ] && [ -e $lib ]; then
+            thelibs="$thelibs $lib"
+        fi
+    done
 
     make_archive
     make_so

@@ -160,6 +160,10 @@ int playbin2_player(int argc, char *argv[]) {
 namespace eau
 {
 
+GST_DEBUG_CATEGORY_STATIC (my_category);     // define category (statically)
+#define GST_CAT_DEFAULT my_category     // set as default
+
+
 gboolean CGstPlayback::handle_message (GstBus *bus, GstMessage *msg, void *data)
 {
     CGstPlayback *thiz = (CGstPlayback *)data;
@@ -168,40 +172,18 @@ gboolean CGstPlayback::handle_message (GstBus *bus, GstMessage *msg, void *data)
     return false;
 }
 
-#define LOG_TAG "k2player"
-static void print_func(const gchar *string)
+CGstPlayback::CGstPlayback()
 {
-    ALOGI("%s", string);
+    GST_DEBUG_CATEGORY_INIT (my_category, "my category", 0, "This is my very own");
 }
 
-static void log_func(const gchar   *log_domain,
-        GLogLevelFlags log_level,
-        const gchar   *message,
-        gpointer       user_data)
+CGstPlayback::~CGstPlayback()
 {
-    switch(log_level) {
-    case G_LOG_LEVEL_ERROR:
-    case G_LOG_LEVEL_CRITICAL:
-        ALOGE("%s", message);
-        break;
-    case G_LOG_LEVEL_WARNING:
-        ALOGW("%s", message);
-        break;
-    case G_LOG_LEVEL_MESSAGE:
-    case G_LOG_LEVEL_INFO:
-        ALOGI("%s", message);
-        break;
-    case G_LOG_LEVEL_DEBUG:
-        ALOGD("%s", message);
-        break;
-    }
 }
 
 bool CGstPlayback::Init(int argc, char *argv[])
 {
-    gint level = 0xff;
-    g_set_print_handler(print_func);
-    g_log_set_handler("k2player", (GLogLevelFlags)level, log_func, NULL);
+    ALOGI("CGstPlayback::Init, begin");
 
     returnb_assert(argc == 2);
     g_snprintf(m_uri, sizeof(m_uri), "%s", argv[1]);
@@ -220,6 +202,7 @@ bool CGstPlayback::Init(int argc, char *argv[])
 
     m_bus = gst_element_get_bus (m_playbin2);
     gst_bus_add_watch (m_bus, (GstBusFunc)handle_message, this);
+    ALOGI("CGstPlayback::Init, end");
 
     return true;
 }

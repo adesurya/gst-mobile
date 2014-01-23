@@ -815,11 +815,13 @@ g_get_any_init_do (void)
     
     if (!pw)
       {
-#if !defined(ANDROID)
+#if defined(ANDROID)
+	pw = getpwuid (getuid ());
+#else
 	setpwent ();
-#endif
 	pw = getpwuid (getuid ());
 	endpwent ();
+#endif
       }
     if (pw)
       {

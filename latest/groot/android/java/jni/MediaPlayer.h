@@ -68,7 +68,7 @@ private:
     string m_szPath;
     int m_fd;
     bool m_bPlaying;
-    GstPlayback *m_pPlayer;
+    zeroptr<GstPlayback> m_pPlayer;
 };
 typedef RefCounted<CMediaPlayer> MediaPlayer;
 
