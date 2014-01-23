@@ -11,8 +11,8 @@ if test -z $ROOT; then
     export STRIP="$CCROOT/bin/$HOST-strip --sysroot=$SYSROOT"
     #export RANLIB="$CCROOT/bin/$HOST-ranlib --sysroot=$SYSROOT"
 fi
-export CFLAGS=""
-export LDFLAGS=""
+export CFLAGS="-I$PWD/../groot/android/include"
+export LDFLAGS="-L$PWD/../groot/lib"
 
 
 PWD=`pwd`
@@ -69,6 +69,8 @@ mkdir -p $PREFIX
     --disable-opensles \
     --disable-smoothstreaming \
     --disable-sbc \
+    --disable-rtmp \
+    --disable-hls \
     --enable-static-plugins \
     --disable-examples \
     --without-libiconv-prefix \
