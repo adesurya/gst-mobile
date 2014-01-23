@@ -163,7 +163,6 @@ namespace eau
 GST_DEBUG_CATEGORY_STATIC (my_category);     // define category (statically)
 #define GST_CAT_DEFAULT my_category     // set as default
 
-
 gboolean CGstPlayback::handle_message (GstBus *bus, GstMessage *msg, void *data)
 {
     CGstPlayback *thiz = (CGstPlayback *)data;
@@ -175,6 +174,8 @@ gboolean CGstPlayback::handle_message (GstBus *bus, GstMessage *msg, void *data)
 CGstPlayback::CGstPlayback()
 {
     GST_DEBUG_CATEGORY_INIT (my_category, "my category", 0, "This is my very own");
+    gst_debug_set_active(true);
+    gst_debug_category_set_threshold(my_category, GST_LEVEL_TRACE);
 }
 
 CGstPlayback::~CGstPlayback()
