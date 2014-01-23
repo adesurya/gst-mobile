@@ -101,7 +101,7 @@ void JniConstants::init(JNIEnv* env) {
     inet6AddressClass = findClass(env, "java/net/Inet6Address");
     inetAddressClass = findClass(env, "java/net/InetAddress");
     inetSocketAddressClass = findClass(env, "java/net/InetSocketAddress");
-    inetUnixAddressClass = findClass(env, "java/net/InetUnixAddress");
+    //inetUnixAddressClass = findClass(env, "java/net/InetUnixAddress");
     inflaterClass = findClass(env, "java/util/zip/Inflater");
     inputStreamClass = findClass(env, "java/io/InputStream");
     integerClass = findClass(env, "java/lang/Integer");
