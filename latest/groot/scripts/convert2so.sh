@@ -25,6 +25,7 @@ make_archive ()
     fi
 }
 
+# ldflags=""
 make_so ()
 {
     if [ $platform = "linux" ] || [ $platform = "android" ]; then
@@ -39,7 +40,7 @@ make_so ()
             ar x $lib
         done
         echo "Generate so lib."
-        $CC -shared *.o -o lib$target.so
+        $CC -shared *.o -o lib$target.so $ldflags
         mv lib$target.so ../
         cd -
         rm -rf tmpobj
@@ -68,7 +69,8 @@ set_platform ()
 make_glibapi ()
 {
     target="glibapi"
-    thelibs="../lib/libgio-2.0.a ../lib/libglib-2.0.a ../lib/libgmodule-2.0.a ../lib/libgobject-2.0.a ../lib/libgthread-2.0.a"
+    ldflags="-lc -lz -lm"
+    thelibs="../lib/libandroid_support.a ../lib/libffi.a ../lib/libgio-2.0.a ../lib/libglib-2.0.a ../lib/libgmodule-2.0.a ../lib/libgobject-2.0.a ../lib/libgthread-2.0.a"
 
     make_archive
     make_so
@@ -79,6 +81,7 @@ make_glibapi ()
 make_gstapi ()
 {
     target="gstapi"
+    ldflags="-lc -lz -lm -lEGL -L../../lib/ -lglibapi"
     thelibs="
     ../lib/libgstallocators-1.0.a        ../lib/libgstcodecparsers-1.0.a  ../lib/libgstnet-1.0.a          ../lib/libgstrtsp-1.0.a        
     ../lib/libgstapp-1.0.a               ../lib/libgstcontroller-1.0.a    ../lib/libgstpbutils-1.0.a      ../lib/libgstsdp-1.0.a          

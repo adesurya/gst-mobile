@@ -96,11 +96,8 @@ void JniConstants::init(JNIEnv* env) {
     floatClass = findClass(env, "java/lang/Float");
     deflaterClass = findClass(env, "java/util/zip/Deflater");
     doubleClass = findClass(env, "java/lang/Double");
-    //errnoExceptionClass = findClass(env, "libcore/io/ErrnoException");
     fieldClass = findClass(env, "java/lang/reflect/Field");
-    //fieldPositionIteratorClass = findClass(env, "libcore/icu/NativeDecimalFormat$FieldPositionIterator");
     fileDescriptorClass = findClass(env, "java/io/FileDescriptor");
-    gaiExceptionClass = findClass(env, "libcore/io/GaiException");
     inet6AddressClass = findClass(env, "java/net/Inet6Address");
     inetAddressClass = findClass(env, "java/net/InetAddress");
     inetSocketAddressClass = findClass(env, "java/net/InetSocketAddress");
@@ -108,11 +105,8 @@ void JniConstants::init(JNIEnv* env) {
     inflaterClass = findClass(env, "java/util/zip/Inflater");
     inputStreamClass = findClass(env, "java/io/InputStream");
     integerClass = findClass(env, "java/lang/Integer");
-    localeDataClass = findClass(env, "libcore/icu/LocaleData");
     longClass = findClass(env, "java/lang/Long");
     methodClass = findClass(env, "java/lang/reflect/Method");
-    mutableIntClass = findClass(env, "libcore/util/MutableInt");
-    mutableLongClass = findClass(env, "libcore/util/MutableLong");
     objectClass = findClass(env, "java/lang/Object");
     objectArrayClass = findClass(env, "[Ljava/lang/Object;");
     outputStreamClass = findClass(env, "java/io/OutputStream");
@@ -125,6 +119,12 @@ void JniConstants::init(JNIEnv* env) {
     socketImplClass = findClass(env, "java/net/SocketImpl");
     stringClass = findClass(env, "java/lang/String");
 #if 0
+    errnoExceptionClass = findClass(env, "libcore/io/ErrnoException");
+    fieldPositionIteratorClass = findClass(env, "libcore/icu/NativeDecimalFormat$FieldPositionIterator");
+    gaiExceptionClass = findClass(env, "libcore/io/GaiException");
+    localeDataClass = findClass(env, "libcore/icu/LocaleData");
+    mutableIntClass = findClass(env, "libcore/util/MutableInt");
+    mutableLongClass = findClass(env, "libcore/util/MutableLong");
     structAddrinfoClass = findClass(env, "libcore/io/StructAddrinfo");
     structFlockClass = findClass(env, "libcore/io/StructFlock");
     structGroupReqClass = findClass(env, "libcore/io/StructGroupReq");

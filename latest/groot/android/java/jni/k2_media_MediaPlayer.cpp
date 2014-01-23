@@ -66,7 +66,7 @@ JNIMediaPlayerListener::JNIMediaPlayerListener(JNIEnv* env, jobject thiz, jobjec
     // that posts events to the application thread.
     jclass clazz = env->GetObjectClass(thiz);
     if (clazz == NULL) {
-        ALOGE("Can't find android/media/MediaPlayer");
+        ALOGE("Can't find k2/media/MediaPlayer");
         jniThrowException(env, "java/lang/Exception", NULL);
         return;
     }
@@ -663,8 +663,7 @@ static JNINativeMethod gMethods[] = {
     {"setAuxEffectSendLevel", "(F)V",                           (void *)k2_media_MediaPlayer_setAuxEffectSendLevel},
     {"attachAuxEffect",     "(I)V",                             (void *)k2_media_MediaPlayer_attachAuxEffect},
     {"native_setRetransmitEndpoint", "(Ljava/lang/String;I)I",  (void *)k2_media_MediaPlayer_setRetransmitEndpoint},
-    {"setNextMediaPlayer",  "(Landroid/media/MediaPlayer;)V",   (void *)k2_media_MediaPlayer_setNextMediaPlayer},
-    {"updateProxyConfig", "(Landroid/net/ProxyProperties;)V", (void *)k2_media_MediaPlayer_updateProxyConfig},
+    {"setNextMediaPlayer",  "(Lk2/media/MediaPlayer;)V",   (void *)k2_media_MediaPlayer_setNextMediaPlayer},
 };
 
 static const char* const kClassPathName = "k2/media/MediaPlayer";

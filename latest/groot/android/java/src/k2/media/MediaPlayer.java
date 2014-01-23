@@ -39,6 +39,8 @@ import java.lang.ref.WeakReference;
 public class MediaPlayer extends MediaConsts
 {
     static {
+        System.loadLibrary("glibapi");
+        System.loadLibrary("gstapi");
         System.loadLibrary("k2player");
         native_init();
     }
@@ -1026,20 +1028,20 @@ class MediaConsts {
      * in include/media/mediaplayer.h!
      */
     /** Unspecified media player error.
-     * @see android.media.MediaPlayer.OnErrorListener
+     * @see k2.media.MediaPlayer.OnErrorListener
      */
     public static final int MEDIA_ERROR_UNKNOWN = 1;
 
     /** Media server died. In this case, the application must release the
      * MediaPlayer object and instantiate a new one.
-     * @see android.media.MediaPlayer.OnErrorListener
+     * @see k2.media.MediaPlayer.OnErrorListener
      */
     public static final int MEDIA_ERROR_SERVER_DIED = 100;
 
     /** The video is streamed and its container is not valid for progressive
      * playback i.e the video's index (e.g moov atom) is not at the start of the
      * file.
-     * @see android.media.MediaPlayer.OnErrorListener
+     * @see k2.media.MediaPlayer.OnErrorListener
      */
     public static final int MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK = 200;
 
@@ -1059,48 +1061,48 @@ class MediaConsts {
      * in include/media/mediaplayer.h!
      */
     /** Unspecified media player info.
-     * @see android.media.MediaPlayer.OnInfoListener
+     * @see k2.media.MediaPlayer.OnInfoListener
      */
     public static final int MEDIA_INFO_UNKNOWN = 1;
 
     /** The player was started because it was used as the next player for another
      * player, which just completed playback.
-     * @see android.media.MediaPlayer.OnInfoListener
+     * @see k2.media.MediaPlayer.OnInfoListener
      * @hide
      */
     public static final int MEDIA_INFO_STARTED_AS_NEXT = 2;
 
     /** The player just pushed the very first video frame for rendering.
-     * @see android.media.MediaPlayer.OnInfoListener
+     * @see k2.media.MediaPlayer.OnInfoListener
      */
     public static final int MEDIA_INFO_VIDEO_RENDERING_START = 3;
 
     /** The video is too complex for the decoder: it can't decode frames fast
      *  enough. Possibly only the audio plays fine at this stage.
-     * @see android.media.MediaPlayer.OnInfoListener
+     * @see k2.media.MediaPlayer.OnInfoListener
      */
     public static final int MEDIA_INFO_VIDEO_TRACK_LAGGING = 700;
 
     /** MediaPlayer is temporarily pausing playback internally in order to
      * buffer more data.
-     * @see android.media.MediaPlayer.OnInfoListener
+     * @see k2.media.MediaPlayer.OnInfoListener
      */
     public static final int MEDIA_INFO_BUFFERING_START = 701;
 
     /** MediaPlayer is resuming playback after filling buffers.
-     * @see android.media.MediaPlayer.OnInfoListener
+     * @see k2.media.MediaPlayer.OnInfoListener
      */
     public static final int MEDIA_INFO_BUFFERING_END = 702;
 
     /** Bad interleaving means that a media has been improperly interleaved or
      * not interleaved at all, e.g has all the video samples first then all the
      * audio ones. Video is playing but a lot of disk seeks may be happening.
-     * @see android.media.MediaPlayer.OnInfoListener
+     * @see k2.media.MediaPlayer.OnInfoListener
      */
     public static final int MEDIA_INFO_BAD_INTERLEAVING = 800;
 
     /** The media cannot be seeked (e.g live stream)
-     * @see android.media.MediaPlayer.OnInfoListener
+     * @see k2.media.MediaPlayer.OnInfoListener
      */
     public static final int MEDIA_INFO_NOT_SEEKABLE = 801;
 
