@@ -83,6 +83,14 @@ make_gstapi ()
     target="gstapi"
     ldflags="-lc -lz -lm -lEGL -L../../lib/ -lglibapi"
     thelibs=""
+    ldflags+=" /tmp/gst_static_plugins.c"
+cat > /tmp/gst_static_plugins.c << EOF
+extern void gst_plugin_coreelements_register(void);
+void gst_static_plugins()
+{
+    gst_plugin_coreelements_register();
+}
+EOF
 
     gst_libs="
 libgstparse.a

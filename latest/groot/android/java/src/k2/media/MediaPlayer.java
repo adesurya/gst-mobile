@@ -108,6 +108,7 @@ public class MediaPlayer extends MediaConsts
      * result in an exception.</p>
      */
     public MediaPlayer() {
+        native_setup(new WeakReference<MediaPlayer>(this));
     }
 
     /**

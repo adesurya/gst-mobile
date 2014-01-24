@@ -157,6 +157,8 @@ int playbin2_player(int argc, char *argv[]) {
     return 0;
 }
 
+extern "C" void gst_static_plugins(void);
+
 namespace eau
 {
 
@@ -190,6 +192,8 @@ bool CGstPlayback::Init(int argc, char *argv[])
     g_snprintf(m_uri, sizeof(m_uri), "%s", argv[1]);
 
     gst_init (&argc, &argv);
+    gst_static_plugins();
+
     m_playbin2 = gst_element_factory_make ("playbin2", "playbin2");
     returnb_assert(m_playbin2);
     g_object_set (m_playbin2, "uri", m_uri, NULL);
