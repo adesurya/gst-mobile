@@ -81,7 +81,7 @@ make_glibapi ()
 make_gstapi ()
 {
     target="gstapi"
-    ldflags="-lc -lz -lm -lEGL -L../../lib/ -lglibapi -logg"
+    ldflags="-lc -lz -lm -lEGL -L../../lib/ -lglibapi -lvorbisenc -lvorbis -logg"
     thelibs=""
     ldflags+=" /tmp/gst_static_plugins.c"
 cat > /tmp/gst_static_plugins.c << EOF
@@ -111,6 +111,7 @@ void gst_static_plugins()
     GST_PLUGIN(videoscale);
     GST_PLUGIN(volume);
     GST_PLUGIN(ogg);
+    GST_PLUGIN(vorbis);
 }
 EOF
 
@@ -144,6 +145,7 @@ libgstvideorate.a
 libgstvideoscale.a
 libgstvolume.a
 libgstogg.a
+libgstvorbis.a
 libgstallocators-1.0.a
 libgstaudio-1.0.a
 libgstapp-1.0.a

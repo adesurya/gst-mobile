@@ -34,8 +34,11 @@ export GST_PLUGINS_DIR="$PWD/../groot/lib/gstreamer-1.0"
 export OGG_CFLAGS="-I$PWD/../groot/include"
 export OGG_LIBS="-L$PWD/../groot/lib -logg"
 
-export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS $GST_CFLAGS $OGG_CFLAGS"
-export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS $OGG_LIBS"
+export VORBIS_CFLAGS="-I$PWD/../groot/include"
+export VORBIS_LIBS="-L$PWD/../groot/lib -lvorbis -logg"
+
+export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS $GST_CFLAGS $OGG_CFLAGS $VORBIS_CFLAGS"
+export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS $OGG_LIBS $VORBIS_LIBS"
 
 ##
 ## start configure
@@ -49,6 +52,7 @@ mkdir -p $PREFIX
 #--disable-external
 #--disable-largefile
 #--disable-ogg
+#--disable-vorbis
 ../configure \
     --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
@@ -63,7 +67,6 @@ mkdir -p $PREFIX
     --disable-alsa \
     --disable-pango \
     --disable-theora \
-    --disable-vorbis \
     --disable-freetypetest \
     --without-libiconv-prefix \
     --without-libintl-prefix
