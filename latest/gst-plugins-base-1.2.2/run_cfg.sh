@@ -31,8 +31,11 @@ export GST_CONTROLLER_LIBS="-L$PWD/../groot/lib -lgstcontroller-1.0"
 export GST_TOOLS_DIR="$PWD/../groot/bin"
 export GST_PLUGINS_DIR="$PWD/../groot/lib/gstreamer-1.0"
 
-export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS $GST_CFLAGS"
-export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS"
+export OGG_CFLAGS="-I$PWD/../groot/include"
+export OGG_LIBS="-L$PWD/../groot/lib -logg"
+
+export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS $GST_CFLAGS $OGG_CFLAGS"
+export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS $OGG_LIBS"
 
 ##
 ## start configure
@@ -45,6 +48,7 @@ mkdir -p $PREFIX
 #--disable-examples
 #--disable-external
 #--disable-largefile
+#--disable-ogg
 ../configure \
     --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
@@ -57,7 +61,6 @@ mkdir -p $PREFIX
     --enable-static-plugins \
     --disable-x --disable-xvideo --disable-xshm \
     --disable-alsa \
-    --disable-ogg \
     --disable-pango \
     --disable-theora \
     --disable-vorbis \

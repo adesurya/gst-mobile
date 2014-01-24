@@ -100,6 +100,8 @@ status_t CMediaPlayer::prepareAsync()
 
 status_t CMediaPlayer::start()
 {
+    returnv_assert(!m_szPath.empty(), BAD_VALUE);
+
     ALOGI("%s, begin", __func__);
 
     int argc = 2;
@@ -107,9 +109,11 @@ status_t CMediaPlayer::start()
     argv[0] = (char *)"k2player";
     argv[1] = (char *)m_szPath.c_str();
     m_bPlaying = true;
+    g_print("start with ogg_player\n");
+    ogg_player(argc, argv);
     //playbin2_player(argc, argv);
-    m_pPlayer->Init(argc, argv);
-    m_pPlayer->Play();
+    //m_pPlayer->Init(argc, argv);
+    //m_pPlayer->Play();
     m_bPlaying = false;
     return OK;
 }

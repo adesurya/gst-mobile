@@ -3,6 +3,8 @@
 #include "gstapi.h"
 #include "ALog-priv.h"
 
+extern "C" void gst_static_plugins(void);
+
 static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 {
     GMainLoop *loop = (GMainLoop *) data;
@@ -52,6 +54,7 @@ int ogg_player (int argc, char *argv[]) {
 
     /* Initialisation */
     gst_init (&argc, &argv);
+    gst_static_plugins();
     loop = g_main_loop_new (NULL, FALSE);
 
     /* Check input arguments */
@@ -63,10 +66,15 @@ int ogg_player (int argc, char *argv[]) {
     /* Create gstreamer elements */
     pipeline = gst_pipeline_new ("audio-player");
     source   = gst_element_factory_make ("filesrc",       "file-source");
+    returnv_assert(source, -1);
     demuxer  = gst_element_factory_make ("oggdemux",      "ogg-demuxer");
+    returnv_assert(demuxer, -1);
     decoder  = gst_element_factory_make ("vorbisdec",     "vorbis-decoder");
+    returnv_assert(decoder, -1);
     conv     = gst_element_factory_make ("audioconvert",  "converter");
+    returnv_assert(conv, -1);
     sink     = gst_element_factory_make ("autoaudiosink", "audio-output");
+    returnv_assert(sink, -1);
 
     if (!pipeline || !source || !demuxer || !decoder || !conv || !sink) {
         g_printerr ("One element could not be created. Exiting.\n");
@@ -80,6 +88,7 @@ int ogg_player (int argc, char *argv[]) {
 
     /* we add a message handler */
     bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));
+    returnv_assert(bus, -1);
     bus_watch_id = gst_bus_add_watch (bus, bus_call, loop);
     gst_object_unref (bus);
 
@@ -157,8 +166,6 @@ int playbin2_player(int argc, char *argv[]) {
     return 0;
 }
 
-extern "C" void gst_static_plugins(void);
-
 namespace eau
 {
 
@@ -194,18 +201,23 @@ bool CGstPlayback::Init(int argc, char *argv[])
     gst_init (&argc, &argv);
     gst_static_plugins();
 
-    m_playbin2 = gst_element_factory_make ("playbin2", "playbin2");
+    m_playbin2 = gst_element_factory_make ("playbin", "playbin2");
     returnb_assert(m_playbin2);
+    ALOGI("CGstPlayback::Init, set uri=%s", m_uri);
     g_object_set (m_playbin2, "uri", m_uri, NULL);
 
     g_object_get (m_playbin2, "flags", &m_flags, NULL);
+    ALOGI("CGstPlayback::Init, get flags=%d", m_flags);
     m_flags |= GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO;
     m_flags &= ~GST_PLAY_FLAG_TEXT;
+    ALOGI("CGstPlayback::Init, set flags=%d", m_flags);
     g_object_set (m_playbin2, "flags", m_flags, NULL);
 
-    g_object_set (m_playbin2, "connection-speed", 56, NULL);
+    //ALOGI("CGstPlayback::Init, set speed");
+    //g_object_set (m_playbin2, "connection-speed", 56, NULL);
 
     m_bus = gst_element_get_bus (m_playbin2);
+    returnb_assert(m_bus);
     gst_bus_add_watch (m_bus, (GstBusFunc)handle_message, this);
     ALOGI("CGstPlayback::Init, end");
 
@@ -323,7 +335,36 @@ void CGstPlayback::AnalyzeStreams()
 
 gboolean CGstPlayback::HandleMessage(GstBus *bus, GstMessage *msg)
 {
-    return false;
+    switch (GST_MESSAGE_TYPE (msg)) {
+        case GST_MESSAGE_EOS:
+            ALOGI ("End of stream");
+            g_main_loop_quit (m_main_loop);
+            break;
+        case GST_MESSAGE_ERROR: 
+        {
+            gchar  *debug;
+            GError *error;
+            gst_message_parse_error (msg, &error, &debug);
+            g_free (debug);
+            ALOGE ("Error: %s", error->message);
+            g_error_free (error);
+            g_main_loop_quit (m_main_loop);
+            break;
+        }
+        default:
+        {
+            gchar  *debug;
+            GError *info;
+            gst_message_parse_info (msg, &info, &debug);
+            g_free (debug);
+            ALOGE ("Info: %s", info->message);
+            g_error_free (info);
+            break;
+        }
+        break;
+    }
+
+    return TRUE;
 }
 
 } // namespace eau

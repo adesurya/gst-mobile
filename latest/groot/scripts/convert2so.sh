@@ -81,14 +81,36 @@ make_glibapi ()
 make_gstapi ()
 {
     target="gstapi"
-    ldflags="-lc -lz -lm -lEGL -L../../lib/ -lglibapi"
+    ldflags="-lc -lz -lm -lEGL -L../../lib/ -lglibapi -logg"
     thelibs=""
     ldflags+=" /tmp/gst_static_plugins.c"
 cat > /tmp/gst_static_plugins.c << EOF
-extern void gst_plugin_coreelements_register(void);
+#define GST_PLUGIN(n) {extern void gst_plugin_##n##_register(void); gst_plugin_##n##_register();}
+
 void gst_static_plugins()
 {
-    gst_plugin_coreelements_register();
+    /* For gstreamer */
+    GST_PLUGIN(coreelements);
+
+    /* For gst-plugin-base */
+    GST_PLUGIN(adder);
+    GST_PLUGIN(app);
+    GST_PLUGIN(audioconvert);
+    GST_PLUGIN(audiorate);
+    GST_PLUGIN(audiotestsrc);
+    GST_PLUGIN(encoding);
+    GST_PLUGIN(videoconvert);
+    GST_PLUGIN(gio);
+    GST_PLUGIN(playback);
+    GST_PLUGIN(audioresample);
+    GST_PLUGIN(subparse);
+    GST_PLUGIN(tcp);
+    GST_PLUGIN(typefindfunctions);
+    GST_PLUGIN(videotestsrc);
+    GST_PLUGIN(videorate);
+    GST_PLUGIN(videoscale);
+    GST_PLUGIN(volume);
+    GST_PLUGIN(ogg);
 }
 EOF
 
@@ -121,6 +143,7 @@ libgstvideotestsrc.a
 libgstvideorate.a
 libgstvideoscale.a
 libgstvolume.a
+libgstogg.a
 libgstallocators-1.0.a
 libgstaudio-1.0.a
 libgstapp-1.0.a
