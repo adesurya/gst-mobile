@@ -112,6 +112,54 @@ void gst_static_plugins()
     GST_PLUGIN(volume);
     GST_PLUGIN(ogg);
     GST_PLUGIN(vorbis);
+
+    /* For gst-plugin-base */
+    GST_PLUGIN(alpha);
+    GST_PLUGIN(alphacolor);
+    GST_PLUGIN(apetag);
+    GST_PLUGIN(audiofx);
+    GST_PLUGIN(audioparsers);
+    GST_PLUGIN(auparse);
+    GST_PLUGIN(autodetect);
+    GST_PLUGIN(avi);
+    GST_PLUGIN(cutter);
+    GST_PLUGIN(deinterlace);
+    GST_PLUGIN(dtmf);
+    GST_PLUGIN(debug);
+    GST_PLUGIN(navigationtest);
+    GST_PLUGIN(effectv);
+    GST_PLUGIN(equalizer);
+    GST_PLUGIN(flv);
+    GST_PLUGIN(goom);
+    GST_PLUGIN(goom2k1);
+    GST_PLUGIN(id3demux);
+    GST_PLUGIN(icydemux);
+    GST_PLUGIN(imagefreeze);
+    GST_PLUGIN(interleave);
+    GST_PLUGIN(isomp4);
+    GST_PLUGIN(alaw);
+    GST_PLUGIN(mulaw);
+    GST_PLUGIN(level);
+    GST_PLUGIN(matroska);
+    GST_PLUGIN(multifile);
+    GST_PLUGIN(multipart);
+    GST_PLUGIN(replaygain);
+    GST_PLUGIN(rtp);
+    GST_PLUGIN(rtpmanager);
+    GST_PLUGIN(rtsp);
+    GST_PLUGIN(shapewipe);
+    GST_PLUGIN(smpte);
+    GST_PLUGIN(spectrum);
+    GST_PLUGIN(udp);
+    GST_PLUGIN(videobox);
+    GST_PLUGIN(videocrop);
+    GST_PLUGIN(videofilter);
+    /* GST_PLUGIN(videomixer); */
+    GST_PLUGIN(wavenc);
+    GST_PLUGIN(wavparse);
+    GST_PLUGIN(flxdec);
+    GST_PLUGIN(y4menc);
+    GST_PLUGIN(oss4);
 }
 EOF
 
@@ -159,7 +207,57 @@ libgstpbutils-1.0.a
 libgstvideo-1.0.a
     "
 
-    tmp_libs="$gst_libs $gst_base_libs"
+    gst_good_libs="
+libparser.a
+libgstalpha.a
+libgstalphacolor.a
+libgstapetag.a
+libgstaudiofx.a
+libgstaudioparsers.a
+libgstauparse.a
+libgstautodetect.a
+libgstavi.a
+libgstcutter.a
+libgstdeinterlace.a
+libgstdtmf.a
+libgstdebug.a
+libgstnavigationtest.a
+libgsteffectv.a
+libgstequalizer.a
+libgstflv.a
+libgstgoom.a
+libgstgoom2k1.a
+libgstid3demux.a
+libgsticydemux.a
+libgstimagefreeze.a
+libgstinterleave.a
+libgstisomp4.a
+libgstalaw.a
+libgstmulaw.a
+libgstlevel.a
+libgstmatroska.a
+libgstmultifile.a
+libgstmultipart.a
+libgstreplaygain.a
+libgstrtp.a
+libgstrtpmanager.a
+libgstrtsp.a
+libgstshapewipe.a
+libgstsmpte.a
+libgstspectrum.a
+libgstudp.a
+libgstvideobox.a
+libgstvideocrop.a
+libgstvideofilter.a
+libgstwavenc.a
+libgstwavparse.a
+libgstflxdec.a
+libgsty4menc.a
+libgstoss4audio.a
+"
+#libgstvideomixer.a conflict with libgstvideoconvert.a
+
+    tmp_libs="$gst_libs $gst_base_libs $gst_good_libs"
     for lib in $tmp_libs; do
         lib=`find ../lib -name $lib`
         if [ ! -z $lib ] && [ -e $lib ]; then
