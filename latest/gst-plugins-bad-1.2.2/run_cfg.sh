@@ -54,6 +54,7 @@ PREFIX=`pwd`/../../groot
 mkdir -p $PREFIX
 
 #--disable-external
+#--disable-opensles
 ../configure \
     --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
@@ -66,7 +67,6 @@ mkdir -p $PREFIX
     --disable-curl \
     --disable-decklink \
     --disable-dash \
-    --disable-opensles \
     --disable-smoothstreaming \
     --disable-sbc \
     --disable-rtmp \

@@ -40,6 +40,7 @@ make_so ()
             ar x $lib
         done
         echo "Generate so lib."
+        $CC -DTEST_PRIV_API *.o -o /tmp/test_$target $ldflags
         $CC -shared *.o -o lib$target.so $ldflags
         mv lib$target.so ../
         cd -
@@ -69,7 +70,16 @@ set_platform ()
 make_glibapi ()
 {
     target="glibapi"
-    ldflags="-lc -lz -lm"
+    ldflags=" /tmp/test_glibapi.c"
+    ldflags+=" -lc -lz -lm"
+cat > /tmp/test_glibapi.c << EOF
+#ifdef TEST_PRIV_API
+int main(int argc, char *argv[])
+{
+    return 0;
+}
+#endif
+EOF
     thelibs="../lib/libandroid_support.a ../lib/libffi.a ../lib/libgio-2.0.a ../lib/libglib-2.0.a ../lib/libgmodule-2.0.a ../lib/libgobject-2.0.a ../lib/libgthread-2.0.a"
 
     make_archive
@@ -77,17 +87,22 @@ make_glibapi ()
     mv lib$target.{a,so} ../lib/
 }
 
-
 make_gstapi ()
 {
     target="gstapi"
-    ldflags="-lc -lz -lm -lEGL -L../../lib/ -lglibapi -lvorbisenc -lvorbis -logg"
-    thelibs=""
-    ldflags+=" /tmp/gst_static_plugins.c"
+    ldflags=" /tmp/gst_static_plugins.c"
+    ldflags+=" -lc -lz -lm -lEGL -lGLESv2 -lOpenSLES"
+    ldflags+=" -L../../lib -lglibapi -lvorbisenc -lvorbis -logg"
 cat > /tmp/gst_static_plugins.c << EOF
-#define GST_PLUGIN(n) {extern void gst_plugin_##n##_register(void); gst_plugin_##n##_register();}
 
-void gst_static_plugins()
+static int s_plugins_num = 0;
+#define GST_PLUGIN(n) {extern void gst_plugin_##n##_register(void); gst_plugin_##n##_register();s_plugins_num++;}
+
+#ifdef TEST_PRIV_API
+int main(int argc, char *argv[])
+#else
+int gst_static_plugins()
+#endif
 {
     /* For gstreamer */
     GST_PLUGIN(coreelements);
@@ -113,7 +128,7 @@ void gst_static_plugins()
     GST_PLUGIN(ogg);
     GST_PLUGIN(vorbis);
 
-    /* For gst-plugin-base */
+    /* For gst-plugin-good */
     GST_PLUGIN(alpha);
     GST_PLUGIN(alphacolor);
     GST_PLUGIN(apetag);
@@ -160,20 +175,82 @@ void gst_static_plugins()
     GST_PLUGIN(flxdec);
     GST_PLUGIN(y4menc);
     GST_PLUGIN(oss4);
+
+    /* For gst-plugin-ugly */
+    GST_PLUGIN(asf);
+    GST_PLUGIN(dvdlpcmdec);
+    GST_PLUGIN(dvdsub);
+    GST_PLUGIN(realmedia);
+    GST_PLUGIN(xingmux);
+
+    /* For gst-plugin-bad */
+    GST_PLUGIN(accurip);
+    GST_PLUGIN(adpcmdec);
+    GST_PLUGIN(adpcmenc);
+    GST_PLUGIN(aiff);
+    GST_PLUGIN(asfmux);
+    GST_PLUGIN(audiofxbad);
+    GST_PLUGIN(audiovisualizers);
+    GST_PLUGIN(autoconvert);
+    GST_PLUGIN(bayer);
+    GST_PLUGIN(camerabin);
+    GST_PLUGIN(coloreffects);
+    GST_PLUGIN(dataurisrc);
+    GST_PLUGIN(debugutilsbad);
+    GST_PLUGIN(dvbsuboverlay);
+    GST_PLUGIN(dvdspu);
+    GST_PLUGIN(festival);
+    GST_PLUGIN(fieldanalysis);
+    GST_PLUGIN(freeverb);
+    GST_PLUGIN(frei0r);
+    GST_PLUGIN(gaudieffects);
+    GST_PLUGIN(geometrictransform);
+    GST_PLUGIN(gdp);
+    GST_PLUGIN(id3tag);
+    GST_PLUGIN(inter);
+    GST_PLUGIN(interlace);
+    GST_PLUGIN(ivtc);
+    GST_PLUGIN(jpegformat);
+    GST_PLUGIN(rfbsrc);
+    GST_PLUGIN(liveadder);
+    GST_PLUGIN(midi);
+    GST_PLUGIN(mpegpsdemux);
+    GST_PLUGIN(mpegtsdemux);
+    GST_PLUGIN(mpegtsmux);
+    GST_PLUGIN(mpegpsmux);
+    GST_PLUGIN(mxf);
+    GST_PLUGIN(pcapparse);
+    GST_PLUGIN(pnm);
+    GST_PLUGIN(rawparse);
+    GST_PLUGIN(removesilence);
+    GST_PLUGIN(sdp);
+    GST_PLUGIN(segmentclip);
+    GST_PLUGIN(gstsiren);
+    GST_PLUGIN(smooth);
+    GST_PLUGIN(speed);
+    GST_PLUGIN(subenc);
+    GST_PLUGIN(videofiltersbad);
+    GST_PLUGIN(videoparsersbad);
+    GST_PLUGIN(y4mdec);
+    GST_PLUGIN(yadif);
+    GST_PLUGIN(androidmedia);
+    GST_PLUGIN(fbdevsink);
+    GST_PLUGIN(opensles);
+    GST_PLUGIN(eglglessink);
+
+    return s_plugins_num;
 }
 EOF
 
     gst_libs="
-libgstparse.a
-libgstprintf.a
 libgstreamer-1.0.a
 libgstbase-1.0.a
-libcheckinternal.a
 libgstcheck-1.0.a
 libgstcontroller-1.0.a
 libgstnet-1.0.a
 libgstcoreelements.a
     "
+
     gst_base_libs="
 libgstadder.a
 libgstapp.a
@@ -208,7 +285,6 @@ libgstvideo-1.0.a
     "
 
     gst_good_libs="
-libparser.a
 libgstalpha.a
 libgstalphacolor.a
 libgstapetag.a
@@ -257,11 +333,85 @@ libgstoss4audio.a
 "
 #libgstvideomixer.a conflict with libgstvideoconvert.a
 
-    tmp_libs="$gst_libs $gst_base_libs $gst_good_libs"
-    for lib in $tmp_libs; do
-        lib=`find ../lib -name $lib`
+gst_ugly_libs="
+libgstasf.a
+libgstdvdlpcmdec.a
+libgstdvdsub.a
+libgstrmdemux.a
+libgstxingmux.a
+"
+
+gst_bad_libs="
+libgstaccurip.a
+libgstadpcmdec.a
+libgstadpcmenc.a
+libgstaiff.a
+libgstasfmux.a
+libgstaudiofxbad.a
+libgstaudiovisualizers.a
+libgstautoconvert.a
+libgstbayer.a
+libgstcamerabin2.a
+libgstcoloreffects.a
+libgstdataurisrc.a
+libgstdebugutilsbad.a
+libgstdvbsuboverlay.a
+libgstdvdspu.a
+libgstfestival.a
+libgstfieldanalysis.a
+libgstfreeverb.a
+libgstfrei0r.a
+libgstgaudieffects.a
+libgstgeometrictransform.a
+libgstgdp.a
+libgstid3tag.a
+libgstinter.a
+libgstinterlace.a
+libgstivtc.a
+libgstjpegformat.a
+libgstrfbsrc.a
+libgstliveadder.a
+libgstmidi.a
+libgstmpegpsdemux.a
+libgstmpegtsdemux.a
+libgstmpegtsmux.a
+libgstmpegpsmux.a
+libgstmxf.a
+libgstpcapparse.a
+libgstpnm.a
+libgstrawparse.a
+libgstremovesilence.a
+libgstsdpelem.a
+libgstsegmentclip.a
+libgstsiren.a
+libgstsmooth.a
+libgstspeed.a
+libgstsubenc.a
+libgstvideofiltersbad.a
+libgstvideoparsersbad.a
+libgsty4mdec.a
+libgstyadif.a
+libgstbasecamerabinsrc-1.0.a
+libgstegl-1.0.a
+libgstinsertbin-1.0.a
+libgstphotography-1.0.a
+libgstcodecparsers-1.0.a
+libgstmpegts-1.0.a
+libgsturidownloader-1.0.a
+libgstandroidmedia.a
+libgstfbdevsink.a
+libgstopensles.a
+libgsteglglessink.a
+"
+
+    thelibs=""
+    tmp_libs="$gst_libs $gst_base_libs $gst_good_libs $gst_ugly_libs $gst_bad_libs"
+    for f in $tmp_libs; do
+        lib=`find ../lib -name $f`
         if [ ! -z $lib ] && [ -e $lib ]; then
             thelibs="$thelibs $lib"
+        else
+            echo "Error: $f is nexist!"
         fi
     done
 
@@ -270,7 +420,8 @@ libgstoss4audio.a
     mv lib$target.{a,so} ../lib/
 }
 
+
 set_platform
 make_glibapi
 make_gstapi
-
+exit 0
