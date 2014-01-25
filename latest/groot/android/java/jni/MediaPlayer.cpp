@@ -3,6 +3,7 @@
 #include "ALog-priv.h"
 
 extern "C" void gst_static_plugins(void);
+extern GstDebugLevel _gst_debug_min;
 
 namespace eau
 {
@@ -52,11 +53,13 @@ static void init_gst()
         g_thread_init (NULL);
     }
 
+    gst_debug_set_active(true);
+#if 0
     GST_DEBUG_CATEGORY_STATIC (my_category);// define category (statically)
     #define GST_CAT_DEFAULT my_category     // set as default
     GST_DEBUG_CATEGORY_INIT (my_category, "my category", 0, "This is my very own");
-    gst_debug_set_active(true);
     gst_debug_category_set_threshold(my_category, GST_LEVEL_TRACE);
+#endif
 
     int argc = 1;
     char *argvs[] = {"k2player", NULL};
