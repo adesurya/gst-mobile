@@ -44,8 +44,7 @@ static void on_pad_added(GstElement *element, GstPad *pad, gpointer data)
     gst_object_unref (sinkpad);
 }
 
-
-int ogg_player (int argc, char *argv[]) {
+int ogg_player (const char *location) {
 
     GMainLoop *loop;
     GstElement *pipeline, *source, *demuxer, *decoder, *conv, *sink;
@@ -53,15 +52,7 @@ int ogg_player (int argc, char *argv[]) {
     guint bus_watch_id;
 
     /* Initialisation */
-    gst_init (&argc, &argv);
-    gst_static_plugins();
     loop = g_main_loop_new (NULL, FALSE);
-
-    /* Check input arguments */
-    if (argc != 2) {
-        g_printerr ("Usage: %s <Ogg/Vorbis filename>\n", argv[0]);
-        return -1;
-    }
 
     /* Create gstreamer elements */
     pipeline = gst_pipeline_new ("audio-player");
@@ -84,7 +75,7 @@ int ogg_player (int argc, char *argv[]) {
     /* Set up the pipeline */
 
     /* we set the input filename to the source element */
-    g_object_set (G_OBJECT (source), "location", argv[1], NULL);
+    g_object_set (G_OBJECT (source), "location", location, NULL);
 
     /* we add a message handler */
     bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));
@@ -110,7 +101,7 @@ int ogg_player (int argc, char *argv[]) {
        when the "pad-added" is emitted.*/
 
     /* Set the pipeline to "playing" state*/
-    g_print ("Now playing: %s\n", argv[1]);
+    g_print ("Now playing: %s\n", location);
     gst_element_set_state (pipeline, GST_STATE_PLAYING);
 
     /* Iterate */
@@ -129,23 +120,15 @@ int ogg_player (int argc, char *argv[]) {
     return 0;
 }
 
-
-int playbin2_player(int argc, char *argv[]) {
+int playbin2_player(const char *location) {
 
     GstElement *pipeline;
     GstBus *bus;
     GstMessage *msg;
-
     gchar uri[512] = {0};
-    if (argc != 2) {
-        g_print ("playbin2 [options] uri\n");
-        return -1;
-    }
-    /* playbin2 uri=http://docs.gstreamer.com/media/sintel_trailer-480p.webm */
-    g_snprintf(uri, sizeof(uri), "playbin2 uri=%s", argv[1]);
 
-    /* Initialize GStreamer */
-    gst_init (&argc, &argv);
+    /* playbin2 uri=http://docs.gstreamer.com/media/sintel_trailer-480p.webm */
+    g_snprintf(uri, sizeof(uri), "playbin2 uri=%s", location);
 
     /* Build the pipeline */
     pipeline = gst_parse_launch (uri, NULL);
@@ -169,9 +152,6 @@ int playbin2_player(int argc, char *argv[]) {
 namespace eau
 {
 
-GST_DEBUG_CATEGORY_STATIC (my_category);     // define category (statically)
-#define GST_CAT_DEFAULT my_category     // set as default
-
 gboolean CGstPlayback::handle_message (GstBus *bus, GstMessage *msg, void *data)
 {
     CGstPlayback *thiz = (CGstPlayback *)data;
@@ -182,70 +162,107 @@ gboolean CGstPlayback::handle_message (GstBus *bus, GstMessage *msg, void *data)
 
 CGstPlayback::CGstPlayback()
 {
-    GST_DEBUG_CATEGORY_INIT (my_category, "my category", 0, "This is my very own");
-    gst_debug_set_active(true);
-    gst_debug_category_set_threshold(my_category, GST_LEVEL_TRACE);
+    m_playbin = NULL;
+    m_audio_sink = NULL;
+    m_video_sink = NULL;
+    m_main_loop = NULL;
+    m_bus_msg_thread = NULL;
 }
 
 CGstPlayback::~CGstPlayback()
 {
+    Uninit();
 }
 
-bool CGstPlayback::Init(int argc, char *argv[])
+bool CGstPlayback::Init()
 {
-    ALOGI("CGstPlayback::Init, begin");
+    g_print("%s, begin", __func__);
 
-    returnb_assert(argc == 2);
-    g_snprintf(m_uri, sizeof(m_uri), "%s", argv[1]);
+    m_main_loop = g_main_loop_new (NULL, FALSE);
+    returnb_assert(m_main_loop);
 
-    gst_init (&argc, &argv);
-    gst_static_plugins();
+    m_playbin = gst_element_factory_make ("playbin", "playbin");
+    returnb_assert(m_playbin);
 
-    m_playbin2 = gst_element_factory_make ("playbin", "playbin2");
-    returnb_assert(m_playbin2);
-    ALOGI("CGstPlayback::Init, set uri=%s", m_uri);
-    g_object_set (m_playbin2, "uri", m_uri, NULL);
+    GstBus *bus = gst_pipeline_get_bus (GST_PIPELINE(m_playbin));
+    returnb_assert(bus);
+    gst_bus_add_watch (bus, (GstBusFunc)handle_message, this);
+    gst_object_unref (bus);
 
-    g_object_get (m_playbin2, "flags", &m_flags, NULL);
-    ALOGI("CGstPlayback::Init, get flags=%d", m_flags);
-    m_flags |= GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO;
+    //m_bus_msg_thread = g_thread_create ((GThreadFunc)g_main_loop_run, m_main_loop, TRUE, NULL);
+    //returnb_assert(m_bus_msg_thread);
+
+    //m_audio_sink = gst_element_factory_make("autoaudiosink", NULL);
+    //returnb_assert(m_audio_sink);
+    //g_object_set (GST_OBJECT(m_playbin), "audio-sink", m_audio_sink, NULL);
+
+    //m_video_sink = gst_element_factory_make("eglglessink", NULL);
+    //returnb_assert(m_video_sink);
+    //g_object_set (GST_OBJECT(m_playbin), "video-sink", m_video_sink, NULL);
+
+    g_print("%s, end", __func__);
+
+    return true;
+}
+
+bool CGstPlayback::SetOption()
+{
+    returnb_assert(m_playbin);
+
+    ALOGI("%s, set flags", __func__);
+    g_object_get (G_OBJECT(m_playbin), "flags", &m_flags, NULL);
+    m_flags |= GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_VIDEO;
     m_flags &= ~GST_PLAY_FLAG_TEXT;
-    ALOGI("CGstPlayback::Init, set flags=%d", m_flags);
-    g_object_set (m_playbin2, "flags", m_flags, NULL);
+    g_object_set (G_OBJECT(m_playbin), "flags", m_flags, NULL);
+    //g_object_set (m_playbin, "connection-speed", 56, NULL);
+    return true;
+}
 
-    //ALOGI("CGstPlayback::Init, set speed");
-    //g_object_set (m_playbin2, "connection-speed", 56, NULL);
+bool CGstPlayback::SetUri(const char *uri)
+{
+    returnb_assert(m_playbin);
 
-    m_bus = gst_element_get_bus (m_playbin2);
-    returnb_assert(m_bus);
-    gst_bus_add_watch (m_bus, (GstBusFunc)handle_message, this);
-    ALOGI("CGstPlayback::Init, end");
-
+    g_print("%s, set uri=%s", __func__, uri);
+    g_object_set (G_OBJECT(m_playbin), "uri", uri, NULL);
     return true;
 }
 
 bool CGstPlayback::Play()
 {
-    returnb_assert(m_playbin2);
+    returnb_assert(m_playbin);
 
-    gint iret = gst_element_set_state (m_playbin2, GST_STATE_PLAYING);
+    g_print("%s, begin", __func__);
+    gint iret = gst_element_set_state (m_playbin, GST_STATE_PLAYING);
     if (iret == GST_STATE_CHANGE_FAILURE) {
         g_printerr ("Unable to set the pipeline to the playing state.\n");
-        gst_object_unref (m_playbin2);
         return false;
     }
 
-    /* Create a GLib Main Loop and set it to run */
-    m_main_loop = g_main_loop_new (NULL, FALSE);
     g_main_loop_run (m_main_loop);
+    gst_element_set_state (m_playbin, GST_STATE_NULL);
+
     return true;
 }
 
 bool CGstPlayback::Pause()
 {
-    returnb_assert(m_playbin2);
+    returnb_assert(m_playbin);
 
-    gint iret = gst_element_set_state (m_playbin2, GST_STATE_PAUSED);
+    g_print("%s, begin", __func__);
+    gint iret = gst_element_set_state (m_playbin, GST_STATE_PAUSED);
+    if (iret == GST_STATE_CHANGE_FAILURE) {
+        g_printerr ("Unable to set the pipeline to the playing state.\n");
+        return false;
+    }
+    return true;
+}
+
+bool CGstPlayback::Stop()
+{
+    returnb_assert(m_playbin);
+
+    g_print("%s, begin", __func__);
+    gint iret = gst_element_set_state (m_playbin, GST_STATE_READY);
     if (iret == GST_STATE_CHANGE_FAILURE) {
         g_printerr ("Unable to set the pipeline to the playing state.\n");
         return false;
@@ -255,32 +272,34 @@ bool CGstPlayback::Pause()
 
 void CGstPlayback::Uninit()
 {
-    if (m_main_loop)
-        g_main_loop_unref (m_main_loop);
-    if (m_bus)
-        gst_object_unref (m_bus);
-    if (m_playbin2) {
-        gst_element_set_state (m_playbin2, GST_STATE_NULL);
-        gst_object_unref (m_playbin2);
-    }
+    g_print("%s, begin", __func__);
+    g_main_loop_unref (m_main_loop);
+    gst_element_set_state (m_playbin, GST_STATE_NULL);
+    gst_object_unref (GST_OBJECT(m_playbin));
+    gst_object_unref (GST_OBJECT(m_audio_sink));
+    gst_object_unref (GST_OBJECT(m_video_sink));
+
     m_main_loop = NULL;
-    m_bus = NULL;
-    m_playbin2 = NULL;
+    m_playbin = NULL;
+    m_audio_sink = NULL;
+    m_video_sink = NULL;
+    m_bus_msg_thread = NULL;
 }
 
 void CGstPlayback::AnalyzeStreams()
 {
-    return_assert(m_playbin2);
+    return_assert(m_playbin);
 
-    g_object_get (m_playbin2, "n-video", &m_numVideo, NULL);
-    g_object_get (m_playbin2, "n-audio", &m_numAudio, NULL);
-    g_object_get (m_playbin2, "n-text", &m_numText, NULL);   
+    g_print("%s, begin", __func__);
+    g_object_get (m_playbin, "n-video", &m_numVideo, NULL);
+    g_object_get (m_playbin, "n-audio", &m_numAudio, NULL);
+    g_object_get (m_playbin, "n-text", &m_numText, NULL);   
 
     for (gint i = 0; i < m_numVideo; i++) {
         GstTagList *tags = NULL;
         gchar *str = NULL;
         /* Retrieve the stream's video tags */
-        g_signal_emit_by_name (m_playbin2, "get-video-tags", i, &tags);
+        g_signal_emit_by_name (m_playbin, "get-video-tags", i, &tags);
         if (tags) {
             g_print ("video stream %d:\n", i);
             gst_tag_list_get_string (tags, GST_TAG_VIDEO_CODEC, &str);
@@ -295,7 +314,7 @@ void CGstPlayback::AnalyzeStreams()
         gchar *str = NULL;
         guint rate = 0;
         /* Retrieve the stream's audio tags */
-        g_signal_emit_by_name (m_playbin2, "get-audio-tags", i, &tags);
+        g_signal_emit_by_name (m_playbin, "get-audio-tags", i, &tags);
         if (tags) {
             g_print ("audio stream %d:\n", i);
             if (gst_tag_list_get_string (tags, GST_TAG_AUDIO_CODEC, &str)) {
@@ -317,7 +336,7 @@ void CGstPlayback::AnalyzeStreams()
         GstTagList *tags = NULL;
         gchar *str = NULL;
         /* Retrieve the stream's subtitle tags */
-        g_signal_emit_by_name (m_playbin2, "get-text-tags", i, &tags);
+        g_signal_emit_by_name (m_playbin, "get-text-tags", i, &tags);
         if (tags) {
             g_print ("subtitle stream %d:\n", i);
             if (gst_tag_list_get_string (tags, GST_TAG_LANGUAGE_CODE, &str)) {
@@ -328,16 +347,16 @@ void CGstPlayback::AnalyzeStreams()
         }
     }
 
-    g_object_get (m_playbin2, "current-video", &m_curVideo, NULL);
-    g_object_get (m_playbin2, "current-audio", &m_curAudio, NULL);
-    g_object_get (m_playbin2, "current-text", &m_curText, NULL);
+    g_object_get (GST_OBJECT(m_playbin), "current-video", &m_curVideo, NULL);
+    g_object_get (GST_OBJECT(m_playbin), "current-audio", &m_curAudio, NULL);
+    g_object_get (GST_OBJECT(m_playbin), "current-text", &m_curText, NULL);
 }
 
 gboolean CGstPlayback::HandleMessage(GstBus *bus, GstMessage *msg)
 {
     switch (GST_MESSAGE_TYPE (msg)) {
         case GST_MESSAGE_EOS:
-            ALOGI ("End of stream");
+            g_print ("End of stream");
             g_main_loop_quit (m_main_loop);
             break;
         case GST_MESSAGE_ERROR: 
@@ -346,7 +365,7 @@ gboolean CGstPlayback::HandleMessage(GstBus *bus, GstMessage *msg)
             GError *error;
             gst_message_parse_error (msg, &error, &debug);
             g_free (debug);
-            ALOGE ("Error: %s", error->message);
+            g_printerr ("Error: %s", error->message);
             g_error_free (error);
             g_main_loop_quit (m_main_loop);
             break;
@@ -357,7 +376,7 @@ gboolean CGstPlayback::HandleMessage(GstBus *bus, GstMessage *msg)
             GError *info;
             gst_message_parse_info (msg, &info, &debug);
             g_free (debug);
-            ALOGE ("Info: %s", info->message);
+            g_print ("Info: %s", info->message);
             g_error_free (info);
             break;
         }

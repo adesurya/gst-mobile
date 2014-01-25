@@ -6,8 +6,8 @@
 #include "refcount.h"
 #include "zeroptr.h"
 
-int ogg_player (int argc, char *argv[]);
-int playbin2_player(int argc, char *argv[]);
+int ogg_player (const char *location);
+int playbin2_player(const char *location);
 
 namespace eau
 {
@@ -24,9 +24,12 @@ public:
     CGstPlayback();
     virtual ~CGstPlayback();
 
-    bool Init(int argc, char *argv[]);
+    bool Init();
+    bool SetOption();
+    bool SetUri(const char *uri);
     bool Play();
     bool Pause();
+    bool Stop();
     void Uninit();
 
 protected:
@@ -35,9 +38,11 @@ protected:
     void AnalyzeStreams();
 
 private:
-    GMainLoop *m_main_loop;
-    GstElement *m_playbin2;
-    GstBus *m_bus;
+    GstElement  *m_playbin;
+    GstElement  *m_audio_sink;
+    GstElement  *m_video_sink;
+    GMainLoop   *m_main_loop;
+    GThread     *m_bus_msg_thread;
 
     gchar m_uri[1024];
     gint m_flags;

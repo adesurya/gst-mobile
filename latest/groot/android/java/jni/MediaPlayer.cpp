@@ -2,6 +2,8 @@
 #include "gstapi.h"
 #include "ALog-priv.h"
 
+extern "C" void gst_static_plugins(void);
+
 namespace eau
 {
 
@@ -34,13 +36,35 @@ static void log_func(const gchar   *log_domain,
     }
 }
 
-static void init_glib_log_print()
+static void init_gst()
 {
+    static bool gst_inited = false;
+    if (gst_inited)
+        return;
+
     gint level = 0xff;
     g_set_print_handler(print_func); // g_print
     g_set_printerr_handler(print_func); // g_printerr
     g_log_set_handler("k2player", (GLogLevelFlags)level, log_func, NULL);
     g_log_set_default_handler(log_func, NULL);
+
+    if (!g_thread_supported ()) {
+        g_thread_init (NULL);
+    }
+
+    GST_DEBUG_CATEGORY_STATIC (my_category);// define category (statically)
+    #define GST_CAT_DEFAULT my_category     // set as default
+    GST_DEBUG_CATEGORY_INIT (my_category, "my category", 0, "This is my very own");
+    gst_debug_set_active(true);
+    gst_debug_category_set_threshold(my_category, GST_LEVEL_TRACE);
+
+    int argc = 1;
+    char *argvs[] = {"k2player", NULL};
+    char **argv = argvs;
+    gst_init (&argc, &argv);
+    gst_static_plugins();
+
+    gst_inited = true;
 }
 
 
@@ -49,7 +73,7 @@ CMediaPlayer::CMediaPlayer()
     m_pListener = NULL;
     m_bPlaying = false;
 
-    init_glib_log_print();
+    init_gst();
     m_pPlayer = new GstPlayback();
 }
 
@@ -104,16 +128,17 @@ status_t CMediaPlayer::start()
 
     ALOGI("%s, begin", __func__);
 
-    int argc = 2;
-    char *argv[2] = {NULL, NULL};
-    argv[0] = (char *)"k2player";
-    argv[1] = (char *)m_szPath.c_str();
     m_bPlaying = true;
-    g_print("start with ogg_player\n");
-    ogg_player(argc, argv);
-    //playbin2_player(argc, argv);
-    //m_pPlayer->Init(argc, argv);
-    //m_pPlayer->Play();
+    g_print("start with k2player\n");
+#if 1
+    m_pPlayer->Init();
+    m_pPlayer->SetOption();
+    m_pPlayer->SetUri(m_szPath.c_str());
+    m_pPlayer->Play();
+#else
+    ogg_player(m_szPath.c_str());
+    //playbin2_player(m_szPath.c_str());
+#endif
     m_bPlaying = false;
     return OK;
 }
