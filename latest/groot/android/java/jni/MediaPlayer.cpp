@@ -43,6 +43,7 @@ static void init_gst()
     if (gst_inited)
         return;
 
+    ALOGI("%s, %d, begin", __func__, time(0));
     gint level = 0xff;
     g_set_print_handler(print_func); // g_print
     g_set_printerr_handler(print_func); // g_printerr
@@ -61,13 +62,17 @@ static void init_gst()
     gst_debug_category_set_threshold(my_category, GST_LEVEL_TRACE);
 #endif
 
+    ALOGI("%s, %d, gst_init", __func__, time(0));
     int argc = 1;
     char *argvs[] = {"k2player", NULL};
     char **argv = argvs;
     gst_init (&argc, &argv);
+
+    ALOGI("%s, %d, gst_static_init", __func__, time(0));
     gst_static_plugins();
 
     gst_inited = true;
+    ALOGI("%s, %d, end", __func__, time(0));
 }
 
 
@@ -129,7 +134,7 @@ status_t CMediaPlayer::start()
 {
     returnv_assert(!m_szPath.empty(), BAD_VALUE);
 
-    ALOGI("%s, begin", __func__);
+    ALOGI("%s, %d, begin", __func__, time(0));
 
     m_bPlaying = true;
     g_print("start with k2player\n");
@@ -143,6 +148,7 @@ status_t CMediaPlayer::start()
     //playbin2_player(m_szPath.c_str());
 #endif
     m_bPlaying = false;
+    ALOGI("%s, %d, end", __func__, time(0));
     return OK;
 }
 

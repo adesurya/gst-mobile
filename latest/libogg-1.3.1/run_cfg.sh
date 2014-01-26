@@ -23,9 +23,7 @@ cd oldbld
 PREFIX=`pwd`/../../groot
 mkdir -p $PREFIX
 
-../configure --prefix=$PREFIX --host=arm \
-    --enable-static \
-    --disable-shared
+../configure --prefix=$PREFIX --host=arm
 
 make && make install
 

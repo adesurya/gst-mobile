@@ -189,8 +189,8 @@ bool CGstPlayback::Init()
     gst_bus_add_watch (bus, (GstBusFunc)handle_message, this);
     gst_object_unref (bus);
 
-    //m_bus_msg_thread = g_thread_create ((GThreadFunc)g_main_loop_run, m_main_loop, TRUE, NULL);
-    //returnb_assert(m_bus_msg_thread);
+    m_bus_msg_thread = g_thread_create ((GThreadFunc)g_main_loop_run, m_main_loop, TRUE, NULL);
+    returnb_assert(m_bus_msg_thread);
 
     //m_audio_sink = gst_element_factory_make("autoaudiosink", NULL);
     //returnb_assert(m_audio_sink);
@@ -238,8 +238,8 @@ bool CGstPlayback::Play()
         return false;
     }
 
-    g_main_loop_run (m_main_loop);
-    gst_element_set_state (m_playbin, GST_STATE_NULL);
+    //g_main_loop_run (m_main_loop);
+    //gst_element_set_state (m_playbin, GST_STATE_NULL);
 
     return true;
 }

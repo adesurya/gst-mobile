@@ -233,7 +233,7 @@ int gst_static_plugins()
     GST_PLUGIN(videoparsersbad);
     GST_PLUGIN(y4mdec);
     GST_PLUGIN(yadif);
-    GST_PLUGIN(androidmedia);
+    /* GST_PLUGIN(androidmedia); */
     GST_PLUGIN(fbdevsink);
     GST_PLUGIN(opensles);
     GST_PLUGIN(eglglessink);
