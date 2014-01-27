@@ -33,12 +33,13 @@ export GST_PLUGINS_DIR="$PWD/../groot/lib/gstreamer-1.0"
 
 export OGG_CFLAGS="-I$PWD/../groot/include"
 export OGG_LIBS="-L$PWD/../groot/lib -logg"
-
 export VORBIS_CFLAGS="-I$PWD/../groot/include"
 export VORBIS_LIBS="-L$PWD/../groot/lib -lvorbis -logg"
+export THEORA_CFLAGS="-I$PWD/../groot/include"
+export THEORA_LIBS="-L$PWD/../groot/lib -ltheora -logg"
 
-export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS $GST_CFLAGS $OGG_CFLAGS $VORBIS_CFLAGS"
-export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS $OGG_LIBS $VORBIS_LIBS"
+export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS $GST_CFLAGS $OGG_CFLAGS $VORBIS_CFLAGS $THEORA_CFLAGS"
+export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS $OGG_LIBS $VORBIS_LIBS $THEORA_LIBS"
 
 ##
 ## start configure
@@ -53,6 +54,7 @@ mkdir -p $PREFIX
 #--disable-largefile
 #--disable-ogg
 #--disable-vorbis
+#--disable-theora
 ../configure \
     --prefix=$PREFIX \
     --host=arm-linux-androideabi  \
@@ -66,7 +68,6 @@ mkdir -p $PREFIX
     --disable-x --disable-xvideo --disable-xshm \
     --disable-alsa \
     --disable-pango \
-    --disable-theora \
     --disable-freetypetest \
     --without-libiconv-prefix \
     --without-libintl-prefix

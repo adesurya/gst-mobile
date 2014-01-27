@@ -92,7 +92,7 @@ make_gstapi ()
     target="gstapi"
     ldflags=" /tmp/gst_static_plugins.c"
     ldflags+=" -lc -lz -lm -lEGL -lGLESv2 -lOpenSLES"
-    ldflags+=" -L../../lib -lglibapi -lvorbisenc -lvorbis -logg"
+    ldflags+=" -L../../lib -lglibapi -lvorbisenc -lvorbis -ltheora -logg"
 cat > /tmp/gst_static_plugins.c << EOF
 
 static int s_plugins_num = 0;
@@ -126,6 +126,7 @@ int gst_static_plugins()
     GST_PLUGIN(videoscale);
     GST_PLUGIN(volume);
     GST_PLUGIN(ogg);
+    GST_PLUGIN(theora);
     GST_PLUGIN(vorbis);
 
     /* For gst-plugin-good */
@@ -173,8 +174,8 @@ int gst_static_plugins()
     GST_PLUGIN(wavenc);
     GST_PLUGIN(wavparse);
     GST_PLUGIN(flxdec);
-    GST_PLUGIN(y4menc);
-    GST_PLUGIN(oss4);
+    /* GST_PLUGIN(y4menc); */
+    /* GST_PLUGIN(oss4); */
 
     /* For gst-plugin-ugly */
     GST_PLUGIN(asf);
@@ -184,7 +185,7 @@ int gst_static_plugins()
     GST_PLUGIN(xingmux);
 
     /* For gst-plugin-bad */
-    GST_PLUGIN(accurip);
+    /* GST_PLUGIN(accurip); */
     GST_PLUGIN(adpcmdec);
     GST_PLUGIN(adpcmenc);
     GST_PLUGIN(aiff);
@@ -225,14 +226,14 @@ int gst_static_plugins()
     GST_PLUGIN(removesilence);
     GST_PLUGIN(sdp);
     GST_PLUGIN(segmentclip);
-    GST_PLUGIN(gstsiren);
+    /* GST_PLUGIN(gstsiren); */
     GST_PLUGIN(smooth);
     GST_PLUGIN(speed);
     GST_PLUGIN(subenc);
     GST_PLUGIN(videofiltersbad);
     GST_PLUGIN(videoparsersbad);
-    GST_PLUGIN(y4mdec);
-    GST_PLUGIN(yadif);
+    /* GST_PLUGIN(y4mdec); */
+    /* GST_PLUGIN(yadif); */
     /* GST_PLUGIN(androidmedia); */
     GST_PLUGIN(fbdevsink);
     GST_PLUGIN(opensles);
@@ -270,6 +271,7 @@ libgstvideorate.a
 libgstvideoscale.a
 libgstvolume.a
 libgstogg.a
+libgsttheora.a
 libgstvorbis.a
 libgstallocators-1.0.a
 libgstaudio-1.0.a
@@ -325,13 +327,13 @@ libgstudp.a
 libgstvideobox.a
 libgstvideocrop.a
 libgstvideofilter.a
+#libgstvideomixer.a
 libgstwavenc.a
 libgstwavparse.a
 libgstflxdec.a
-libgsty4menc.a
-libgstoss4audio.a
+#libgsty4menc.a
+#libgstoss4audio.a
 "
-#libgstvideomixer.a conflict with libgstvideoconvert.a
 
 gst_ugly_libs="
 libgstasf.a
@@ -342,7 +344,7 @@ libgstxingmux.a
 "
 
 gst_bad_libs="
-libgstaccurip.a
+#libgstaccurip.a
 libgstadpcmdec.a
 libgstadpcmenc.a
 libgstaiff.a
@@ -383,14 +385,14 @@ libgstrawparse.a
 libgstremovesilence.a
 libgstsdpelem.a
 libgstsegmentclip.a
-libgstsiren.a
+#libgstsiren.a
 libgstsmooth.a
 libgstspeed.a
 libgstsubenc.a
 libgstvideofiltersbad.a
 libgstvideoparsersbad.a
-libgsty4mdec.a
-libgstyadif.a
+#libgsty4mdec.a
+#libgstyadif.a
 libgstbasecamerabinsrc-1.0.a
 libgstegl-1.0.a
 libgstinsertbin-1.0.a
@@ -398,7 +400,7 @@ libgstphotography-1.0.a
 libgstcodecparsers-1.0.a
 libgstmpegts-1.0.a
 libgsturidownloader-1.0.a
-libgstandroidmedia.a
+#libgstandroidmedia.a
 libgstfbdevsink.a
 libgstopensles.a
 libgsteglglessink.a
