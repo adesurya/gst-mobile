@@ -200,6 +200,12 @@ bool CGstPlayback::Init()
     //returnb_assert(m_video_sink);
     //g_object_set (GST_OBJECT(m_playbin), "video-sink", m_video_sink, NULL);
 
+    // Set the pipeline to READY, so it can already accept a window handle, if we have one
+    gst_element_set_state(m_playbin, GST_STATE_READY);
+
+    //m_video_sink = gst_bin_get_by_interface(GST_BIN(m_playbin), GST_TYPE_X_OVERLAY);
+    //returnb_assert(m_video_sink);
+
     g_print("%s, end", __func__);
 
     return true;
@@ -224,6 +230,16 @@ bool CGstPlayback::SetUri(const char *uri)
 
     g_print("%s, set uri=%s", __func__, uri);
     g_object_set (G_OBJECT(m_playbin), "uri", uri, NULL);
+    return true;
+}
+
+bool CGstPlayback::SetWindow(void *window)
+{
+    returnb_assert(m_playbin);
+    returnb_assert(m_video_sink);
+
+    g_print("%s, set native window", __func__);
+    //gst_x_overlay_set_window_handle (GST_X_OVERLAY (m_video_sink), (guintptr)window);
     return true;
 }
 

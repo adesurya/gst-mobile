@@ -7,6 +7,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <android/native_window.h>
+#include <android/native_window_jni.h>
+
 #include "JniConstants.h"
 #include "JNIHelp.h"
 #include "MediaPlayer.h"

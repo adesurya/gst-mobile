@@ -27,6 +27,7 @@ public:
     bool Init();
     bool SetOption();
     bool SetUri(const char *uri);
+    bool SetWindow(void *window);
     bool Play();
     bool Pause();
     bool Stop();

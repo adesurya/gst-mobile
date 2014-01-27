@@ -289,7 +289,7 @@ public class MediaPlayer extends MediaConsts
         throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
         String scheme = uri.getScheme();
         if(scheme == null || scheme.equals("file")) {
-            setDataSource(uri.getPath());
+            setDataSource(uri.toString());
             return;
         }
 
@@ -368,20 +368,7 @@ public class MediaPlayer extends MediaConsts
 
     private void setDataSource(String path, String[] keys, String[] values)
             throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
-        final Uri uri = Uri.parse(path);
-        if ("file".equals(uri.getScheme())) {
-            path = uri.getPath();
-        }
-
-        final File file = new File(path);
-        if (file.exists()) {
-            FileInputStream is = new FileInputStream(file);
-            FileDescriptor fd = is.getFD();
-            setDataSource(fd);
-            is.close();
-        } else {
-            _setDataSource(path, keys, values);
-        }
+    	_setDataSource(path, keys, values);
     }
 
     /**
