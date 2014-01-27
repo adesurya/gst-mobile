@@ -78,11 +78,13 @@ static void init_gst()
 
 CMediaPlayer::CMediaPlayer()
 {
+    m_fd = -1;
     m_pListener = NULL;
+    m_pPlayer = NULL;
+    m_pTexture = NULL;
     m_bPlaying = false;
 
     init_gst();
-    m_pPlayer = new GstPlayback();
 }
 
 CMediaPlayer::~CMediaPlayer()
@@ -115,13 +117,25 @@ status_t CMediaPlayer::setDataSource(int fd, long offset, long length)
     return OK;
 }
 
-void CMediaPlayer::setVideoSurfaceTexture(int texture)
+void CMediaPlayer::setVideoSurfaceTexture(void * texture)
 {
+    m_pTexture = texture;
 }
 
 status_t CMediaPlayer::prepare()
 {
     ALOGI("%s, begin", __func__);
+    m_pPlayer = NULL;;
+    m_pPlayer = new GstPlayback();
+    m_pPlayer->Init();
+    m_pPlayer->SetOption();
+    m_pPlayer->SetUri(m_szPath.c_str());
+    m_pPlayer->Prepare();
+
+    if (m_pTexture)
+        m_pPlayer->SetWindow(m_pTexture);
+    ALOGI("%s, end", __func__);
+
     return OK;
 }
 
@@ -132,20 +146,13 @@ status_t CMediaPlayer::prepareAsync()
 
 status_t CMediaPlayer::start()
 {
-    returnv_assert(!m_szPath.empty(), BAD_VALUE);
-
     ALOGI("%s, %d, begin", __func__, time(0));
 
     m_bPlaying = true;
-    g_print("start with k2player\n");
 #if 1
-    m_pPlayer->Init();
-    m_pPlayer->SetOption();
-    m_pPlayer->SetUri(m_szPath.c_str());
     m_pPlayer->Play();
 #else
     ogg_player(m_szPath.c_str());
-    //playbin2_player(m_szPath.c_str());
 #endif
     m_bPlaying = false;
     ALOGI("%s, %d, end", __func__, time(0));
@@ -154,12 +161,14 @@ status_t CMediaPlayer::start()
 
 status_t CMediaPlayer::stop()
 {
+    m_pPlayer->Stop();
     m_bPlaying = false;
     return OK;
 }
 
 status_t CMediaPlayer::pause()
 {
+    m_pPlayer->Pause();
     return OK;
 }
 

@@ -33,7 +33,7 @@ public:
 public:
     status_t setDataSource(const string &path, const vector<string> &headers);
     status_t setDataSource(int fd, long offset, long length);
-    void setVideoSurfaceTexture(int texture);
+    void setVideoSurfaceTexture(void *texture);
 
     status_t prepare();
     status_t prepareAsync();
@@ -69,6 +69,7 @@ private:
     int m_fd;
     bool m_bPlaying;
     zeroptr<GstPlayback> m_pPlayer;
+    void * m_pTexture;
 };
 typedef RefCounted<CMediaPlayer> MediaPlayer;
 

@@ -1,5 +1,7 @@
-#include <gst/gst.h>
 #include <glib.h>
+#include <gst/gst.h>
+#include <gst/video/videooverlay.h>
+
 #include "gstapi.h"
 #include "ALog-priv.h"
 
@@ -200,12 +202,6 @@ bool CGstPlayback::Init()
     //returnb_assert(m_video_sink);
     //g_object_set (GST_OBJECT(m_playbin), "video-sink", m_video_sink, NULL);
 
-    // Set the pipeline to READY, so it can already accept a window handle, if we have one
-    gst_element_set_state(m_playbin, GST_STATE_READY);
-
-    //m_video_sink = gst_bin_get_by_interface(GST_BIN(m_playbin), GST_TYPE_X_OVERLAY);
-    //returnb_assert(m_video_sink);
-
     g_print("%s, end", __func__);
 
     return true;
@@ -216,10 +212,10 @@ bool CGstPlayback::SetOption()
     returnb_assert(m_playbin);
 
     ALOGI("%s, set flags", __func__);
-    g_object_get (G_OBJECT(m_playbin), "flags", &m_flags, NULL);
+    g_object_get (m_playbin, "flags", &m_flags, NULL);
     m_flags |= GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_VIDEO;
     m_flags &= ~GST_PLAY_FLAG_TEXT;
-    g_object_set (G_OBJECT(m_playbin), "flags", m_flags, NULL);
+    g_object_set (m_playbin, "flags", m_flags, NULL);
     //g_object_set (m_playbin, "connection-speed", 56, NULL);
     return true;
 }
@@ -229,7 +225,7 @@ bool CGstPlayback::SetUri(const char *uri)
     returnb_assert(m_playbin);
 
     g_print("%s, set uri=%s", __func__, uri);
-    g_object_set (G_OBJECT(m_playbin), "uri", uri, NULL);
+    g_object_set (m_playbin, "uri", uri, NULL);
     return true;
 }
 
@@ -239,7 +235,19 @@ bool CGstPlayback::SetWindow(void *window)
     returnb_assert(m_video_sink);
 
     g_print("%s, set native window", __func__);
-    //gst_x_overlay_set_window_handle (GST_X_OVERLAY (m_video_sink), (guintptr)window);
+    gst_video_overlay_set_window_handle (GST_VIDEO_OVERLAY (m_video_sink), (guintptr)window);
+    return true;
+}
+
+bool CGstPlayback::Prepare()
+{
+    returnb_assert(m_playbin);
+
+    g_print("%s, set ready state and get GST_TYPE_VIDEO_OVERLAY", __func__);
+    // Set the pipeline to READY, so it can already accept a window handle, if we have one
+    gst_element_set_state(m_playbin, GST_STATE_READY);
+    m_video_sink = gst_bin_get_by_interface(GST_BIN(m_playbin), GST_TYPE_VIDEO_OVERLAY);
+    returnb_assert(m_video_sink);
     return true;
 }
 
@@ -253,10 +261,6 @@ bool CGstPlayback::Play()
         g_printerr ("Unable to set the pipeline to the playing state.\n");
         return false;
     }
-
-    //g_main_loop_run (m_main_loop);
-    //gst_element_set_state (m_playbin, GST_STATE_NULL);
-
     return true;
 }
 
