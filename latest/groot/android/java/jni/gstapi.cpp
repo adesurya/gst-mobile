@@ -243,9 +243,15 @@ bool CGstPlayback::Prepare()
 {
     returnb_assert(m_playbin);
 
-    g_print("%s, set ready state and get GST_TYPE_VIDEO_OVERLAY", __func__);
+    g_print("%s, set ready state", __func__);
     // Set the pipeline to READY, so it can already accept a window handle, if we have one
-    gst_element_set_state(m_playbin, GST_STATE_READY);
+    gint iret = gst_element_set_state(m_playbin, GST_STATE_READY);
+    if (iret == GST_STATE_CHANGE_FAILURE) {
+        g_printerr ("Unable to set the pipeline to the ready state.\n");
+        return false;
+    }
+
+    g_print("%s, get GST_TYPE_VIDEO_OVERLAY", __func__);
     m_video_sink = gst_bin_get_by_interface(GST_BIN(m_playbin), GST_TYPE_VIDEO_OVERLAY);
     returnb_assert(m_video_sink);
     return true;

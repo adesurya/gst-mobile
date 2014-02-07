@@ -22,7 +22,7 @@ LOCAL_SRC_FILES := \
 	MediaPlayer.cpp  \
 	k2_media_MediaPlayer.cpp
 
-LOCAL_CFLAGS += -DHAS_ATOMICS=1 -DHAVE_PTHREAD_H 
+LOCAL_CFLAGS += -DHAS_ATOMICS=1 -DHAVE_PTHREAD_H #-DNDEBUG
 LOCAL_CFLAGS += -I../../../include/gstreamer-1.0 -I../../../include/glib-2.0 -I../../../lib/glib-2.0/include
 LOCAL_LDLIBS += -llog -landroid
 #LOCAL_LDFLAGS += -L../../../lib -lglibapi -lgstapi

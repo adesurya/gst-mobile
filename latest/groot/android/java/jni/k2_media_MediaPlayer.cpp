@@ -1,6 +1,3 @@
-//#define LOG_NDEBUG 0
-#define LOG_TAG "MediaPlayer-JNI"
-
 #include <stdio.h>
 #include <assert.h>
 #include <limits.h>
@@ -9,6 +6,8 @@
 
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
+
+//#define LOG_TAG "MediaPlayer-JNI"
 
 #include "JniConstants.h"
 #include "JNIHelp.h"
@@ -105,9 +104,6 @@ static zeroptr<MediaPlayer> setMediaPlayer(JNIEnv* env, jobject thiz, const zero
     zeroptr<MediaPlayer> old = (MediaPlayer*)env->GetIntField(thiz, fields.context);
     if (player.get()) {
         player->AddRef(); // Add extra ref count
-    }
-    if (old != 0) {
-        old->Release();
     }
     env->SetIntField(thiz, fields.context, (int)player.get());
     return old;
@@ -486,6 +482,7 @@ static void k2_media_MediaPlayer_release(JNIEnv *env, jobject thiz)
         // this prevents native callbacks after the object is released
         mp->setListener(0);
         mp->disconnect();
+        mp->Release();
     }
 
     int texture = getVideoSurfaceTexture(env, thiz);

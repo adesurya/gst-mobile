@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "JniConstants"
+//#define LOG_TAG "JniConstants"
 
 #include "ALog-priv.h"
 #include "JniConstants.h"

@@ -20,8 +20,8 @@
 #include <android/log.h>
 
 #ifndef LOG_TAG
-#define LOG_NDEBUG 0
 #define LOG_TAG "k2player"
+#define LOG_NDEBUG 0
 #endif
 
 #ifndef LOG_NDEBUG
