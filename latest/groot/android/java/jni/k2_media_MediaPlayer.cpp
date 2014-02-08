@@ -206,14 +206,18 @@ static void setVideoSurface(JNIEnv *env, jobject thiz, jobject jsurface, jboolea
         return;
     }
 
-    ANativeWindow *native_window = ANativeWindow_fromSurface(env, jsurface);
-    env->SetIntField(thiz, fields.surface_texture, (int)native_window);
+    ANativeWindow *window = (ANativeWindow *)getVideoSurfaceTexture(env, thiz);
+    if (window) {
+        ALOGV("setVideoSurface, release previous surface");
+        env->SetIntField(thiz, fields.surface_texture, 0);
+        ANativeWindow_release(window);
+    }
 
-    // This will fail if the media player has not been initialized yet. This
-    // can be the case if setDisplay() on MediaPlayer.java has been called
-    // before setDataSource(). The redundant call to setVideoSurfaceTexture()
-    // in prepare/prepareAsync covers for this case.
-    mp->setVideoSurfaceTexture((void *)native_window);
+    ANativeWindow *native_window = ANativeWindow_fromSurface(env, jsurface);
+    if (native_window) {
+        env->SetIntField(thiz, fields.surface_texture, (int)native_window);
+        mp->setVideoSurfaceTexture(native_window);
+    }
 }
 
 static void k2_media_MediaPlayer_setVideoSurface(JNIEnv *env, jobject thiz, jobject jsurface)
@@ -231,8 +235,8 @@ static void k2_media_MediaPlayer_prepare(JNIEnv *env, jobject thiz)
 
     // Handle the case where the display surface was set before the mp was
     // initialized. We try again to make it stick.
-    int texture = getVideoSurfaceTexture(env, thiz);
-    mp->setVideoSurfaceTexture((ANativeWindow *)texture);
+    ANativeWindow *window = (ANativeWindow *)getVideoSurfaceTexture(env, thiz);
+    mp->setVideoSurfaceTexture(window);
 
     process_media_player_call( env, thiz, mp->prepare(), "java/io/IOException", "Prepare failed." );
 }
@@ -247,8 +251,8 @@ static void k2_media_MediaPlayer_prepareAsync(JNIEnv *env, jobject thiz)
 
     // Handle the case where the display surface was set before the mp was
     // initialized. We try again to make it stick.
-    int texture = getVideoSurfaceTexture(env, thiz);
-    mp->setVideoSurfaceTexture((ANativeWindow *)texture);
+    ANativeWindow *window = (ANativeWindow *)getVideoSurfaceTexture(env, thiz);
+    mp->setVideoSurfaceTexture(window);
 
     process_media_player_call( env, thiz, mp->prepareAsync(), "java/io/IOException", "Prepare Async failed." );
 }
@@ -476,7 +480,7 @@ static void k2_media_MediaPlayer_native_setup(JNIEnv *env, jobject thiz, jobject
 
 static void k2_media_MediaPlayer_release(JNIEnv *env, jobject thiz)
 {
-    ALOGV("release");
+    ALOGV("release MediaPlayer");
     zeroptr<MediaPlayer> mp = setMediaPlayer(env, thiz, 0);
     if (mp != NULL) {
         // this prevents native callbacks after the object is released
@@ -485,10 +489,11 @@ static void k2_media_MediaPlayer_release(JNIEnv *env, jobject thiz)
         mp->Release();
     }
 
-    int texture = getVideoSurfaceTexture(env, thiz);
-    if (texture > 0) {
-        //ANativeWindow_release((ANativeWindow *)texture);
+    ALOGV("release Surface");
+    ANativeWindow *window = (ANativeWindow *)getVideoSurfaceTexture(env, thiz);
+    if (window) {
         //env->SetIntField(thiz, fields.surface_texture, 0);
+        //ANativeWindow_release(window);
     }
 }
 

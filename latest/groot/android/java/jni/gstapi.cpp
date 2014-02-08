@@ -234,7 +234,7 @@ bool CGstPlayback::SetWindow(void *window)
     returnb_assert(m_playbin);
     returnb_assert(m_video_sink);
 
-    g_print("%s, set native window", __func__);
+    g_print("%s, set native window=(%x)", __func__, window);
     gst_video_overlay_set_window_handle (GST_VIDEO_OVERLAY (m_video_sink), (guintptr)window);
     return true;
 }
