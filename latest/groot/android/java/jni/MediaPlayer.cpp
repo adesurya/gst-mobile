@@ -130,10 +130,12 @@ void CMediaPlayer::setVideoSurfaceTexture(void * texture)
 status_t CMediaPlayer::prepare()
 {
     ALOGI("%s, begin", __func__);
-    m_pPlayer = NULL;;
-    m_pPlayer = new GstPlayback();
-    m_pPlayer->Init();
-    m_pPlayer->SetOption();
+    if (!m_pPlayer.get()) {
+        m_pPlayer = new GstPlayback();
+        m_pPlayer->Init();
+        m_pPlayer->SetOption();
+    }
+
     m_pPlayer->SetUri(m_szPath.c_str());
     if (m_pTexture) {
         m_pPlayer->Prepare();
@@ -154,11 +156,7 @@ status_t CMediaPlayer::start()
     ALOGI("%s, %lu, begin", __func__, time(0));
 
     m_bPlaying = true;
-#if 1
     m_pPlayer->Play();
-#else
-    ogg_player(m_szPath.c_str());
-#endif
     m_bPlaying = false;
     ALOGI("%s, %lu, end", __func__, time(0));
     return OK;

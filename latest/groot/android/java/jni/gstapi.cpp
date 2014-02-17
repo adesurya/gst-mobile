@@ -178,10 +178,9 @@ CGstPlayback::~CGstPlayback()
 
 bool CGstPlayback::Init()
 {
-    g_print("%s, begin", __func__);
+    returnv_assert(!m_playbin, true);
 
-    m_main_loop = g_main_loop_new (NULL, FALSE);
-    returnb_assert(m_main_loop);
+    g_print("%s, begin", __func__);
 
     m_playbin = gst_element_factory_make ("playbin", "playbin");
     returnb_assert(m_playbin);
@@ -190,9 +189,6 @@ bool CGstPlayback::Init()
     returnb_assert(bus);
     gst_bus_add_watch (bus, (GstBusFunc)handle_message, this);
     gst_object_unref (bus);
-
-    m_bus_msg_thread = g_thread_create ((GThreadFunc)g_main_loop_run, m_main_loop, TRUE, NULL);
-    returnb_assert(m_bus_msg_thread);
 
     //m_audio_sink = gst_element_factory_make("autoaudiosink", NULL);
     //returnb_assert(m_audio_sink);
@@ -232,6 +228,9 @@ bool CGstPlayback::SetUri(const char *uri)
 bool CGstPlayback::SetWindow(void *window)
 {
     returnb_assert(m_playbin);
+
+    g_print("%s, get GST_TYPE_VIDEO_OVERLAY", __func__);
+    m_video_sink = gst_bin_get_by_interface(GST_BIN(m_playbin), GST_TYPE_VIDEO_OVERLAY);
     returnb_assert(m_video_sink);
 
     g_print("%s, set native window=(%x)", __func__, window);
@@ -251,9 +250,6 @@ bool CGstPlayback::Prepare()
         return false;
     }
 
-    g_print("%s, get GST_TYPE_VIDEO_OVERLAY", __func__);
-    m_video_sink = gst_bin_get_by_interface(GST_BIN(m_playbin), GST_TYPE_VIDEO_OVERLAY);
-    returnb_assert(m_video_sink);
     return true;
 }
 
@@ -267,6 +263,15 @@ bool CGstPlayback::Play()
         g_printerr ("Unable to set the pipeline to the playing state.\n");
         return false;
     }
+
+    if (!m_main_loop) {
+        m_main_loop = g_main_loop_new (NULL, FALSE);
+    }
+
+    returnb_assert(m_main_loop);
+    m_bus_msg_thread = g_thread_create ((GThreadFunc)g_main_loop_run, m_main_loop, TRUE, NULL);
+    returnb_assert(m_bus_msg_thread);
+
     return true;
 }
 
@@ -380,35 +385,30 @@ void CGstPlayback::AnalyzeStreams()
 
 gboolean CGstPlayback::HandleMessage(GstBus *bus, GstMessage *msg)
 {
+    gchar  *debug;
+    GError *error;
+    gst_message_parse_error (msg, &error, &debug);
+
     switch (GST_MESSAGE_TYPE (msg)) {
         case GST_MESSAGE_EOS:
-            g_print ("End of stream");
+            g_print ("Info: End of stream");
             g_main_loop_quit (m_main_loop);
             break;
+        case GST_MESSAGE_STATE_CHANGED: {
+            g_print("Info: state changed");
+            break;
+        }
         case GST_MESSAGE_ERROR: 
-        {
-            gchar  *debug;
-            GError *error;
-            gst_message_parse_error (msg, &error, &debug);
-            g_free (debug);
             g_printerr ("Error: %s", error->message);
-            g_error_free (error);
             g_main_loop_quit (m_main_loop);
             break;
-        }
         default:
-        {
-            gchar  *debug;
-            GError *info;
-            gst_message_parse_info (msg, &info, &debug);
-            g_free (debug);
-            g_print ("Info: %s", info->message);
-            g_error_free (info);
+            g_print ("Info: %s", error->message);
             break;
-        }
-        break;
     }
 
+    g_free (debug);
+    g_error_free (error);
     return TRUE;
 }
 
