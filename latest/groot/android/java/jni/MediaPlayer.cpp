@@ -261,4 +261,25 @@ int CMediaPlayer::setRetransmitEndpoint(const char *addr, unsigned short port)
 void CMediaPlayer::updateProxyConfig(const char *host, unsigned short port, const char *exclusionList)
 {}
 
+void CMediaPlayer::onPrepared()
+{}
+
+void CMediaPlayer::onCompletion()
+{}
+
+void CMediaPlayer::onBufferingUpdate(int percent)
+{}
+
+void CMediaPlayer::onSeekComplete()
+{}
+
+void CMediaPlayer::onVideoSizeChanged(int width, int height)
+{}
+
+void CMediaPlayer::onError(int code, const char *extra)
+{}
+
+void CMediaPlayer::onInfo(int code, const char *extra)
+{}
+
 } // namespace eau

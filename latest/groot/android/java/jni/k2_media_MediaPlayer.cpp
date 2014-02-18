@@ -43,7 +43,7 @@ static JNIEnv* getJNIEnv()
     JNIEnv* env;
     JavaVM* vm = sJavaVM;
     assert(vm != NULL);
-    if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK)
+    if (vm && vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK)
         return NULL;
     return env;
 }
@@ -54,7 +54,9 @@ class JNIMediaPlayerListener : public MediaPlayerListener
 {
 public:
     JNIMediaPlayerListener(JNIEnv* env, jobject thiz, jobject weak_thiz);
-    ~JNIMediaPlayerListener();
+    virtual ~JNIMediaPlayerListener();
+
+    virtual void notify(int msg, int ext1, int ext2);
 
 private:
     JNIMediaPlayerListener();
@@ -86,7 +88,17 @@ JNIMediaPlayerListener::~JNIMediaPlayerListener()
     if (env && mObject)
         env->DeleteGlobalRef(mObject);
     if (env && mClass)
-    env->DeleteGlobalRef(mClass);
+        env->DeleteGlobalRef(mClass);
+}
+
+void JNIMediaPlayerListener::notify(int msg, int ext1, int ext2)
+{
+    JNIEnv *env = getJNIEnv();
+    if (!env)
+        return;
+
+    env->CallStaticVoidMethod(mClass, fields.post_event, mObject,
+            msg, ext1, ext2, NULL);
 }
 
 // ----------------------------------------------------------------------------

@@ -18,11 +18,26 @@ typedef enum {
     GST_PLAY_FLAG_TEXT          = (1 << 2)  /* We want subtitle output */
 } GstPlayFlags;
 
+class IPlaybackSink {
+public:
+    virtual ~IPlaybackSink() {}
+
+    virtual void onPrepared() = 0;
+    virtual void onCompletion() = 0;
+    virtual void onBufferingUpdate(int percent) = 0;
+    virtual void onSeekComplete() = 0;
+    virtual void onVideoSizeChanged(int width, int height) = 0;
+
+    virtual void onError(int code, const char *extra) = 0;
+    virtual void onInfo(int code, const char *extra) = 0;
+};
+
 class CGstPlayback : public RefCount
 {
 public:
     CGstPlayback();
     virtual ~CGstPlayback();
+    void setSink(IPlaybackSink *sink) { m_sink = sink; }
 
     bool Init();
     bool SetOption();
@@ -40,6 +55,8 @@ protected:
     void AnalyzeStreams();
 
 private:
+    IPlaybackSink *m_sink;
+
     GstElement  *m_playbin;
     GstElement  *m_audio_sink;
     GstElement  *m_video_sink;

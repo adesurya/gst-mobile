@@ -17,11 +17,14 @@ namespace eau
 
 class IMediaPlayerListener : public RefCount
 {
-
+public:
+    virtual ~IMediaPlayerListener() {}
+    virtual void notify(int msg, int ext1, int ext2) = 0;
 };
 typedef RefCounted<IMediaPlayerListener> MediaPlayerListener;
 
-class CMediaPlayer : public RefCount
+class IPlaybackSink;
+class CMediaPlayer : public RefCount, public IPlaybackSink
 {
 public:
     CMediaPlayer();
@@ -62,6 +65,16 @@ public:
 
     int setRetransmitEndpoint(const char *addr, unsigned short port);
     void updateProxyConfig(const char *host, unsigned short port, const char *exclusionList);
+
+public:
+    // for IPlaybackSink
+    virtual void onPrepared();
+    virtual void onCompletion();
+    virtual void onBufferingUpdate(int percent);
+    virtual void onSeekComplete();
+    virtual void onVideoSizeChanged(int width, int height);
+    virtual void onError(int code, const char *extra);
+    virtual void onInfo(int code, const char *extra);
 
 private:
     zeroptr<MediaPlayerListener> m_pListener;

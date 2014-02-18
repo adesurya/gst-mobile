@@ -122,35 +122,6 @@ int ogg_player (const char *location) {
     return 0;
 }
 
-int playbin2_player(const char *location) {
-
-    GstElement *pipeline;
-    GstBus *bus;
-    GstMessage *msg;
-    gchar uri[512] = {0};
-
-    /* playbin2 uri=http://docs.gstreamer.com/media/sintel_trailer-480p.webm */
-    g_snprintf(uri, sizeof(uri), "playbin2 uri=%s", location);
-
-    /* Build the pipeline */
-    pipeline = gst_parse_launch (uri, NULL);
-
-    /* Start playing */
-    gst_element_set_state (pipeline, GST_STATE_PLAYING);
-
-    /* Wait until error or EOS */
-    bus = gst_element_get_bus (pipeline);
-    msg = gst_bus_timed_pop_filtered (bus, GST_CLOCK_TIME_NONE, (GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
-
-    /* Free resources */
-    if (msg != NULL)
-        gst_message_unref (msg);
-    gst_object_unref (bus);
-    gst_element_set_state (pipeline, GST_STATE_NULL);
-    gst_object_unref (pipeline);
-    return 0;
-}
-
 namespace eau
 {
 
@@ -164,6 +135,7 @@ gboolean CGstPlayback::handle_message (GstBus *bus, GstMessage *msg, void *data)
 
 CGstPlayback::CGstPlayback()
 {
+    m_sink = NULL;
     m_playbin = NULL;
     m_audio_sink = NULL;
     m_video_sink = NULL;
@@ -304,17 +276,23 @@ bool CGstPlayback::Stop()
 void CGstPlayback::Uninit()
 {
     g_print("%s, begin", __func__);
-    g_main_loop_unref (m_main_loop);
     gst_element_set_state (m_playbin, GST_STATE_NULL);
-    gst_object_unref (GST_OBJECT(m_playbin));
-    gst_object_unref (GST_OBJECT(m_audio_sink));
-    gst_object_unref (GST_OBJECT(m_video_sink));
 
-    m_main_loop = NULL;
-    m_playbin = NULL;
-    m_audio_sink = NULL;
-    m_video_sink = NULL;
+    g_thread_join(m_bus_msg_thread);
+    g_thread_unref(m_bus_msg_thread);
     m_bus_msg_thread = NULL;
+
+    gst_object_unref (GST_OBJECT(m_playbin));
+    m_playbin = NULL;
+
+    gst_object_unref (GST_OBJECT(m_audio_sink));
+    m_audio_sink = NULL;
+
+    gst_object_unref (GST_OBJECT(m_video_sink));
+    m_video_sink = NULL;
+
+    g_main_loop_unref (m_main_loop);
+    m_main_loop = NULL;
 }
 
 void CGstPlayback::AnalyzeStreams()
@@ -385,30 +363,50 @@ void CGstPlayback::AnalyzeStreams()
 
 gboolean CGstPlayback::HandleMessage(GstBus *bus, GstMessage *msg)
 {
-    gchar  *debug;
-    GError *error;
-    gst_message_parse_error (msg, &error, &debug);
-
     switch (GST_MESSAGE_TYPE (msg)) {
         case GST_MESSAGE_EOS:
-            g_print ("Info: End of stream");
-            g_main_loop_quit (m_main_loop);
+            g_print ("End of stream");
+            if (m_sink)
+                m_sink->onCompletion();
+            //g_main_loop_quit (m_main_loop);
             break;
         case GST_MESSAGE_STATE_CHANGED: {
-            g_print("Info: state changed");
+            GstState state = GST_STATE_NULL;
+            gint iret = gst_element_get_state(m_playbin, &state, NULL, NULL);
+            if (iret != GST_STATE_CHANGE_FAILURE && state == GST_STATE_READY) {
+                if (m_sink) 
+                    m_sink->onPrepared();
+            }
+            g_print("state changed to=%d", (gint)state);
             break;
         }
-        case GST_MESSAGE_ERROR: 
+        case GST_MESSAGE_ERROR: {
+            gchar  *debug;
+            GError *error;
+            gst_message_parse_error (msg, &error, &debug);
             g_printerr ("Error: %s", error->message);
-            g_main_loop_quit (m_main_loop);
+            if (m_sink)
+                m_sink->onError(error->code, error->message);
+            g_free (debug);
+            g_error_free (error);
+            //g_main_loop_quit (m_main_loop);
             break;
+        }
+        case GST_MESSAGE_INFO: {
+            gchar  *debug;
+            GError *error;
+            gst_message_parse_info (msg, &error, &debug);
+            g_printerr ("Info: %s", error->message);
+            if (m_sink)
+                m_sink->onInfo(error->code, error->message);
+            g_free (debug);
+            g_error_free (error);
+            break;
+        }
         default:
-            g_print ("Info: %s", error->message);
             break;
     }
 
-    g_free (debug);
-    g_error_free (error);
     return TRUE;
 }
 
