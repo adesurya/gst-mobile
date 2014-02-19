@@ -373,9 +373,8 @@ gboolean CGstPlayback::HandleMessage(GstBus *bus, GstMessage *msg)
         case GST_MESSAGE_STATE_CHANGED: {
             GstState state = GST_STATE_NULL;
             gint iret = gst_element_get_state(m_playbin, &state, NULL, NULL);
-            if (iret != GST_STATE_CHANGE_FAILURE && state == GST_STATE_READY) {
-                if (m_sink) 
-                    m_sink->onPrepared();
+            if (iret != GST_STATE_CHANGE_FAILURE && m_sink) {
+                m_sink->onPlayState(state);
             }
             g_print("state changed to=%d", (gint)state);
             break;

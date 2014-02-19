@@ -83,7 +83,7 @@ CMediaPlayer::CMediaPlayer()
     m_pListener = NULL;
     m_pPlayer = NULL;
     m_pTexture = NULL;
-    m_bPlaying = false;
+    m_state = GST_STATE_NULL;
 
     init_gst();
 }
@@ -129,7 +129,8 @@ void CMediaPlayer::setVideoSurfaceTexture(void * texture)
 
 status_t CMediaPlayer::prepare()
 {
-    ALOGI("%s, begin", __func__);
+    returnv_assert(m_state != GST_STATE_PLAYING, OK);
+
     if (!m_pPlayer.get()) {
         m_pPlayer = new GstPlayback();
         m_pPlayer->Init();
@@ -141,7 +142,6 @@ status_t CMediaPlayer::prepare()
         m_pPlayer->Prepare();
         m_pPlayer->SetWindow(m_pTexture);
     }
-    ALOGI("%s, end", __func__);
 
     return OK;
 }
@@ -153,19 +153,14 @@ status_t CMediaPlayer::prepareAsync()
 
 status_t CMediaPlayer::start()
 {
-    ALOGI("%s, %lu, begin", __func__, time(0));
-
-    m_bPlaying = true;
+    returnv_assert(m_state != GST_STATE_PLAYING, OK);
     m_pPlayer->Play();
-    m_bPlaying = false;
-    ALOGI("%s, %lu, end", __func__, time(0));
     return OK;
 }
 
 status_t CMediaPlayer::stop()
 {
     m_pPlayer->Stop();
-    m_bPlaying = false;
     return OK;
 }
 
@@ -177,7 +172,7 @@ status_t CMediaPlayer::pause()
 
 bool CMediaPlayer::isPlaying()
 {
-    return m_bPlaying;
+    return (m_state == GST_STATE_PLAYING);
 }
 
 status_t CMediaPlayer::seekTo(int msec)
@@ -261,11 +256,23 @@ int CMediaPlayer::setRetransmitEndpoint(const char *addr, unsigned short port)
 void CMediaPlayer::updateProxyConfig(const char *host, unsigned short port, const char *exclusionList)
 {}
 
-void CMediaPlayer::onPrepared()
-{}
+void CMediaPlayer::onPlayState(GstState state)
+{
+    m_state = state;
+    switch(state) {
+    case GST_STATE_READY:
+        break;
+    case GST_STATE_PAUSED:
+        break;
+    case GST_STATE_PLAYING:
+        break;
+    }
+}
 
 void CMediaPlayer::onCompletion()
-{}
+{
+    m_state = GST_STATE_NULL;
+}
 
 void CMediaPlayer::onBufferingUpdate(int percent)
 {}

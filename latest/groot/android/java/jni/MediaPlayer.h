@@ -68,7 +68,7 @@ public:
 
 public:
     // for IPlaybackSink
-    virtual void onPrepared();
+    virtual void onPlayState(GstState state);
     virtual void onCompletion();
     virtual void onBufferingUpdate(int percent);
     virtual void onSeekComplete();
@@ -80,9 +80,9 @@ private:
     zeroptr<MediaPlayerListener> m_pListener;
     string m_szPath;
     int m_fd;
-    bool m_bPlaying;
     zeroptr<GstPlayback> m_pPlayer;
     void * m_pTexture;
+    GstState m_state;
 };
 typedef RefCounted<CMediaPlayer> MediaPlayer;
 
