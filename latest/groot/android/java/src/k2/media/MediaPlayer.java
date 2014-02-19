@@ -368,7 +368,8 @@ public class MediaPlayer extends MediaConsts
 
     private void setDataSource(String path, String[] keys, String[] values)
             throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
-    	_setDataSource(path, keys, values);
+        path = "file://" + path;
+        _setDataSource(path, keys, values);
     }
 
     /**

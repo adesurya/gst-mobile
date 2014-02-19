@@ -278,7 +278,7 @@ void CGstPlayback::Uninit()
     g_print("%s, begin", __func__);
     gst_element_set_state (m_playbin, GST_STATE_NULL);
 
-    g_thread_join(m_bus_msg_thread);
+    //g_thread_join(m_bus_msg_thread);
     g_thread_unref(m_bus_msg_thread);
     m_bus_msg_thread = NULL;
 
@@ -293,6 +293,7 @@ void CGstPlayback::Uninit()
 
     g_main_loop_unref (m_main_loop);
     m_main_loop = NULL;
+    g_print("%s, end", __func__);
 }
 
 void CGstPlayback::AnalyzeStreams()
