@@ -23,31 +23,22 @@ make_archive ()
     else
         libtool -static -arch_only i386 -o lib$target.a ${thelibs[@]:0}
     fi
+
+    [ -f lib$target.a ] && mv lib$target.a ../lib/
 }
 
 # ldflags=""
 make_so ()
 {
     if [ $platform = "linux" ] || [ $platform = "android" ]; then
-        rm -rf tmpobj; mkdir tmpobj
-        cd tmpobj
-        for lib in $thelibs; do
-            lib=../$lib
-            if [ ! -e $lib ]; then
-                echo "Can not find $lib!"
-                continue
-            fi
-            ar x $lib
-        done
-        echo "Generate so lib."
-        $CC -DTEST_PRIV_API *.o -o /tmp/test_$target $ldflags
-        $CC -shared *.o -o lib$target.so $ldflags
-        mv lib$target.so ../
-        cd -
-        rm -rf tmpobj
+        echo "Generate lib$target.so ..."
+        $CC -shared -o lib$target.so -Wl,-whole-archive $thelibs -Wl,-no-whole-archive $ldflags
+        $CC -DTEST_PRIV_API -o /tmp/test_$target -L. -l$target $ldflags 
     else
         libtool -dynamic -arch_only i386 -o lib$target.so ${thelibs[@]:0}
     fi
+
+    [ -f lib$target.so ] && mv lib$target.so ../lib/
 }
 
 set_platform ()
@@ -84,7 +75,6 @@ EOF
 
     make_archive
     make_so
-    mv lib$target.{a,so} ../lib/
 }
 
 make_gstapi ()
@@ -92,7 +82,7 @@ make_gstapi ()
     target="gstapi"
     ldflags=" /tmp/gst_static_plugins.c"
     ldflags+=" -lc -lz -lm -lEGL -lGLESv2 -lOpenSLES"
-    ldflags+=" -L../../lib -lglibapi -lvorbisenc -lvorbis -ltheora -logg"
+    ldflags+=" -L../lib -lglibapi -lvorbisenc -lvorbis -ltheora -logg"
 cat > /tmp/gst_static_plugins.c << EOF
 
 static int s_plugins_num = 0;
@@ -419,7 +409,6 @@ libgsteglglessink.a
 
     make_archive
     make_so
-    mv lib$target.{a,so} ../lib/
 }
 
 
