@@ -142,7 +142,7 @@ int gst_static_plugins()
     //GST_PLUGIN(icydemux);
     //GST_PLUGIN(imagefreeze);
     //GST_PLUGIN(interleave);
-    //GST_PLUGIN(isomp4);
+    GST_PLUGIN(isomp4);
     //GST_PLUGIN(alaw);
     //GST_PLUGIN(mulaw);
     //GST_PLUGIN(level);
@@ -299,7 +299,7 @@ libgstequalizer.a
 #libgsticydemux.a
 #libgstimagefreeze.a
 #libgstinterleave.a
-#libgstisomp4.a
+libgstisomp4.a
 #libgstalaw.a
 #libgstmulaw.a
 #libgstlevel.a
