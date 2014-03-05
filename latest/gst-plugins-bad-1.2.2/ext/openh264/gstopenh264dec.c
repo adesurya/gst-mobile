@@ -109,7 +109,7 @@ gst_openh264_dec_class_init (GstOpenH264DecClass * klass)
 }
 
 static void
-gst_openh264_close_dec(ISVCDecoder *decoder)
+close_decoder(ISVCDecoder *decoder)
 {
   if (decoder) {
     (*decoder)->Uninitialize(decoder);
@@ -118,7 +118,7 @@ gst_openh264_close_dec(ISVCDecoder *decoder)
 }
 
 static gboolean 
-gst_openh264_open_dec(ISVCDecoder **decoder, const SDecodingParam* param)
+open_decoder(ISVCDecoder **decoder, const SDecodingParam* param)
 {
   gboolean bret = FALSE;
   ISVCDecoder *svc_dec = NULL;
@@ -130,12 +130,12 @@ gst_openh264_open_dec(ISVCDecoder **decoder, const SDecodingParam* param)
     }
 
     if((*svc_dec)->Initialize (svc_dec, param)) {
-      gst_openh264_close_dec(svc_dec);
+      close_decoder(svc_dec);
       break;
     }
 
     if((*svc_dec)->SetOption (svc_dec, DECODER_OPTION_DATAFORMAT, (void *)&color_fmt)) {
-      gst_openh264_close_dec(svc_dec);
+      close_decoder(svc_dec);
       break;
     }
 
@@ -147,13 +147,44 @@ gst_openh264_open_dec(ISVCDecoder **decoder, const SDecodingParam* param)
 }
 
 static long
-gst_openh264_decode(ISVCDecoder *decoder, const unsigned char *src, int src_len, void **dst, SBufferInfo* dst_info)
+codec_decode(ISVCDecoder *decoder, const unsigned char *src, int src_len, void **dst, SBufferInfo* dst_info)
 {
-  long status = 1;
+  long status = -1;
   if (decoder && src && dst && dst_info) {
     status = (*decoder)->DecodeFrame2 (decoder, src, src_len, dst, dst_info);
   }
   return status;
+}
+
+static void
+codec_dec_image_to_buffer (GstOpenH264Dec * dec, const SBufferInfo* img_info, void** img_data,
+    GstBuffer * buffer)
+{
+  int deststride, srcstride, height, width, line, comp;
+  guint8 *dest, *src;
+  GstVideoFrame frame;
+  GstVideoInfo *info = &dec->output_state->info;
+
+  if (!gst_video_frame_map (&frame, info, buffer, GST_MAP_WRITE)) {
+    GST_ERROR_OBJECT (dec, "Could not map video buffer");
+  }
+
+  for (comp = 0; comp < 3; comp++) {
+    dest = GST_VIDEO_FRAME_COMP_DATA (&frame, comp);
+    src = img_data[comp];
+    width = GST_VIDEO_FRAME_COMP_WIDTH (&frame, comp);
+    height = GST_VIDEO_FRAME_COMP_HEIGHT (&frame, comp);
+    deststride = GST_VIDEO_FRAME_COMP_STRIDE (&frame, comp);
+    srcstride = img_info->UsrData.sSystemBuffer.iStride[(comp==0?0:1)];
+
+    for (line = 0; line < height; line++) {
+      memcpy (dest, src, width);
+      dest += deststride;
+      src += srcstride;
+    }
+  }
+
+  gst_video_frame_unmap (&frame);
 }
 
 static void
@@ -237,7 +268,7 @@ gst_openh264_dec_stop (GstVideoDecoder * decoder)
   }
 
   if (openh264_dec->decoder_inited){
-    gst_openh264_close_dec(openh264_dec->svc_dec);
+    close_decoder(openh264_dec->svc_dec);
     openh264_dec->svc_dec = NULL;
   }
   openh264_dec->decoder_inited = FALSE;
@@ -253,7 +284,7 @@ gst_openh264_dec_set_format (GstVideoDecoder * decoder, GstVideoCodecState * sta
   GST_DEBUG_OBJECT (openh264_dec, "set_format");
 
   if (openh264_dec->decoder_inited) {
-    gst_openh264_close_dec(openh264_dec->svc_dec);
+    close_decoder(openh264_dec->svc_dec);
     openh264_dec->svc_dec = NULL;
   }
   openh264_dec->decoder_inited = FALSE;
@@ -278,7 +309,7 @@ gst_openh264_dec_flush (GstVideoDecoder * decoder)
   }
 
   if (openh264_dec->decoder_inited) {
-    gst_openh264_close_dec(openh264_dec->svc_dec);
+    close_decoder(openh264_dec->svc_dec);
     openh264_dec->svc_dec = NULL;
   }
   openh264_dec->decoder_inited = FALSE;
@@ -305,7 +336,8 @@ gst_openh264_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * f
   dec = GST_OPENH264_DEC (decoder);
 
   if (!dec->decoder_inited) {
-    if(!gst_openh264_open_dec(&dec->svc_dec, &dec->param)) {
+    if(!open_decoder(&dec->svc_dec, &dec->param)) {
+      GST_ERROR_OBJECT (decoder, "Failed to open_decoder");
       return GST_FLOW_ERROR;
     }
     dec->decoder_inited = TRUE;
@@ -329,47 +361,40 @@ gst_openh264_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * f
 
   pdata[0] = NULL; pdata[1] = NULL; pdata[2] = NULL;
   memset (&dst_info, 0, sizeof (SBufferInfo));
-  status = gst_openh264_decode(dec->svc_dec, minfo.data, minfo.size, pdata, &dst_info);
+  status = codec_decode(dec->svc_dec, minfo.data, minfo.size, pdata, &dst_info);
   gst_buffer_unmap (frame->input_buffer, &minfo);
 
-  if (status) {
+  if (status != dsErrorFree) {
     GST_VIDEO_DECODER_ERROR (decoder, 1, LIBRARY, ENCODE,
         ("Failed to decode frame"), ("%ld", (status)), ret);
     return ret;
   }
 
-  if (dst_info.iBufferStatus == 1) {
-#if 0
-    int width, height;
-    uint8_t* pdst[3] = {NULL};
-    pdst[0] = (uint8_t*)pdata[0];
-    pdst[1] = (uint8_t*)pdata[1];
-    pdst[2] = (uint8_t*)pdata[2];
-    int width  = dst_info.UsrData.sSystemBuffer.iWidth;
-    int height = dst_info.UsrData.sSystemBuffer.iHeight;
-#endif
+  if (dec->output_state == NULL) {
+    GstVideoCodecState *state = dec->input_state;
+    dec->output_state = gst_video_decoder_set_output_state (GST_VIDEO_DECODER (dec),
+        GST_VIDEO_FORMAT_I420, dst_info.UsrData.sSystemBuffer.iWidth, dst_info.UsrData.sSystemBuffer.iHeight, state);
+    gst_video_decoder_negotiate (GST_VIDEO_DECODER (dec));
   }
 
-  // TODO: get decoded data from decoder
-  if (0) {
+  if (dst_info.iBufferStatus == 1) {
+    if (deadline < 0) {
+      GST_LOG_OBJECT (dec, "Skipping late frame (%f s past deadline)",
+          (double) -deadline / GST_SECOND);
+      gst_video_decoder_drop_frame (decoder, frame);
+    }else {
+      ret = gst_video_decoder_allocate_output_frame (decoder, frame);
+      if (ret == GST_FLOW_OK) {
+        codec_dec_image_to_buffer (dec, &dst_info, pdata, frame->output_buffer);
+        ret = gst_video_decoder_finish_frame (decoder, frame);
+      } else {
+        gst_video_decoder_finish_frame (decoder, frame);
+      }
+    }
+  }else {
+    /* Invisible frame */
     GST_VIDEO_CODEC_FRAME_SET_DECODE_ONLY (frame);
     gst_video_decoder_finish_frame (decoder, frame);
-    return ret;
-  }
-
-  if (deadline < 0) {
-    GST_LOG_OBJECT (dec, "Skipping late frame (%f s past deadline)",
-        (double) -deadline / GST_SECOND);
-    gst_video_decoder_drop_frame (decoder, frame);
-  }else {
-    ret = gst_video_decoder_allocate_output_frame (decoder, frame);
-    if (ret == GST_FLOW_OK) {
-      // TODO: copy decoded data into frame->output_buffer
-      //gst_vp8_dec_image_to_buffer (dec, img, frame->output_buffer);
-      ret = gst_video_decoder_finish_frame (decoder, frame);
-    } else {
-      gst_video_decoder_finish_frame (decoder, frame);
-    }
   }
 
   return ret;
