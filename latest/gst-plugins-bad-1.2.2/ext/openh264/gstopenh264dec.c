@@ -109,6 +109,54 @@ gst_openh264_dec_class_init (GstOpenH264DecClass * klass)
 }
 
 static void
+gst_openh264_close_dec(ISVCDecoder *decoder)
+{
+  if (decoder) {
+    (*decoder)->Uninitialize(decoder);
+    DestroyDecoder (decoder);
+  }
+}
+
+static gboolean 
+gst_openh264_open_dec(ISVCDecoder **decoder, const SDecodingParam* param)
+{
+  gboolean bret = FALSE;
+  ISVCDecoder *svc_dec = NULL;
+  int32_t color_fmt = videoFormatInternal;
+
+  do {
+    if(CreateDecoder (&svc_dec) || (svc_dec == NULL)) {
+       break;
+    }
+
+    if((*svc_dec)->Initialize (svc_dec, param)) {
+      gst_openh264_close_dec(svc_dec);
+      break;
+    }
+
+    if((*svc_dec)->SetOption (svc_dec, DECODER_OPTION_DATAFORMAT, (void *)&color_fmt)) {
+      gst_openh264_close_dec(svc_dec);
+      break;
+    }
+
+    *decoder = svc_dec;
+    bret = TRUE;
+  }while(0);
+
+  return bret;
+}
+
+static long
+gst_openh264_decode(ISVCDecoder *decoder, const unsigned char *src, int src_len, void **dst, SBufferInfo* dst_info)
+{
+  long status = 1;
+  if (decoder && src && dst && dst_info) {
+    status = (*decoder)->DecodeFrame2 (decoder, src, src_len, dst, dst_info);
+  }
+  return status;
+}
+
+static void
 gst_openh264_dec_init (GstOpenH264Dec * openh264_dec)
 {
   GstVideoDecoder *decoder = (GstVideoDecoder *) openh264_dec;
@@ -118,6 +166,13 @@ gst_openh264_dec_init (GstOpenH264Dec * openh264_dec)
   openh264_dec->frame_size = 0;
   openh264_dec->use_threads = FALSE;
   openh264_dec->decoder_inited = FALSE;
+
+  openh264_dec->svc_dec = NULL;
+  memset(&openh264_dec->param, 0, sizeof(SDecodingParam));
+  openh264_dec->param.iOutputColorFormat        = videoFormatI420;
+  openh264_dec->param.uiTargetDqLayer           = (uint8_t) - 1;
+  openh264_dec->param.uiEcActiveFlag            = 1;
+  openh264_dec->param.sVideoProperty.eVideoBsType = VIDEO_BITSTREAM_DEFAULT;
 }
 
 static void
@@ -182,7 +237,8 @@ gst_openh264_dec_stop (GstVideoDecoder * decoder)
   }
 
   if (openh264_dec->decoder_inited){
-    // codec destroy
+    gst_openh264_close_dec(openh264_dec->svc_dec);
+    openh264_dec->svc_dec = NULL;
   }
   openh264_dec->decoder_inited = FALSE;
 
@@ -197,7 +253,8 @@ gst_openh264_dec_set_format (GstVideoDecoder * decoder, GstVideoCodecState * sta
   GST_DEBUG_OBJECT (openh264_dec, "set_format");
 
   if (openh264_dec->decoder_inited) {
-    // codec destroy
+    gst_openh264_close_dec(openh264_dec->svc_dec);
+    openh264_dec->svc_dec = NULL;
   }
   openh264_dec->decoder_inited = FALSE;
 
@@ -221,7 +278,8 @@ gst_openh264_dec_flush (GstVideoDecoder * decoder)
   }
 
   if (openh264_dec->decoder_inited) {
-    // codec destroy
+    gst_openh264_close_dec(openh264_dec->svc_dec);
+    openh264_dec->svc_dec = NULL;
   }
   openh264_dec->decoder_inited = FALSE;
 
@@ -239,38 +297,57 @@ gst_openh264_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * f
   GstMapInfo minfo;
   long status;
 
+  void* pdata[3] = {NULL};
+  SBufferInfo dst_info;
+
   GST_DEBUG_OBJECT (decoder, "handle_frame");
 
   dec = GST_OPENH264_DEC (decoder);
 
   if (!dec->decoder_inited) {
-      // open codec
+    if(!gst_openh264_open_dec(&dec->svc_dec, &dec->param)) {
+      return GST_FLOW_ERROR;
+    }
+    dec->decoder_inited = TRUE;
   }
 
   deadline = gst_video_decoder_get_max_decode_time (decoder, frame);
+#if 0
   if (deadline < 0) {
-    //decoder_deadline = 1;
+    decoder_deadline = 1;
   } else if (deadline == G_MAXINT64) {
-    //decoder_deadline = 0;
+    decoder_deadline = 0;
   } else {
-    //decoder_deadline = MAX (1, deadline / GST_MSECOND);
+    decoder_deadline = MAX (1, deadline / GST_MSECOND);
   }
+#endif
 
   if (!gst_buffer_map (frame->input_buffer, &minfo, GST_MAP_READ)) {
     GST_ERROR_OBJECT (dec, "Failed to map input buffer");
     return GST_FLOW_ERROR;
   }
 
-  //TODO: call decoder to decode frame
-  //status = vpx_codec_decode (&dec->decoder, minfo.data, minfo.size, NULL, decoder_deadline);
-
+  pdata[0] = NULL; pdata[1] = NULL; pdata[2] = NULL;
+  memset (&dst_info, 0, sizeof (SBufferInfo));
+  status = gst_openh264_decode(dec->svc_dec, minfo.data, minfo.size, pdata, &dst_info);
   gst_buffer_unmap (frame->input_buffer, &minfo);
 
-  status = 0;
   if (status) {
     GST_VIDEO_DECODER_ERROR (decoder, 1, LIBRARY, ENCODE,
         ("Failed to decode frame"), ("%ld", (status)), ret);
     return ret;
+  }
+
+  if (dst_info.iBufferStatus == 1) {
+#if 0
+    int width, height;
+    uint8_t* pdst[3] = {NULL};
+    pdst[0] = (uint8_t*)pdata[0];
+    pdst[1] = (uint8_t*)pdata[1];
+    pdst[2] = (uint8_t*)pdata[2];
+    int width  = dst_info.UsrData.sSystemBuffer.iWidth;
+    int height = dst_info.UsrData.sSystemBuffer.iHeight;
+#endif
   }
 
   // TODO: get decoded data from decoder

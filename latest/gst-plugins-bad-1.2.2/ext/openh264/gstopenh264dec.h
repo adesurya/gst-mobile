@@ -29,6 +29,8 @@
 
 #include <stdio.h>
 
+#include <openh264/codec_api.h>
+
 G_BEGIN_DECLS
 
 #define GST_TYPE_OPENH264_DEC \
@@ -51,6 +53,8 @@ struct _GstOpenH264Dec {
   GstVideoCodecState *input_state;
   GstVideoCodecState *output_state;
 
+  ISVCDecoder* svc_dec;
+  SDecodingParam param;
   gboolean decoder_inited;
   guint frame_size;
   gboolean use_threads;
