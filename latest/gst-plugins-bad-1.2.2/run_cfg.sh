@@ -40,7 +40,10 @@ export GST_TOOLS_DIR="$PWD/../groot/bin"
 export GST_PLUGINS_DIR="$PWD/../groot/lib/gstreamer-1.0"
 export GSTPB_PLUGINS_DIR="$PWD/../groot/lib/gstreamer-1.0"
 
-export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS $GST_CFLAGS"
+export OPENH264_CFLAGS="-I$PWD/../groot/include"
+export OPENH264_LIBS="-L$PWD/../groot/lib -lwels"
+
+export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS $GST_CFLAGS $OPENH264_CFLAGS"
 export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS"
 export USE_SBC_TRUE="#"
 export USE_NO_X11="#"
@@ -69,6 +72,7 @@ mkdir -p $PREFIX
     --disable-dash \
     --disable-smoothstreaming \
     --disable-sbc \
+    --disable-librfb \
     --disable-rtmp \
     --disable-hls \
     --enable-static-plugins \

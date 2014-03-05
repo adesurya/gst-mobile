@@ -1221,6 +1221,15 @@ AG_GST_CHECK_FEATURE(WAYLAND, [wayland sink], wayland , [
   ])
 ])
 
+dnl **** OpenH264 ****
+translit(dnm, m, l) AM_CONDITIONAL(USE_OPENH264, true)
+AG_GST_CHECK_FEATURE(OPENH264, [OpenH264 plug-in], openh264, [
+  AG_GST_CHECK_LIBHEADER(OPENH264, wels, CreateDecoder, $LIBM, openh264/codec_api.h,
+    OPENH264_LIBS="-lwels $LIBM")
+  AC_SUBST(OPENH264_CFLAGS)
+  AC_SUBST(OPENH264_LIBS)
+])
+
 dnl **** WebP ****
 translit(dnm, m, l) AM_CONDITIONAL(USE_WEBP, true)
 AG_GST_CHECK_FEATURE(WEBP, [WebP], webp , [
@@ -2250,6 +2259,7 @@ AM_CONDITIONAL(USE_RTMP, false)
 AM_CONDITIONAL(USE_TELETEXTDEC, false)
 AM_CONDITIONAL(USE_SNDIO, false)
 AM_CONDITIONAL(USE_UVCH264, false)
+AM_CONDITIONAL(USE_OPENH264, false)
 AM_CONDITIONAL(USE_WEBP, false)
 
 fi dnl of EXT plugins
@@ -2510,6 +2520,7 @@ ext/gsettings/Makefile
 ext/gsettings/org.freedesktop.gstreamer.default-elements.gschema.xml
 ext/spc/Makefile
 ext/timidity/Makefile
+ext/openh264/Makefile
 ext/webp/Makefile
 ext/xvid/Makefile
 ext/zbar/Makefile

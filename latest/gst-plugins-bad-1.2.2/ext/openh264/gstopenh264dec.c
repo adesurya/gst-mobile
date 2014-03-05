@@ -50,7 +50,7 @@ static gboolean gst_openh264_dec_start (GstVideoDecoder * decoder);
 static gboolean gst_openh264_dec_stop (GstVideoDecoder * decoder);
 static gboolean gst_openh264_dec_set_format (GstVideoDecoder * decoder,
     GstVideoCodecState * state);
-static GstFlowReturn gst_openh264_dec_flush (GstVideoDecoder * decoder)
+static GstFlowReturn gst_openh264_dec_flush (GstVideoDecoder * decoder);
 static GstFlowReturn gst_openh264_dec_handle_frame (GstVideoDecoder * decoder,
     GstVideoCodecFrame * frame);
 static gboolean gst_openh264_dec_decide_allocation (GstVideoDecoder * decoder,
@@ -115,18 +115,19 @@ gst_openh264_dec_init (GstOpenH264Dec * openh264_dec)
 
   GST_DEBUG_OBJECT (openh264_dec, "gst_openh264_dec_init");
   gst_video_decoder_set_packetized (decoder, TRUE);
-  decoder->frame_size = 0;
-  decoder->use_threads = FALSE;
+  openh264_dec->frame_size = 0;
+  openh264_dec->use_threads = FALSE;
+  openh264_dec->decoder_inited = FALSE;
 }
 
 static void
 gst_openh264_dec_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec)
 {
-  GstOpenH264Dec *dec;
+  //GstOpenH264Dec *dec;
 
   g_return_if_fail (GST_IS_OPENH264_DEC (object));
-  dec = GST_OPENH264_DEC (object);
+  //dec = GST_OPENH264_DEC (object);
 
   GST_DEBUG_OBJECT (object, "gst_openh264_dec_set_property");
   switch (prop_id) {
@@ -140,10 +141,10 @@ static void
 gst_openh264_dec_get_property (GObject * object, guint prop_id, GValue * value,
     GParamSpec * pspec)
 {
-  GstOpenH264Dec *dec;
+  //GstOpenH264Dec *dec;
 
   g_return_if_fail (GST_IS_OPENH264_DEC (object));
-  dec = GST_OPENH264_DEC (object);
+  //dec = GST_OPENH264_DEC (object);
 
   switch (prop_id) {
     default:
@@ -232,10 +233,11 @@ gst_openh264_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * f
 {
   GstOpenH264Dec *dec;
   GstFlowReturn ret = GST_FLOW_OK;
-  GstVideoFrame vframe;
-  long decoder_deadline = 0;
+  //GstVideoFrame vframe;
+  //long decoder_deadline = 0;
   GstClockTimeDiff deadline;
   GstMapInfo minfo;
+  long status;
 
   GST_DEBUG_OBJECT (decoder, "handle_frame");
 
@@ -247,11 +249,11 @@ gst_openh264_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * f
 
   deadline = gst_video_decoder_get_max_decode_time (decoder, frame);
   if (deadline < 0) {
-    decoder_deadline = 1;
+    //decoder_deadline = 1;
   } else if (deadline == G_MAXINT64) {
-    decoder_deadline = 0;
+    //decoder_deadline = 0;
   } else {
-    decoder_deadline = MAX (1, deadline / GST_MSECOND);
+    //decoder_deadline = MAX (1, deadline / GST_MSECOND);
   }
 
   if (!gst_buffer_map (frame->input_buffer, &minfo, GST_MAP_READ)) {
@@ -264,9 +266,10 @@ gst_openh264_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * f
 
   gst_buffer_unmap (frame->input_buffer, &minfo);
 
+  status = 0;
   if (status) {
     GST_VIDEO_DECODER_ERROR (decoder, 1, LIBRARY, ENCODE,
-        ("Failed to decode frame"), ("%d", (status)), ret);
+        ("Failed to decode frame"), ("%ld", (status)), ret);
     return ret;
   }
 

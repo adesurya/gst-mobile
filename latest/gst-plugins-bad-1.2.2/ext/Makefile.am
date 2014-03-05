@@ -376,6 +376,12 @@ else
 HLS_DIR =
 endif
 
+if USE_OPENH264
+OPENH264_DIR=openh264
+else
+OPENH264_DIR=
+endif
+
 if USE_WEBP
 WEBP_DIR=webp
 else
@@ -445,6 +451,7 @@ SUBDIRS=\
 	$(ZBAR_DIR) \
 	$(RTMP_DIR) \
 	$(HLS_DIR) \
+	$(OPENH264_DIR) \
 	$(WEBP_DIR)
 
 DIST_SUBDIRS = \
@@ -506,6 +513,7 @@ DIST_SUBDIRS = \
 	xvid \
 	zbar \
 	rtmp \
+	openh264 \
 	webp
 
 include $(top_srcdir)/common/parallel-subdirs.mak

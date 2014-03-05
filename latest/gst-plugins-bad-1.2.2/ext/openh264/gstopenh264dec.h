@@ -51,6 +51,7 @@ struct _GstOpenH264Dec {
   GstVideoCodecState *input_state;
   GstVideoCodecState *output_state;
 
+  gboolean decoder_inited;
   guint frame_size;
   gboolean use_threads;
 };

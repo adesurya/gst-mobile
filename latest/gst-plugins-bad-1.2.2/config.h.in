@@ -364,6 +364,9 @@
 /* Define to 1 if you have the <opencv2/highgui/highgui_c.h> header file. */
 #undef HAVE_OPENCV2_HIGHGUI_HIGHGUI_C_H
 
+/* Define to enable OpenH264 plug-in (used by openh264). */
+#undef HAVE_OPENH264
+
 /* Define to enable openjpeg library (used by openjpeg). */
 #undef HAVE_OPENJPEG
 

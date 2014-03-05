@@ -883,6 +883,11 @@ USE_WEBP_FALSE
 USE_WEBP_TRUE
 WEBP_LIBS
 WEBP_CFLAGS
+USE_OPENH264_FALSE
+USE_OPENH264_TRUE
+OPENH264_LIBS
+OPENH264_CFLAGS
+HAVE_OPENH264
 USE_WAYLAND_FALSE
 USE_WAYLAND_TRUE
 WAYLAND_LIBS
@@ -1622,6 +1627,7 @@ enable_dc1394
 enable_decklink
 enable_directfb
 enable_wayland
+enable_openh264
 enable_webp
 enable_daala
 enable_dts
@@ -2605,6 +2611,7 @@ Optional Features:
   --disable-decklink           disable decklink: decklink
   --disable-directfb           disable directfb: dfbvideosink
   --disable-wayland            disable wayland sink: wayland
+  --disable-openh264           disable OpenH264 plug-in: openh264
   --disable-webp               disable WebP: webp
   --disable-daala              disable daala: daala
   --disable-dts                disable dts library: dtsdec
@@ -26263,13 +26270,11 @@ $as_echo "no" >&6; }
 elif test $pkg_failed = untried; then
 	HAVE_X11=no
 else
-if test -z $USE_NO_X11; then
 	X11_CFLAGS=$pkg_cv_X11_CFLAGS
 	X11_LIBS=$pkg_cv_X11_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 	HAVE_X11=yes
-fi
 fi
 
 
@@ -36629,6 +36634,159 @@ fi
 else
   USE_WAYLAND_TRUE='#'
   USE_WAYLAND_FALSE=
+fi
+
+
+
+echo
+{ $as_echo "$as_me:${as_lineno-$LINENO}: *** checking feature: OpenH264 plug-in ***" >&5
+$as_echo "$as_me: *** checking feature: OpenH264 plug-in ***" >&6;}
+if test "xopenh264" != "x"
+then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: *** for plug-ins: openh264 ***" >&5
+$as_echo "$as_me: *** for plug-ins: openh264 ***" >&6;}
+fi
+NOUSE=
+if test "x$USE_OPENH264" = "xno"; then
+  NOUSE="yes"
+fi
+# Check whether --enable-openh264 was given.
+if test "${enable_openh264+set}" = set; then :
+  enableval=$enable_openh264;  case "${enableval}" in
+      yes) USE_OPENH264=yes;;
+      no) USE_OPENH264=no;;
+      *) as_fn_error $? "bad value ${enableval} for --enable-openh264" "$LINENO" 5 ;;
+    esac
+else
+   USE_OPENH264=yes
+fi
+
+if test "x$NOUSE" = "xyes"; then
+  USE_OPENH264="no"
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** openh264 pre-configured not to be built" >&5
+$as_echo "$as_me: WARNING: *** openh264 pre-configured not to be built" >&2;}
+fi
+NOUSE=
+
+if echo " $GST_PLUGINS_NONPORTED " | tr , ' ' | grep -i " OPENH264 " > /dev/null; then
+  USE_OPENH264="no"
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** openh264 not ported" >&5
+$as_echo "$as_me: WARNING: *** openh264 not ported" >&2;}
+fi
+
+
+if test x$USE_OPENH264 = xyes; then
+
+  gst_check_save_LIBS=$LIBS
+  gst_check_save_LDFLAGS=$LDFLAGS
+  gst_check_save_CFLAGS=$CFLAGS
+  gst_check_save_CPPFLAGS=$CPPFLAGS
+  gst_check_save_CXXFLAGS=$CXXFLAGS
+
+  HAVE_OPENH264=no
+
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for CreateDecoder in -lwels" >&5
+$as_echo_n "checking for CreateDecoder in -lwels... " >&6; }
+if ${ac_cv_lib_wels_CreateDecoder+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lwels $LIBM $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char CreateDecoder ();
+int
+main ()
+{
+return CreateDecoder ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_wels_CreateDecoder=yes
+else
+  ac_cv_lib_wels_CreateDecoder=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_wels_CreateDecoder" >&5
+$as_echo "$ac_cv_lib_wels_CreateDecoder" >&6; }
+if test "x$ac_cv_lib_wels_CreateDecoder" = xyes; then :
+  HAVE_OPENH264=yes
+else
+  HAVE_OPENH264=no
+fi
+
+  if test "x$HAVE_OPENH264" = "xyes"; then
+    ac_fn_c_check_header_mongrel "$LINENO" "openh264/codec_api.h" "ac_cv_header_openh264_codec_api_h" "$ac_includes_default"
+if test "x$ac_cv_header_openh264_codec_api_h" = xyes; then :
+  :
+else
+  HAVE_OPENH264=no
+fi
+
+
+    if test "x$HAVE_OPENH264" = "xyes"; then
+            OPENH264_LIBS="-lwels $LIBM"
+    else
+      :
+    fi
+  else
+    :
+  fi
+
+
+
+
+
+
+
+  LIBS=$gst_check_save_LIBS
+  LDFLAGS=$gst_check_save_LDFLAGS
+  CFLAGS=$gst_check_save_CFLAGS
+  CPPFLAGS=$gst_check_save_CPPFLAGS
+  CXXFLAGS=$gst_check_save_CXXFLAGS
+
+    if test x$HAVE_OPENH264 = xno; then
+    USE_OPENH264=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: *** These plugins will be built: openh264" >&5
+$as_echo "$as_me: *** These plugins will be built: openh264" >&6;}
+  fi
+fi
+if test x$USE_OPENH264 = xyes; then
+  :
+  if test "xopenh264" != "x"; then
+    GST_PLUGINS_YES="\topenh264\n$GST_PLUGINS_YES"
+  fi
+
+$as_echo "#define HAVE_OPENH264 /**/" >>confdefs.h
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: *** These plugins will not be built: openh264" >&5
+$as_echo "$as_me: *** These plugins will not be built: openh264" >&6;}
+  if test "xopenh264" != "x"; then
+    GST_PLUGINS_NO="\topenh264\n$GST_PLUGINS_NO"
+  fi
+  :
+fi
+ if test x$USE_OPENH264 = xyes; then
+  USE_OPENH264_TRUE=
+  USE_OPENH264_FALSE='#'
+else
+  USE_OPENH264_TRUE='#'
+  USE_OPENH264_FALSE=
 fi
 
 
@@ -50985,6 +51143,14 @@ else
 fi
 
  if false; then
+  USE_OPENH264_TRUE=
+  USE_OPENH264_FALSE='#'
+else
+  USE_OPENH264_TRUE='#'
+  USE_OPENH264_FALSE=
+fi
+
+ if false; then
   USE_WEBP_TRUE=
   USE_WEBP_FALSE='#'
 else
@@ -51043,7 +51209,7 @@ GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^_*gst_plugin_
 $MKDIR_P tests/check/orc
 
 
-ac_config_files="$ac_config_files Makefile common/Makefile common/m4/Makefile gst-plugins-bad.spec gst/Makefile gst/accurip/Makefile gst/adpcmdec/Makefile gst/adpcmenc/Makefile gst/aiff/Makefile gst/asfmux/Makefile gst/audiofxbad/Makefile gst/audiovisualizers/Makefile gst/autoconvert/Makefile gst/bayer/Makefile gst/camerabin2/Makefile gst/cdxaparse/Makefile gst/coloreffects/Makefile gst/dataurisrc/Makefile gst/dccp/Makefile gst/debugutils/Makefile gst/dvbsuboverlay/Makefile gst/dvdspu/Makefile gst/faceoverlay/Makefile gst/festival/Makefile gst/fieldanalysis/Makefile gst/freeverb/Makefile gst/frei0r/Makefile gst/gaudieffects/Makefile gst/geometrictransform/Makefile gst/gdp/Makefile gst/hdvparse/Makefile gst/id3tag/Makefile gst/inter/Makefile gst/interlace/Makefile gst/ivfparse/Makefile gst/ivtc/Makefile gst/jp2kdecimator/Makefile gst/jpegformat/Makefile gst/librfb/Makefile gst/liveadder/Makefile gst/midi/Makefile gst/mpegdemux/Makefile gst/mpegtsdemux/Makefile gst/mpegtsmux/Makefile gst/mpegtsmux/tsmux/Makefile gst/mpegpsmux/Makefile gst/mve/Makefile gst/mxf/Makefile gst/nuvdemux/Makefile gst/patchdetect/Makefile gst/pcapparse/Makefile gst/pnm/Makefile gst/rawparse/Makefile gst/real/Makefile gst/removesilence/Makefile gst/sdi/Makefile gst/sdp/Makefile gst/segmentclip/Makefile gst/siren/Makefile gst/smooth/Makefile gst/speed/Makefile gst/subenc/Makefile gst/stereo/Makefile gst/tta/Makefile gst/videofilters/Makefile gst/videomeasure/Makefile gst/videoparsers/Makefile gst/videosignal/Makefile gst/vmnc/Makefile gst/y4m/Makefile gst/yadif/Makefile gst-libs/Makefile gst-libs/gst/Makefile gst-libs/gst/basecamerabinsrc/Makefile gst-libs/gst/egl/Makefile gst-libs/gst/insertbin/Makefile gst-libs/gst/interfaces/Makefile gst-libs/gst/codecparsers/Makefile gst-libs/gst/mpegts/Makefile gst-libs/gst/uridownloader/Makefile sys/Makefile sys/dshowdecwrapper/Makefile sys/acmenc/Makefile sys/acmmp3dec/Makefile sys/androidmedia/Makefile sys/applemedia/Makefile sys/applemedia-nonpublic/Makefile sys/avc/Makefile sys/bluez/Makefile sys/d3dvideosink/Makefile sys/decklink/Makefile sys/directdraw/Makefile sys/directsound/Makefile sys/dshowsrcwrapper/Makefile sys/dshowvideosink/Makefile sys/dvb/Makefile sys/fbdev/Makefile sys/linsys/Makefile sys/opensles/Makefile sys/osxvideo/Makefile sys/qtwrapper/Makefile sys/mfc/Makefile sys/shm/Makefile sys/uvch264/Makefile sys/vcd/Makefile sys/vdpau/Makefile sys/pvr2d/Makefile sys/wasapi/Makefile sys/wininet/Makefile sys/winks/Makefile sys/winscreencap/Makefile tests/Makefile tests/check/Makefile tests/files/Makefile tests/examples/Makefile tests/examples/camerabin2/Makefile tests/examples/directfb/Makefile tests/examples/mpegts/Makefile tests/examples/mxf/Makefile tests/examples/opencv/Makefile tests/examples/uvch264/Makefile tests/icles/Makefile ext/voamrwbenc/Makefile ext/voaacenc/Makefile ext/assrender/Makefile ext/apexsink/Makefile ext/bz2/Makefile ext/cdaudio/Makefile ext/chromaprint/Makefile ext/curl/Makefile ext/dash/Makefile ext/dc1394/Makefile ext/directfb/Makefile ext/wayland/Makefile ext/daala/Makefile ext/dts/Makefile ext/eglgles/Makefile ext/faac/Makefile ext/faad/Makefile ext/flite/Makefile ext/fluidsynth/Makefile ext/gsm/Makefile ext/hls/Makefile ext/kate/Makefile ext/ladspa/Makefile ext/lv2/Makefile ext/libmms/Makefile ext/Makefile ext/modplug/Makefile ext/mpeg2enc/Makefile ext/mpg123/Makefile ext/mimic/Makefile ext/mplex/Makefile ext/musepack/Makefile ext/mythtv/Makefile ext/nas/Makefile ext/neon/Makefile ext/ofa/Makefile ext/openal/Makefile ext/opencv/Makefile ext/openjpeg/Makefile ext/opus/Makefile ext/rsvg/Makefile ext/resindvd/Makefile ext/rtmp/Makefile ext/sbc/Makefile ext/schroedinger/Makefile ext/sdl/Makefile ext/smoothstreaming/Makefile ext/sndfile/Makefile ext/soundtouch/Makefile ext/spandsp/Makefile ext/sndio/Makefile ext/srtp/Makefile ext/teletextdec/Makefile ext/gme/Makefile ext/gsettings/Makefile ext/gsettings/org.freedesktop.gstreamer.default-elements.gschema.xml ext/spc/Makefile ext/timidity/Makefile ext/webp/Makefile ext/xvid/Makefile ext/zbar/Makefile po/Makefile.in docs/Makefile docs/plugins/Makefile docs/libs/Makefile docs/version.entities pkgconfig/Makefile pkgconfig/gstreamer-plugins-bad.pc pkgconfig/gstreamer-plugins-bad-uninstalled.pc pkgconfig/gstreamer-codecparsers.pc pkgconfig/gstreamer-codecparsers-uninstalled.pc pkgconfig/gstreamer-insertbin.pc pkgconfig/gstreamer-insertbin-uninstalled.pc pkgconfig/gstreamer-egl.pc pkgconfig/gstreamer-egl-uninstalled.pc pkgconfig/gstreamer-mpegts.pc pkgconfig/gstreamer-mpegts-uninstalled.pc tools/Makefile m4/Makefile"
+ac_config_files="$ac_config_files Makefile common/Makefile common/m4/Makefile gst-plugins-bad.spec gst/Makefile gst/accurip/Makefile gst/adpcmdec/Makefile gst/adpcmenc/Makefile gst/aiff/Makefile gst/asfmux/Makefile gst/audiofxbad/Makefile gst/audiovisualizers/Makefile gst/autoconvert/Makefile gst/bayer/Makefile gst/camerabin2/Makefile gst/cdxaparse/Makefile gst/coloreffects/Makefile gst/dataurisrc/Makefile gst/dccp/Makefile gst/debugutils/Makefile gst/dvbsuboverlay/Makefile gst/dvdspu/Makefile gst/faceoverlay/Makefile gst/festival/Makefile gst/fieldanalysis/Makefile gst/freeverb/Makefile gst/frei0r/Makefile gst/gaudieffects/Makefile gst/geometrictransform/Makefile gst/gdp/Makefile gst/hdvparse/Makefile gst/id3tag/Makefile gst/inter/Makefile gst/interlace/Makefile gst/ivfparse/Makefile gst/ivtc/Makefile gst/jp2kdecimator/Makefile gst/jpegformat/Makefile gst/librfb/Makefile gst/liveadder/Makefile gst/midi/Makefile gst/mpegdemux/Makefile gst/mpegtsdemux/Makefile gst/mpegtsmux/Makefile gst/mpegtsmux/tsmux/Makefile gst/mpegpsmux/Makefile gst/mve/Makefile gst/mxf/Makefile gst/nuvdemux/Makefile gst/patchdetect/Makefile gst/pcapparse/Makefile gst/pnm/Makefile gst/rawparse/Makefile gst/real/Makefile gst/removesilence/Makefile gst/sdi/Makefile gst/sdp/Makefile gst/segmentclip/Makefile gst/siren/Makefile gst/smooth/Makefile gst/speed/Makefile gst/subenc/Makefile gst/stereo/Makefile gst/tta/Makefile gst/videofilters/Makefile gst/videomeasure/Makefile gst/videoparsers/Makefile gst/videosignal/Makefile gst/vmnc/Makefile gst/y4m/Makefile gst/yadif/Makefile gst-libs/Makefile gst-libs/gst/Makefile gst-libs/gst/basecamerabinsrc/Makefile gst-libs/gst/egl/Makefile gst-libs/gst/insertbin/Makefile gst-libs/gst/interfaces/Makefile gst-libs/gst/codecparsers/Makefile gst-libs/gst/mpegts/Makefile gst-libs/gst/uridownloader/Makefile sys/Makefile sys/dshowdecwrapper/Makefile sys/acmenc/Makefile sys/acmmp3dec/Makefile sys/androidmedia/Makefile sys/applemedia/Makefile sys/applemedia-nonpublic/Makefile sys/avc/Makefile sys/bluez/Makefile sys/d3dvideosink/Makefile sys/decklink/Makefile sys/directdraw/Makefile sys/directsound/Makefile sys/dshowsrcwrapper/Makefile sys/dshowvideosink/Makefile sys/dvb/Makefile sys/fbdev/Makefile sys/linsys/Makefile sys/opensles/Makefile sys/osxvideo/Makefile sys/qtwrapper/Makefile sys/mfc/Makefile sys/shm/Makefile sys/uvch264/Makefile sys/vcd/Makefile sys/vdpau/Makefile sys/pvr2d/Makefile sys/wasapi/Makefile sys/wininet/Makefile sys/winks/Makefile sys/winscreencap/Makefile tests/Makefile tests/check/Makefile tests/files/Makefile tests/examples/Makefile tests/examples/camerabin2/Makefile tests/examples/directfb/Makefile tests/examples/mpegts/Makefile tests/examples/mxf/Makefile tests/examples/opencv/Makefile tests/examples/uvch264/Makefile tests/icles/Makefile ext/voamrwbenc/Makefile ext/voaacenc/Makefile ext/assrender/Makefile ext/apexsink/Makefile ext/bz2/Makefile ext/cdaudio/Makefile ext/chromaprint/Makefile ext/curl/Makefile ext/dash/Makefile ext/dc1394/Makefile ext/directfb/Makefile ext/wayland/Makefile ext/daala/Makefile ext/dts/Makefile ext/eglgles/Makefile ext/faac/Makefile ext/faad/Makefile ext/flite/Makefile ext/fluidsynth/Makefile ext/gsm/Makefile ext/hls/Makefile ext/kate/Makefile ext/ladspa/Makefile ext/lv2/Makefile ext/libmms/Makefile ext/Makefile ext/modplug/Makefile ext/mpeg2enc/Makefile ext/mpg123/Makefile ext/mimic/Makefile ext/mplex/Makefile ext/musepack/Makefile ext/mythtv/Makefile ext/nas/Makefile ext/neon/Makefile ext/ofa/Makefile ext/openal/Makefile ext/opencv/Makefile ext/openjpeg/Makefile ext/opus/Makefile ext/rsvg/Makefile ext/resindvd/Makefile ext/rtmp/Makefile ext/sbc/Makefile ext/schroedinger/Makefile ext/sdl/Makefile ext/smoothstreaming/Makefile ext/sndfile/Makefile ext/soundtouch/Makefile ext/spandsp/Makefile ext/sndio/Makefile ext/srtp/Makefile ext/teletextdec/Makefile ext/gme/Makefile ext/gsettings/Makefile ext/gsettings/org.freedesktop.gstreamer.default-elements.gschema.xml ext/spc/Makefile ext/timidity/Makefile ext/openh264/Makefile ext/webp/Makefile ext/xvid/Makefile ext/zbar/Makefile po/Makefile.in docs/Makefile docs/plugins/Makefile docs/libs/Makefile docs/version.entities pkgconfig/Makefile pkgconfig/gstreamer-plugins-bad.pc pkgconfig/gstreamer-plugins-bad-uninstalled.pc pkgconfig/gstreamer-codecparsers.pc pkgconfig/gstreamer-codecparsers-uninstalled.pc pkgconfig/gstreamer-insertbin.pc pkgconfig/gstreamer-insertbin-uninstalled.pc pkgconfig/gstreamer-egl.pc pkgconfig/gstreamer-egl-uninstalled.pc pkgconfig/gstreamer-mpegts.pc pkgconfig/gstreamer-mpegts-uninstalled.pc tools/Makefile m4/Makefile"
 
 
 sed \
@@ -51778,6 +51944,10 @@ if test -z "${USE_WAYLAND_TRUE}" && test -z "${USE_WAYLAND_FALSE}"; then
   as_fn_error $? "conditional \"USE_WAYLAND\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
+if test -z "${USE_OPENH264_TRUE}" && test -z "${USE_OPENH264_FALSE}"; then
+  as_fn_error $? "conditional \"USE_OPENH264\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 if test -z "${USE_WEBP_TRUE}" && test -z "${USE_WEBP_FALSE}"; then
   as_fn_error $? "conditional \"USE_WEBP\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -52288,6 +52458,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${USE_UVCH264_TRUE}" && test -z "${USE_UVCH264_FALSE}"; then
   as_fn_error $? "conditional \"USE_UVCH264\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${USE_OPENH264_TRUE}" && test -z "${USE_OPENH264_FALSE}"; then
+  as_fn_error $? "conditional \"USE_OPENH264\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${USE_WEBP_TRUE}" && test -z "${USE_WEBP_FALSE}"; then
@@ -53473,6 +53647,7 @@ do
     "ext/gsettings/org.freedesktop.gstreamer.default-elements.gschema.xml") CONFIG_FILES="$CONFIG_FILES ext/gsettings/org.freedesktop.gstreamer.default-elements.gschema.xml" ;;
     "ext/spc/Makefile") CONFIG_FILES="$CONFIG_FILES ext/spc/Makefile" ;;
     "ext/timidity/Makefile") CONFIG_FILES="$CONFIG_FILES ext/timidity/Makefile" ;;
+    "ext/openh264/Makefile") CONFIG_FILES="$CONFIG_FILES ext/openh264/Makefile" ;;
     "ext/webp/Makefile") CONFIG_FILES="$CONFIG_FILES ext/webp/Makefile" ;;
     "ext/xvid/Makefile") CONFIG_FILES="$CONFIG_FILES ext/xvid/Makefile" ;;
     "ext/zbar/Makefile") CONFIG_FILES="$CONFIG_FILES ext/zbar/Makefile" ;;
