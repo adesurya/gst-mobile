@@ -82,7 +82,7 @@ make_gstapi ()
     target="gstapi"
     ldflags=" /tmp/gst_static_plugins.c"
     ldflags+=" -lc -lz -lm -lEGL -lGLESv2 -lOpenSLES"
-    ldflags+=" -L../lib -lglibapi -lvorbisenc -lvorbis -ltheora -logg"
+    ldflags+=" -L../lib -lglibapi -lvorbisenc -lvorbis -ltheora -logg -lwels"
 cat > /tmp/gst_static_plugins.c << EOF
 
 static int s_plugins_num = 0;
@@ -228,6 +228,7 @@ int gst_static_plugins()
     GST_PLUGIN(fbdevsink);
     GST_PLUGIN(opensles);
     GST_PLUGIN(eglglessink);
+    GST_PLUGIN(openh264);
 
     return s_plugins_num;
 }
@@ -394,6 +395,7 @@ libgstegl-1.0.a
 libgstfbdevsink.a
 libgstopensles.a
 libgsteglglessink.a
+libgstopenh264.a
 "
 
     thelibs=""
@@ -403,7 +405,7 @@ libgsteglglessink.a
         if [ ! -z $lib ] && [ -e $lib ]; then
             thelibs="$thelibs $lib"
         else
-            echo "Error: $f is nexist!"
+            :; #echo "Error: $f is nexist!"
         fi
     done
 

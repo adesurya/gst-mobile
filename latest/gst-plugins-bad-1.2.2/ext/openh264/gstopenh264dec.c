@@ -22,6 +22,7 @@
 #include "config.h"
 #endif
 #include <string.h>
+#include <dlfcn.h>
 
 #include "gstopenh264dec.h"
 
@@ -109,37 +110,70 @@ gst_openh264_dec_class_init (GstOpenH264DecClass * klass)
 }
 
 static void
-close_decoder(ISVCDecoder *decoder)
+close_decoder(GstOpenH264Dec *decoder)
 {
-  if (decoder) {
-    (*decoder)->Uninitialize(decoder);
-    DestroyDecoder (decoder);
+  if (!decoder) return;
+
+  if (decoder->svc_dec) {
+    (*decoder->svc_dec)->Uninitialize(decoder->svc_dec);
+
+#ifdef DL_LOAD_OPENH264
+    void (* pfDestroyDecoder) (ISVCDecoder* ) = NULL;
+    if (decoder->svc_handle)
+        pfDestroyDecoder = dlsym(decoder->svc_handle, "DestroyDecoder");
+    if (pfDestroyDecoder)
+        pfDestroyDecoder (decoder->svc_dec);
+#else
+    DestroyDecoder (decoder->svc_dec);
+#endif
+    decoder->svc_dec = NULL;
   }
+
+#ifdef DL_LOAD_OPENH264
+  if (decoder->svc_handle) {
+    dlclose(decoder->svc_handle);
+    decoder->svc_handle = NULL;
+  }
+#endif
 }
 
 static gboolean 
-open_decoder(ISVCDecoder **decoder, const SDecodingParam* param)
+open_decoder(GstOpenH264Dec *decoder)
 {
   gboolean bret = FALSE;
-  ISVCDecoder *svc_dec = NULL;
   int32_t color_fmt = videoFormatInternal;
 
+  if (!decoder) return FALSE;
+
   do {
-    if(CreateDecoder (&svc_dec) || (svc_dec == NULL)) {
-       break;
+#ifdef DL_LOAD_OPENH264
+    long (* pfCreateDecoder) (ISVCDecoder** ) = NULL;
+    if (!decoder->svc_handle) {
+      decoder->svc_handle = dlopen("libwels.so", RTLD_LAZY);
     }
 
-    if((*svc_dec)->Initialize (svc_dec, param)) {
-      close_decoder(svc_dec);
+    pfCreateDecoder = dlsym(decoder->svc_handle, "CreateDecoder");
+    if(!pfCreateDecoder || pfCreateDecoder (&decoder->svc_dec) || (decoder->svc_dec == NULL)) {
+      close_decoder(decoder);
+      break;
+    }
+#else
+    if(CreateDecoder (&decoder->svc_dec) || (decoder->svc_dec == NULL)) {
+      close_decoder(decoder);
+      break;
+    }
+#endif
+
+    if((*decoder->svc_dec)->Initialize (decoder->svc_dec, &decoder->param)) {
+      close_decoder(decoder);
       break;
     }
 
-    if((*svc_dec)->SetOption (svc_dec, DECODER_OPTION_DATAFORMAT, (void *)&color_fmt)) {
-      close_decoder(svc_dec);
+    if((*decoder->svc_dec)->SetOption (decoder->svc_dec, DECODER_OPTION_DATAFORMAT, (void *)&color_fmt)) {
+      close_decoder(decoder);
       break;
     }
 
-    *decoder = svc_dec;
     bret = TRUE;
   }while(0);
 
@@ -147,14 +181,28 @@ open_decoder(ISVCDecoder **decoder, const SDecodingParam* param)
 }
 
 static long
-codec_decode(ISVCDecoder *decoder, const unsigned char *src, int src_len, void **dst, SBufferInfo* dst_info)
+codec_decode(GstOpenH264Dec *decoder, const unsigned char *src, int src_len, void **dst, SBufferInfo* dst_info)
 {
   long status = -1;
-  if (decoder && src && dst && dst_info) {
-    status = (*decoder)->DecodeFrame2 (decoder, src, src_len, dst, dst_info);
+  if (decoder && decoder->svc_dec && src && dst && dst_info) {
+    status = (*decoder->svc_dec)->DecodeFrame2 (decoder->svc_dec, src, src_len, dst, dst_info);
   }
   return status;
 }
+
+static void
+codec_dec_send_tags (GstOpenH264Dec * dec)
+{
+  GstTagList *list;
+
+  list = gst_tag_list_new_empty ();
+  gst_tag_list_add (list, GST_TAG_MERGE_REPLACE,
+      GST_TAG_VIDEO_CODEC, "OpenH264 video", NULL);
+
+  gst_pad_push_event (GST_VIDEO_DECODER_SRC_PAD (dec),
+      gst_event_new_tag (list));
+}
+
 
 static void
 codec_dec_image_to_buffer (GstOpenH264Dec * dec, const SBufferInfo* img_info, void** img_data,
@@ -194,10 +242,11 @@ gst_openh264_dec_init (GstOpenH264Dec * openh264_dec)
 
   GST_DEBUG_OBJECT (openh264_dec, "gst_openh264_dec_init");
   gst_video_decoder_set_packetized (decoder, TRUE);
-  openh264_dec->frame_size = 0;
-  openh264_dec->use_threads = FALSE;
-  openh264_dec->decoder_inited = FALSE;
 
+  openh264_dec->input_state = NULL;
+  openh264_dec->output_state = NULL;
+
+  openh264_dec->svc_handle = NULL;
   openh264_dec->svc_dec = NULL;
   memset(&openh264_dec->param, 0, sizeof(SDecodingParam));
   openh264_dec->param.iOutputColorFormat        = videoFormatI420;
@@ -245,7 +294,6 @@ gst_openh264_dec_start (GstVideoDecoder * decoder)
   GstOpenH264Dec *openh264_dec = GST_OPENH264_DEC(decoder);
 
   GST_DEBUG_OBJECT (openh264_dec, "start");
-  openh264_dec->decoder_inited = FALSE;
 
   return TRUE;
 }
@@ -267,11 +315,7 @@ gst_openh264_dec_stop (GstVideoDecoder * decoder)
     openh264_dec->input_state = NULL;
   }
 
-  if (openh264_dec->decoder_inited){
-    close_decoder(openh264_dec->svc_dec);
-    openh264_dec->svc_dec = NULL;
-  }
-  openh264_dec->decoder_inited = FALSE;
+  close_decoder(openh264_dec);
 
   return TRUE;
 }
@@ -283,11 +327,7 @@ gst_openh264_dec_set_format (GstVideoDecoder * decoder, GstVideoCodecState * sta
 
   GST_DEBUG_OBJECT (openh264_dec, "set_format");
 
-  if (openh264_dec->decoder_inited) {
-    close_decoder(openh264_dec->svc_dec);
-    openh264_dec->svc_dec = NULL;
-  }
-  openh264_dec->decoder_inited = FALSE;
+  close_decoder(openh264_dec);
 
   if (openh264_dec->input_state)
     gst_video_codec_state_unref (openh264_dec->input_state);
@@ -308,11 +348,7 @@ gst_openh264_dec_flush (GstVideoDecoder * decoder)
     openh264_dec->output_state = NULL;
   }
 
-  if (openh264_dec->decoder_inited) {
-    close_decoder(openh264_dec->svc_dec);
-    openh264_dec->svc_dec = NULL;
-  }
-  openh264_dec->decoder_inited = FALSE;
+  close_decoder(openh264_dec);
 
   return TRUE;
 }
@@ -322,7 +358,6 @@ gst_openh264_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * f
 {
   GstOpenH264Dec *dec;
   GstFlowReturn ret = GST_FLOW_OK;
-  //GstVideoFrame vframe;
   //long decoder_deadline = 0;
   GstClockTimeDiff deadline;
   GstMapInfo minfo;
@@ -335,12 +370,11 @@ gst_openh264_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * f
 
   dec = GST_OPENH264_DEC (decoder);
 
-  if (!dec->decoder_inited) {
-    if(!open_decoder(&dec->svc_dec, &dec->param)) {
+  if (!dec->svc_dec) {
+    if(!open_decoder(dec)) {
       GST_ERROR_OBJECT (decoder, "Failed to open_decoder");
       return GST_FLOW_ERROR;
     }
-    dec->decoder_inited = TRUE;
   }
 
   deadline = gst_video_decoder_get_max_decode_time (decoder, frame);
@@ -361,7 +395,7 @@ gst_openh264_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * f
 
   pdata[0] = NULL; pdata[1] = NULL; pdata[2] = NULL;
   memset (&dst_info, 0, sizeof (SBufferInfo));
-  status = codec_decode(dec->svc_dec, minfo.data, minfo.size, pdata, &dst_info);
+  status = codec_decode(dec, minfo.data, minfo.size, pdata, &dst_info);
   gst_buffer_unmap (frame->input_buffer, &minfo);
 
   if (status != dsErrorFree) {
@@ -372,9 +406,11 @@ gst_openh264_dec_handle_frame (GstVideoDecoder * decoder, GstVideoCodecFrame * f
 
   if (dec->output_state == NULL) {
     GstVideoCodecState *state = dec->input_state;
+    g_assert(dec->input_state != NULL);
     dec->output_state = gst_video_decoder_set_output_state (GST_VIDEO_DECODER (dec),
         GST_VIDEO_FORMAT_I420, dst_info.UsrData.sSystemBuffer.iWidth, dst_info.UsrData.sSystemBuffer.iHeight, state);
     gst_video_decoder_negotiate (GST_VIDEO_DECODER (dec));
+    codec_dec_send_tags(dec);
   }
 
   if (dst_info.iBufferStatus == 1) {

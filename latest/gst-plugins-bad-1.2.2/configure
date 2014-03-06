@@ -36738,7 +36738,7 @@ fi
 
 
     if test "x$HAVE_OPENH264" = "xyes"; then
-            OPENH264_LIBS="-lwels $LIBM"
+            OPENH264_LIBS="$LIBM"
     else
       :
     fi

@@ -6,6 +6,11 @@ LOCAL_SRC_FILES := ../../../lib/libglibapi.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE := wels
+LOCAL_SRC_FILES := ../../../lib/libwels.so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
 LOCAL_MODULE := gstapi
 LOCAL_SRC_FILES := ../../../lib/libgstapi.so
 include $(PREBUILT_SHARED_LIBRARY)
@@ -28,6 +33,6 @@ LOCAL_LDLIBS += -llog -landroid
 #LOCAL_LDFLAGS += -L../../../lib -lglibapi -lgstapi
 #LOCAL_LDFLAGS += -lffi -landroid_support
 
-LOCAL_SHARED_LIBRARIES := glibapi gstapi
+LOCAL_SHARED_LIBRARIES := glibapi wels gstapi
 
 include $(BUILD_SHARED_LIBRARY)

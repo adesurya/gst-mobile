@@ -53,11 +53,9 @@ struct _GstOpenH264Dec {
   GstVideoCodecState *input_state;
   GstVideoCodecState *output_state;
 
+  void * svc_handle;
   ISVCDecoder* svc_dec;
   SDecodingParam param;
-  gboolean decoder_inited;
-  guint frame_size;
-  gboolean use_threads;
 };
 
 struct _GstOpenH264DecClass {

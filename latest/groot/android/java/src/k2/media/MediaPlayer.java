@@ -40,6 +40,7 @@ public class MediaPlayer extends MediaConsts
 {
     static {
         System.loadLibrary("glibapi");
+        System.loadLibrary("wels");
         System.loadLibrary("gstapi");
         System.loadLibrary("k2player");
         native_init();

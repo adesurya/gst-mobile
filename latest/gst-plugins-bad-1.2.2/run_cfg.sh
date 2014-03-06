@@ -41,10 +41,10 @@ export GST_PLUGINS_DIR="$PWD/../groot/lib/gstreamer-1.0"
 export GSTPB_PLUGINS_DIR="$PWD/../groot/lib/gstreamer-1.0"
 
 export OPENH264_CFLAGS="-I$PWD/../groot/include"
-export OPENH264_LIBS="-L$PWD/../groot/lib -lwels"
+export OPENH264_LIBS="-L$PWD/../groot/lib"
 
 export CFLAGS="$CFLAGS $GLIB_CFLAGS $GIO_CFLAGS $GST_CFLAGS $OPENH264_CFLAGS"
-export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS"
+export LDFLAGS="$LDFLAGS $GLIB_LIBS $GIO_LIBS $GST_LIBS $OPENH264_LIBS"
 export USE_SBC_TRUE="#"
 export USE_NO_X11="#"
 

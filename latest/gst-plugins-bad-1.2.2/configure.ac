@@ -1225,7 +1225,7 @@ dnl **** OpenH264 ****
 translit(dnm, m, l) AM_CONDITIONAL(USE_OPENH264, true)
 AG_GST_CHECK_FEATURE(OPENH264, [OpenH264 plug-in], openh264, [
   AG_GST_CHECK_LIBHEADER(OPENH264, wels, CreateDecoder, $LIBM, openh264/codec_api.h,
-    OPENH264_LIBS="-lwels $LIBM")
+    OPENH264_LIBS="$LIBM")
   AC_SUBST(OPENH264_CFLAGS)
   AC_SUBST(OPENH264_LIBS)
 ])
