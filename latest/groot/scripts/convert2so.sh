@@ -131,38 +131,38 @@ int gst_static_plugins()
     //GST_PLUGIN(cutter);
     //GST_PLUGIN(deinterlace);
     GST_PLUGIN(dtmf);
-    //GST_PLUGIN(debug);
+    GST_PLUGIN(debug);
     /* GST_PLUGIN(navigationtest); */
     //GST_PLUGIN(effectv);
     GST_PLUGIN(equalizer);
-    //GST_PLUGIN(flv);
+    GST_PLUGIN(flv);
     //GST_PLUGIN(goom);
     //GST_PLUGIN(goom2k1);
-    //GST_PLUGIN(id3demux);
+    GST_PLUGIN(id3demux);
     //GST_PLUGIN(icydemux);
     //GST_PLUGIN(imagefreeze);
     //GST_PLUGIN(interleave);
     GST_PLUGIN(isomp4);
-    //GST_PLUGIN(alaw);
-    //GST_PLUGIN(mulaw);
+    GST_PLUGIN(alaw);
+    GST_PLUGIN(mulaw);
     //GST_PLUGIN(level);
-    //GST_PLUGIN(matroska);
+    GST_PLUGIN(matroska);
     //GST_PLUGIN(multifile);
     //GST_PLUGIN(multipart);
     GST_PLUGIN(replaygain);
-    //GST_PLUGIN(rtp);
-    //GST_PLUGIN(rtpmanager);
-    //GST_PLUGIN(rtsp);
+    GST_PLUGIN(rtp);
+    GST_PLUGIN(rtpmanager);
+    GST_PLUGIN(rtsp);
     //GST_PLUGIN(shapewipe);
     //GST_PLUGIN(smpte);
     //GST_PLUGIN(spectrum);
-    //GST_PLUGIN(udp);
+    GST_PLUGIN(udp);
     //GST_PLUGIN(videobox);
     //GST_PLUGIN(videocrop);
     //GST_PLUGIN(videofilter);
     /* GST_PLUGIN(videomixer); */
-    //GST_PLUGIN(wavenc);
-    //GST_PLUGIN(wavparse);
+    GST_PLUGIN(wavenc);
+    GST_PLUGIN(wavparse);
     //GST_PLUGIN(flxdec);
     /* GST_PLUGIN(y4menc); */
     /* GST_PLUGIN(oss4); */
@@ -171,7 +171,7 @@ int gst_static_plugins()
     //GST_PLUGIN(asf);
     //GST_PLUGIN(dvdlpcmdec);
     //GST_PLUGIN(dvdsub);
-    //GST_PLUGIN(realmedia);
+    GST_PLUGIN(realmedia);
     /* GST_PLUGIN(xingmux); */
 
     /* For gst-plugin-bad */
@@ -197,16 +197,16 @@ int gst_static_plugins()
     /* GST_PLUGIN(gaudieffects); */
     //GST_PLUGIN(geometrictransform);
     //GST_PLUGIN(gdp);
-    //GST_PLUGIN(id3tag);
+    GST_PLUGIN(id3tag);
     //GST_PLUGIN(inter);
     //GST_PLUGIN(interlace);
     //GST_PLUGIN(ivtc);
     //GST_PLUGIN(jpegformat);
     /* GST_PLUGIN(rfbsrc); */
     //GST_PLUGIN(liveadder);
-    //GST_PLUGIN(midi);
-    //GST_PLUGIN(mpegpsdemux);
-    //GST_PLUGIN(mpegtsdemux);
+    GST_PLUGIN(midi);
+    GST_PLUGIN(mpegpsdemux);
+    GST_PLUGIN(mpegtsdemux);
     //GST_PLUGIN(mpegtsmux);
     //GST_PLUGIN(mpegpsmux);
     /* GST_PLUGIN(mxf); */
@@ -214,7 +214,7 @@ int gst_static_plugins()
     /* GST_PLUGIN(pnm); */
     /* GST_PLUGIN(rawparse); */
     //GST_PLUGIN(removesilence);
-    //GST_PLUGIN(sdp);
+    GST_PLUGIN(sdp);
     //GST_PLUGIN(segmentclip);
     /* GST_PLUGIN(gstsiren); */
     //GST_PLUGIN(smooth);
@@ -289,38 +289,38 @@ libgstautodetect.a
 #libgstcutter.a
 #libgstdeinterlace.a
 libgstdtmf.a
-#libgstdebug.a
+libgstdebug.a
 #libgstnavigationtest.a
 #libgsteffectv.a
 libgstequalizer.a
-#libgstflv.a
+libgstflv.a
 #libgstgoom.a
 #libgstgoom2k1.a
-#libgstid3demux.a
+libgstid3demux.a
 #libgsticydemux.a
 #libgstimagefreeze.a
 #libgstinterleave.a
 libgstisomp4.a
-#libgstalaw.a
-#libgstmulaw.a
+libgstalaw.a
+libgstmulaw.a
 #libgstlevel.a
-#libgstmatroska.a
+libgstmatroska.a
 #libgstmultifile.a
 #libgstmultipart.a
 libgstreplaygain.a
-#libgstrtp.a
-#libgstrtpmanager.a
-#libgstrtsp.a
+libgstrtp.a
+libgstrtpmanager.a
+libgstrtsp.a
 #libgstshapewipe.a
 #libgstsmpte.a
 #libgstspectrum.a
-#libgstudp.a
+libgstudp.a
 #libgstvideobox.a
 #libgstvideocrop.a
 #libgstvideofilter.a
 #libgstvideomixer.a
-#libgstwavenc.a
-#libgstwavparse.a
+libgstwavenc.a
+libgstwavparse.a
 #libgstflxdec.a
 #libgsty4menc.a
 #libgstoss4audio.a
@@ -330,7 +330,7 @@ gst_ugly_libs="
 #libgstasf.a
 #libgstdvdlpcmdec.a
 #libgstdvdsub.a
-#libgstrmdemux.a
+libgstrmdemux.a
 #libgstxingmux.a
 "
 
@@ -357,16 +357,16 @@ libgstautoconvert.a
 #libgstgaudieffects.a
 #libgstgeometrictransform.a
 #libgstgdp.a
-#libgstid3tag.a
+libgstid3tag.a
 #libgstinter.a
 #libgstinterlace.a
 #libgstivtc.a
 #libgstjpegformat.a
 #libgstrfbsrc.a
 #libgstliveadder.a
-#libgstmidi.a
-#libgstmpegpsdemux.a
-#libgstmpegtsdemux.a
+libgstmidi.a
+libgstmpegpsdemux.a
+libgstmpegtsdemux.a
 #libgstmpegtsmux.a
 #libgstmpegpsmux.a
 #libgstmxf.a
@@ -374,7 +374,7 @@ libgstautoconvert.a
 #libgstpnm.a
 #libgstrawparse.a
 #libgstremovesilence.a
-#libgstsdpelem.a
+libgstsdpelem.a
 #libgstsegmentclip.a
 #libgstsiren.a
 #libgstsmooth.a
@@ -389,7 +389,7 @@ libgstegl-1.0.a
 #libgstinsertbin-1.0.a
 #libgstphotography-1.0.a
 #libgstcodecparsers-1.0.a
-#libgstmpegts-1.0.a
+libgstmpegts-1.0.a
 #libgsturidownloader-1.0.a
 #libgstandroidmedia.a
 libgstfbdevsink.a

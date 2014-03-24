@@ -64,4 +64,6 @@ struct _GstOpenH264DecClass {
 
 GType gst_openh264_dec_get_type (void);
 
+G_END_DECLS
+
 #endif /* __GST_OPENH264_DEC_H__ */
